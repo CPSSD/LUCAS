@@ -1,42 +1,45 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+
 module.exports = {
+  entry: './src/index.jsx',
   module: {
     rules: [
       {
-        test: /\.css(\.js)?$/,
+        test: /\.scss$/,
         use: [
-          { loader: 'style-loader' },
-          { loader: 'css-loader' },
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'sass-loader',
+          },
         ],
-      }, 
-      {
-        test: /\.css\.js$/,
-        use: {
-          loader: 'css-js-loader',
-        },
       },
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.html$/,
         use: [
           {
-            loader: "html-loader",
-            options: { minimize: true }
-          }
-        ]
-      }
-    ]
+            loader: 'html-loader',
+            options: { minimize: true },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
-    })
-  ]
+      template: './src/index.html',
+      filename: './index.html',
+    }),
+  ],
 };
