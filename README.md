@@ -6,3 +6,5 @@ LUCAS is an API used to accurately determine if user-submitted content is falsif
 
 To bring our API to the public, we have developed our flagship interface, Amazoff. This specialises on helping users assess falsified reviews on amazon products. This demonstrates our mission, which is to enable users to bypass the increasing online deception caused by opinion spam.
 
+Tests
+
