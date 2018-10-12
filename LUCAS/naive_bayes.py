@@ -62,11 +62,13 @@ data_y = np.asarray(data_fm['deceptive_class'],dtype=int)
 
 X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.3)
 
-tf =  TfidfVectorizer()
+# tf =  TfidfVectorizer()
+cv = CountVectorizer() # Works better than tf-idf
 
-X_traincv = tf.fit_transform(X_train)
-X_testcv = tf.transform(X_test)
+X_traincv = cv.fit_transform(X_train)
+X_testcv = cv.transform(X_test)
 
+# nbayes = ComplementNB()
 nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
@@ -79,6 +81,10 @@ output_fm = pd.DataFrame({'Review':X_testlist ,'True(1)/Deceptive(0)':yp})
 output_fm
 
 print(output_fm)
+
+print(nbayes.feature_log_prob_)
+print(nbayes.class_count_)
+print(nbayes.feature_all_)
 
 print("Accuracy % :",metrics.accuracy_score(y_test, y_predictions_nbayes)*100)
 print("Precision Score: ", precision_score(y_test, y_predictions_nbayes, average='micro'))

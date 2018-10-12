@@ -6,15 +6,18 @@ LUCAS is a hosted web service, with a main endpoint that takes:
 A list of user submitted reviews for a product or services page,
 A list of every review submitted by every user in that list.
 It will return a metric that corresponds to overall review quality.
+It will do this by using a combination of machine learning and deep learning methods to produce a model that returns an accuracy metric when given a review.
 
-## How to run
+## Installation and running
 
 ### Prerequisites
 
-Pythonn 3.X
-Conda [installed on your system](https://conda.io/docs/user-guide/install/index.html)
+* Python 3.X
+* Conda [installed on your system](https://conda.io/docs/user-guide/install/index.html)
 
-* Copy the datasets into the LUCAS/data/ folder. Reccomended folder heirarchy looks like:
+### Steps to run
+
+* Copy the datasets into the LUCAS/data/ folder. Recommended folder heirarchy looks like:
   * `Amazoff/LUCAS/data/amazonBooks/`
   * `Amazoff/LUCAS/data/hotels/`
   * `Amazoff/LUCAS/data/yelpData/`
