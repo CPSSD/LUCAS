@@ -21,37 +21,6 @@ reviews = []
 deceptive_class =[]
 
 for i in range(1,6):
-<<<<<<< HEAD
-    positive_true = pos_true_folder_path + 'fold' + str(i)
-    positive_deceptive = pos_deceptive_folder_path + 'fold' + str(i)
-    negative_true = neg_true_folder_path + 'fold' + str(i)
-    negative_deceptive = neg_deceptive_folder_path + 'fold' + str(i)
-    pos_list = []
-    for data_file in sorted(os.listdir(negative_deceptive)):
-        sentiment_class.append('negative')
-        deceptive_class.append(str(data_file.split('_')[0]))
-        with open(os.path.join(negative_deceptive, data_file)) as f:
-                contents = f.read()
-                reviews.append(contents)
-    for data_file in sorted(os.listdir(negative_true)):
-        sentiment_class.append('negative')
-        deceptive_class.append(str(data_file.split('_')[0]))
-        with open(os.path.join(negative_true, data_file)) as f:
-                contents = f.read()
-                reviews.append(contents)
-    for data_file in sorted(os.listdir(positive_deceptive)):
-        sentiment_class.append('positive')
-        deceptive_class.append(str(data_file.split('_')[0]))
-        with open(os.path.join(positive_deceptive, data_file)) as f:
-                contents = f.read()
-                reviews.append(contents)
-    for data_file in sorted(os.listdir(positive_true)):
-        sentiment_class.append('positive')
-        deceptive_class.append(str(data_file.split('_')[0]))
-        with open(os.path.join(positive_true, data_file)) as f:
-                contents = f.read()
-                reviews.append(contents)
-=======
   positive_true = pos_true_folder_path + 'fold' + str(i) 
   positive_deceptive = pos_deceptive_folder_path + 'fold' + str(i)
   negative_true = neg_true_folder_path + 'fold' + str(i) 
@@ -80,8 +49,6 @@ for i in range(1,6):
     with open(os.path.join(positive_true, data_file)) as f:
       contents = f.read()
       reviews.append(contents)
->>>>>>> naive_bayes
-
 
 data_fm = pd.DataFrame({'sentiment_class':sentiment_class,'review':reviews,'deceptive_class':deceptive_class})
 
