@@ -69,7 +69,8 @@ nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
 
-joblib.dump(nbayes, "classify_review.pkl")
+joblib.dump(nbayes, "lucas_model.pkl")
+joblib.dump(cv, 'countVectorizer.pkl')
 
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
