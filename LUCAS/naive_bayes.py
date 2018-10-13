@@ -24,7 +24,6 @@ for i in range(1,6):
     positive_deceptive = pos_deceptive_folder_path + 'fold' + str(i)
     negative_true = neg_true_folder_path + 'fold' + str(i) 
     negative_deceptive = neg_deceptive_folder_path + 'fold' + str(i) 
-    pos_list = []
     for data_file in sorted(os.listdir(negative_deceptive)):
         sentiment_class.append('negative')
         deceptive_class.append(str(data_file.split('_')[0]))
