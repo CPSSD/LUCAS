@@ -5,6 +5,7 @@ from sklearn import metrics
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
+from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import ComplementNB
@@ -20,10 +21,10 @@ reviews = []
 deceptive_class =[]
 
 for i in range(1,6):
-    positive_true = pos_true_folder_path + 'fold' + str(i) 
+    positive_true = pos_true_folder_path + 'fold' + str(i)
     positive_deceptive = pos_deceptive_folder_path + 'fold' + str(i)
-    negative_true = neg_true_folder_path + 'fold' + str(i) 
-    negative_deceptive = neg_deceptive_folder_path + 'fold' + str(i) 
+    negative_true = neg_true_folder_path + 'fold' + str(i)
+    negative_deceptive = neg_deceptive_folder_path + 'fold' + str(i)
     pos_list = []
     for data_file in sorted(os.listdir(negative_deceptive)):
         sentiment_class.append('negative')
@@ -73,6 +74,9 @@ nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
 
+joblib.dump(nbayes, "classify_review.pkl")
+# model = joblib.load("classify_review.pkl")
+
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
 yp=["True" if a==1 else "Deceptive" for a in y_predictions_nbayes]
@@ -91,3 +95,8 @@ print("Precision Score: ", precision_score(y_test, y_predictions_nbayes, average
 print("Recall Score: ",recall_score(y_test, y_predictions_nbayes, average='micro') )
 print("F1 Score: ",f1_score(y_test, y_predictions_nbayes, average='micro') )
 
+def predict_new(review):
+  return 'True' if nbayes.predict(review) == [1] else 'Deceptive'
+
+# review = input('Enter a review to classify: ')
+# print(predict_new(cv.transform([review])))
