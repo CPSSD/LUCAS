@@ -7,7 +7,7 @@ jobs:
     working_directory: ~/Amazoff
     steps:
       - checkout
-      - npm install
+      - run: npm install
   build_lucas:
     docker:
       - image: circleci/python:3.6.6-jessie-browsers
