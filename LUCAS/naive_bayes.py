@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn import metrics
 from sklearn.metrics import precision_score
-# from sklearn.metrics import recall_score
-# from sklearn.metrics import f1_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
 from sklearn.feature_extraction.text import CountVectorizer
 # from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import ComplementNB
@@ -68,7 +68,6 @@ cv = CountVectorizer() # Works better than tf-idf
 X_traincv = cv.fit_transform(X_train)
 X_testcv = cv.transform(X_test)
 
-# nbayes = ComplementNB()
 nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
