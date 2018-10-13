@@ -7,4 +7,6 @@ dependencies:
   - keras
   - matplotlib
   - tensorflow
+  - pytest
+  - protobuf
  
