@@ -7,7 +7,10 @@ nbayes = joblib.load("lucas_model.pkl")
 cv = joblib.load("countVectorizer.pkl")
 
 def classify_review(review):
-  return 'Truthful' if nbayes.predict(cv.transform([review])) == 1 else 'Deceptive'
+  reviewcv = cv.transform([review])
+  predicted_class = 'Truthful' if nbayes.predict(reviewcv) == 1 else 'Deceptive'
+  class_probs = nbayes.predict_proba(reviewcv)
+  return '{}, {}'.format(predicted_class, class_probs)
         
 @app.route('/')
 def return_status():
