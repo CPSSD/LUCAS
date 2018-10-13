@@ -17,7 +17,7 @@ It will do this by using a combination of machine learning and deep learning met
 
 ### Steps to run
 
-* Copy the datasets into the LUCAS/data/ folder. Recommended folder heirarchy looks like:
+* Copy the datasets into the LUCAS/data/ folder. Recommended folder hierarchy looks like:
   * `Amazoff/LUCAS/data/amazonBooks/`
   * `Amazoff/LUCAS/data/hotels/`
   * `Amazoff/LUCAS/data/yelpData/`

@@ -3,10 +3,10 @@ import numpy as np
 import pandas as pd
 from sklearn import metrics
 from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import f1_score
+# from sklearn.metrics import recall_score
+# from sklearn.metrics import f1_score
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import ComplementNB
 from sklearn.model_selection import train_test_split
 
@@ -78,7 +78,6 @@ y_predictions_nbayes = list(nbayes.predict(X_testcv))
 yp=["True" if a==1 else "Deceptive" for a in y_predictions_nbayes]
 X_testlist = list(X_test)
 output_fm = pd.DataFrame({'Review':X_testlist ,'True(1)/Deceptive(0)':yp})
-output_fm
 
 print(output_fm)
 
