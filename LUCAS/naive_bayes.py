@@ -7,7 +7,6 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
-# from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import ComplementNB
 from sklearn.model_selection import train_test_split
 
@@ -61,7 +60,6 @@ data_y = np.asarray(data_fm['deceptive_class'],dtype=int)
 
 X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.3)
 
-# tf =  TfidfVectorizer()
 cv = CountVectorizer() # Works better than tf-idf
 
 X_traincv = cv.fit_transform(X_train)
@@ -72,12 +70,11 @@ nbayes = ComplementNB()
 nbayes.fit(X_traincv, y_train)
 
 joblib.dump(nbayes, "classify_review.pkl")
-# model = joblib.load("classify_review.pkl")
 
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
 yp=["True" if a==1 else "Deceptive" for a in y_predictions_nbayes]
-output_fm = pd.DataFrame({'Review':list(X_testlist) ,'True(1)/Deceptive(0)':yp})
+output_fm = pd.DataFrame({'Review':list(X_test) ,'True(1)/Deceptive(0)':yp})
 
 print(output_fm)
 
