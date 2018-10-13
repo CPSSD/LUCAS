@@ -77,8 +77,7 @@ joblib.dump(nbayes, "classify_review.pkl")
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
 yp=["True" if a==1 else "Deceptive" for a in y_predictions_nbayes]
-X_testlist = list(X_test)
-output_fm = pd.DataFrame({'Review':X_testlist ,'True(1)/Deceptive(0)':yp})
+output_fm = pd.DataFrame({'Review':list(X_testlist) ,'True(1)/Deceptive(0)':yp})
 
 print(output_fm)
 
@@ -90,9 +89,3 @@ print("Accuracy % :",metrics.accuracy_score(y_test, y_predictions_nbayes)*100)
 print("Precision Score: ", precision_score(y_test, y_predictions_nbayes, average='micro'))
 print("Recall Score: ",recall_score(y_test, y_predictions_nbayes, average='micro') )
 print("F1 Score: ",f1_score(y_test, y_predictions_nbayes, average='micro') )
-
-def predict_new(review):
-  return 'True' if nbayes.predict(review) == [1] else 'Deceptive'
-
-# review = input('Enter a review to classify: ')
-# print(predict_new(cv.transform([review])))
