@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0creview.proto\"S\n\x06Review\x12\x16\n\x0ereview_content\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\r\x12\x12\n\nproduct_id\x18\x04 \x01(\rb\x06proto3')
+  serialized_pb=_b('\n\x0creview.proto\"b\n\x06Review\x12\x16\n\x0ereview_content\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\r\x12\x12\n\nproduct_id\x18\x04 \x01(\r\x12\r\n\x05label\x18\x05 \x01(\x08\x62\x06proto3')
 )
 
 
@@ -60,6 +60,13 @@ _REVIEW = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='label', full_name='Review.label', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -73,7 +80,7 @@ _REVIEW = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=16,
-  serialized_end=99,
+  serialized_end=114,
 )
 
 DESCRIPTOR.message_types_by_name['Review'] = _REVIEW
