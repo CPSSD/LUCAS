@@ -1,34 +1,47 @@
-from formatting import format_yelp_nyc_review_content
+from formatting import format_yelp_nyc_review
 from formatting import format_yelp_chi_review
 from protos import review_pb2
 from id_map_service import IDMapService
 
-def _get_entry_text(userid, productid, date, content):
+def _get_entry_text(userid=1, productid=2, date="2001-01-01", content=""):
   return str(userid) + "\t" + str(productid) + "\t" + date + "\t" + content
+
+def _get_nyc_metadata(label=1):
+  return "0\t0\t3.0\t" + str(label) + "\t2014-12-08"
 
 def test_formatting_yelp_nyc_gives_correct_user_id():
   review = review_pb2.Review()
-  entry = _get_entry_text(2, 1, "2000-01-01", "abc")
-  format_yelp_nyc_review_content(review, entry)
+  entry = _get_entry_text(userid=2)
+  format_yelp_nyc_review(review, entry, _get_nyc_metadata())
   assert review.user_id == 2
 
 def test_formatting_yelp_nyc_gives_correct_product_id():
   review = review_pb2.Review()
-  entry = _get_entry_text(1, 3, "2000-01-01", "Blarg")
-  format_yelp_nyc_review_content(review, entry)
+  entry = _get_entry_text(productid=3)
+  format_yelp_nyc_review(review, entry, _get_nyc_metadata())
   assert review.product_id == 3
 
 def test_formatting_yelp_nyc_gives_correct_date():
   review = review_pb2.Review()
-  entry = _get_entry_text(1, 1, "2001-02-03", "abc")
-  format_yelp_nyc_review_content(review, entry)
+  entry = _get_entry_text(date="2001-02-03")
+  format_yelp_nyc_review(review, entry, _get_nyc_metadata())
   assert review.date == "2001-02-03"
 
 def test_formatting_yelp_nyc_gives_correct_review_content():
   review = review_pb2.Review()
-  entry = _get_entry_text(1, 1, "2000-01-01", "Blarg")
-  format_yelp_nyc_review_content(review, entry)
+  entry = _get_entry_text(content="Blarg")
+  format_yelp_nyc_review(review, entry, _get_nyc_metadata())
   assert review.review_content == "Blarg"
+
+def test_formatting_yelp_nyc_gives_correct_fake_label():
+  review = review_pb2.Review()
+  format_yelp_nyc_review(review, _get_entry_text(), _get_nyc_metadata(label=-1))
+  assert review.label==True
+
+def test_formatting_yelp_nyc_gives_correct_genuine_label():
+  review = review_pb2.Review()
+  format_yelp_nyc_review(review, _get_entry_text(), _get_nyc_metadata(label=1))
+  assert review.label==False
 
 # Chicago
 
