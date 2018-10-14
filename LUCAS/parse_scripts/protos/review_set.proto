@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+import "review.proto";
+
+message ReviewSet {
+  repeated Review reviews = 1;
+}
