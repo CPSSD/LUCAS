@@ -34,5 +34,17 @@ with open(os.path.normpath(yelp_chi_directory + '/output_review_yelpHotelData_NR
     for line in f1:
       format_yelp_chi_review(review_set.reviews.add(), line, f2.readline(), userid_map_service, productid_map_service)
 
-with open(os.path.normpath(yelp_chi_directory + '/normalisedReviewContent'), 'w') as f:
+with open(os.path.normpath(yelp_chi_directory + '/normalisedReviewContent-Hotels'), 'w') as f:
+  f.write(str(review_set))
+
+userid_map_service = IDMapService(id_func)
+productid_map_service = IDMapService(id_func)
+
+review_set = review_set_pb2.ReviewSet()
+with open(os.path.normpath(yelp_chi_directory + '/output_review_yelpResData_NRYRcleaned.txt'), 'r') as f1:
+  with open(os.path.normpath(yelp_chi_directory + '/output_meta_yelpResData_NRYRcleaned.txt'), 'r') as f2:
+    for line in f1:
+      format_yelp_chi_review(review_set.reviews.add(), line, f2.readline(), userid_map_service, productid_map_service)
+
+with open(os.path.normpath(yelp_chi_directory + '/normalisedReviewContent-Resteraunts'), 'w') as f:
   f.write(str(review_set))
