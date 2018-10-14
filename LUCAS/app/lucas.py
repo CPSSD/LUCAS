@@ -3,8 +3,8 @@ from flask import request
 from sklearn.externals import joblib
 
 app = Flask(__name__)
-nbayes = joblib.load("lucas_model.pkl")
-cv = joblib.load("countVectorizer.pkl")
+nbayes = joblib.load("../lucas_model.pkl")
+cv = joblib.load("../countVectorizer.pkl")
 
 def classify_review(review):
   reviewcv = cv.transform([review])
