@@ -1,6 +1,5 @@
 import sys
 import os
-from protos import review_pb2
 from protos import review_set_pb2
 from formatting import format_yelp_nyc_review
 from formatting import format_yelp_chi_review
