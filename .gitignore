@@ -3,3 +3,4 @@ dist
 package-lock.json
 logs
 LUCAS/data/*
+*.pkl
