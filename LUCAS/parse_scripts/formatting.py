@@ -12,3 +12,4 @@ def format_yelp_chi_review(review, content, metadata, userid_map_service, produc
   review.date = split_tokens[0]
   review.user_id = userid_map_service.map(split_tokens[2])
   review.product_id = productid_map_service.map(split_tokens[3])
+  review.label = (split_tokens[4] == "Y")

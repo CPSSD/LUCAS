@@ -32,8 +32,8 @@ def test_formatting_yelp_nyc_gives_correct_review_content():
 
 # Chicago
 
-def _get_chi_metadata(userid="SL4aEwrM2q0HAXHpduMQ1Q", productid="rpP9iZsT3NC-Z4pUtQGoiA", date="1970-01-01"):
-  return date + " xwPMoEzuvpn3J32IvTcsiQ " + userid + " " + productid + " Y 0 0 0 3" 
+def _get_chi_metadata(userid="SL4aEwrM2q0HAXHpduMQ1Q", productid="rpP9iZsT3NC-Z4pUtQGoiA", date="1970-01-01", label="Y"):
+  return date + " xwPMoEzuvpn3J32IvTcsiQ " + userid + " " + productid + " " + label + " 0 0 0 3"
 
 def _get_id_map_service():
   def get_id(map, key):
@@ -78,3 +78,13 @@ def test_formatting_yelp_chi_gives_correct_productid():
   metadata=_get_chi_metadata(productid=test_productid)
   _format_yelp_chi_review(review, metadata=metadata, productid_map_service=map_service)
   assert review.product_id == 321321
+
+def test_formatting_yelp_chi_gives_correct_fake_label():
+  review = review_pb2.Review()
+  _format_yelp_chi_review(review, metadata=_get_chi_metadata(label="Y"))
+  assert review.label == True
+
+def test_formatting_yelp_chi_gives_correct_genuine_label():
+  review = review_pb2.Review()
+  _format_yelp_chi_review(review, metadata=_get_chi_metadata(label="N"))
+  assert review.label == False
