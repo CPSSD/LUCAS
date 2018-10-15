@@ -1,5 +1,5 @@
 {
-  "name": "Amazoff",
+  "name": "amazoff",
   "version": "1.0.0",
   "engines": {
     "npm": ">=3",
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "babel-polyfill": "6.26.0",
+    "bulma": "^0.7.2",
     "chalk": "^2.3.2",
     "compression": "1.7.2",
     "cross-env": "^5.1.6",
@@ -37,8 +38,9 @@
     "ip": "1.1.5",
     "lodash": "^4.17.10",
     "minimist": "1.2.0",
+    "optipng-bin": "^4.0.0",
     "prop-types": "15.6.1",
-    "react": "^16.5.2",
+    "react": "16.5.2",
     "react-dom": "^16.4.0",
     "react-helmet": "5.2.0",
     "react-loadable": "^5.4.0",

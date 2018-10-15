@@ -28,7 +28,7 @@
       ],
       "arrow-body-style": [
         2,
-        "as-needed"
+        "never"
       ],
       "comma-dangle": [
         "error",
