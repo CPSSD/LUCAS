@@ -9,8 +9,12 @@ body,
   font-family: 'Roboto', sans-serif;
 }
 
-.app {
-  padding: 0 10vw;
+// .app {
+//   padding: 0 10vw; fucks the viewport
+// }
+
+.logo {
+  // transform: scale(0.4)
 }
 .hero {
   height: 100%;
@@ -21,8 +25,8 @@ body,
 }
 
 .main-title-container {
-  padding-bottom: 50px;
+  padding-bottom: 20px;
 }
 .main-fakereview-input {
-  padding: 0 20vw 0 20vw;
+  padding: -0 30vw 0 30vw;
 }
