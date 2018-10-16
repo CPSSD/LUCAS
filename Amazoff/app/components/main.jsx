@@ -6,7 +6,7 @@ const Main = () => (
   <div className="hero-body">
     <div className="container has-text-centered main-title-container">
       <h1 className="title">
-        <img className="logo" src={logo} alt="Logo" />
+        <img src={logo} alt="Logo" />
       </h1>
       <h2 className="subtitle">
         This is the flagship app, demonstrating the power of the LUCAS API.
