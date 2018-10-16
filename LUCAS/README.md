@@ -30,6 +30,7 @@ It will do this by using a combination of machine learning and deep learning met
 * Once the dependencies have been downloaded and installed, execute `conda activate classify`. This will start the environment.
 
 * To run the naive_bayes.py classifier, execute `python naive_bayes.py`. This will produce an accuracy, and pickle the model.
+  * For best results, re-run the classifer until it pickles a model with the best accuracy. Then serve that model.
 
 ### Steps to run the docker container with the model to test locally
 
@@ -38,3 +39,5 @@ It will do this by using a combination of machine learning and deep learning met
 * Execute `docker run -p 80:80 -it classifyreviews`. This will start the docker image with port 80 exposed, allowing you to query it from the host machine.
 
 * Execute `python app.py` to start the Flask server inside the container. Visit 0.0.0.0 to check the status.
+
+* Use `curl  -H "Content-Type: text/plain" -d "Great hotel would recommend." http://0.0.0.0:80/classify` to query the local endpoint with a custom review. The endpoint will run the review over the model and return a classification.

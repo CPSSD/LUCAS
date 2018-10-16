@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message Review {
+  string review_content = 1;
+  string date = 2;
+  uint32 user_id = 3;
+  uint32 product_id = 4;
+  bool label = 5;
+}
