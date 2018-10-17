@@ -16,3 +16,11 @@ def format_yelp_chi_review(review, content, metadata, userid_map_service, produc
   review.user_id = userid_map_service.map(split_tokens[2])
   review.product_id = productid_map_service.map(split_tokens[3])
   review.label = split_tokens[4] == "Y"
+
+def format_amazonBooks_review(review, reviewObject, userid_map_service, productid_map_service):
+  review.review_content = reviewObject['review_body']
+  review.date = reviewObject['date']
+  review.user_id = userid_map_service.map(reviewObject['author'])
+  review.product_id = productid_map_service.map(reviewObject['title'])
+  review.label = reviewObject['realclass'] == "0"
+
