@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def format_yelp_nyc_review(review, content, metadata):
   split_tokens = content.split("\t")
   review.review_content = split_tokens[3]
@@ -19,7 +21,7 @@ def format_yelp_chi_review(review, content, metadata, userid_map_service, produc
 
 def format_amazonBooks_review(review, reviewObject, userid_map_service, productid_map_service):
   review.review_content = reviewObject['review_body']
-  review.date = reviewObject['date']
+  review.date = datetime.strptime(reviewObject['date'], "%B %d, %Y").strftime('%m/%d/%Y').lstrip('0')
   review.user_id = userid_map_service.map(reviewObject['author'])
   review.product_id = productid_map_service.map(reviewObject['title'])
   review.label = reviewObject['realclass'] == "0"
