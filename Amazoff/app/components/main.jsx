@@ -20,14 +20,14 @@ class Main extends React.Component {
   }
 
   setFilledTextareaHeight() {
-    this.ghost.style.display = 'block';
+    this.ghost.className = 'textarea textarea--ghost display-block';
     if (this.ghost.clientHeight > 0 && this.state.height !== this.ghost.clientHeight) {
       this.setState({
         height: this.ghost.clientHeight,
       });
     }
 
-    this.ghost.style.display = 'none';
+    this.ghost.className = 'textarea textarea--ghost display-none';
   }
 
   setValue(event) {
@@ -51,7 +51,6 @@ class Main extends React.Component {
           resize: isOneLine ? 'none' : null
         }}
         onChange={(e) => this.setValue(e)}
-        onKeyDown={() => this.setFilledTextareaHeight()}
       />
     );
   }
@@ -59,7 +58,7 @@ class Main extends React.Component {
   getGhostField() {
     return (
       <div
-        className="textarea textarea--ghost"
+        className="textarea textarea--ghost display-block"
         ref={(c) => this.ghost = c}
         aria-hidden="true"
       >
