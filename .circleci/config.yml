@@ -11,7 +11,6 @@ jobs:
   build_lucas:
     docker:
       - image: circleci/python:3.6.6-jessie-browsers
-
     working_directory: ~/LUCAS
     steps:
       - checkout

@@ -6,34 +6,21 @@ folderpath = '../data/amazonBooks/'
 
 reviews = os.listdir(folderpath)
 
-truefilepath = '../data/amazonBooks/truthful/truthful.txt'
-deceptivefilepath = '../data/amazonBooks/deceptive/deceptive.txt'
-unlabelledfilepath = '../data/amazonBooks/unlabelled/unknown.txt'
+reviewfilepath = '../data/amazonBooks/reviewContent'
+
+f = open(reviewfilepath, 'a+')
 
 for review in reviews:
-  print(review)
-  if('xml' in review):
+  if(review[-3:] in 'xml'):
     e = xml.etree.ElementTree.parse(folderpath+review).getroot()
-
     attributes = e.attrib
     review_title = e[0].text
     review_body = e[1].text
-
-    review_object = {}
-
+    review_object = {"review_title": review_title, "review_body": review_body}
     for (k,v) in (attributes.items()):
       review_object[k] = v
-    review_object['review_title'] = review_title
-    review_object['review_body'] = review_body
+    review_object = json.dumps(review_object)
+    if(review[0] in ['F', 'T']):
+      f.write('{}, \n'.format(review_object))
 
-    if('F' in review):
-      with open(deceptivefilepath, 'a+') as f:
-        f.write('{}, \n'.format(str(review_object)))
-
-    elif('T' in review):
-      with open(truefilepath, 'a+') as t:
-        t.write('{}, \n'.format(str(review_object)))
-
-    elif('U' in review):
-      with open(unlabelledfilepath, 'a+') as u:
-        u.write('{}, \n'.format(str(review_object)))
+f.close()
