@@ -67,7 +67,7 @@ class Main extends React.Component {
         ref={(c) => this.ghost = c}
         aria-hidden="true"
       >
-        {this.state.value}
+        {`${this.state.value} \u200b`}
       </div>
     );
   }
