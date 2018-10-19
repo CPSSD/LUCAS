@@ -4,10 +4,9 @@ import { Helmet } from 'react-helmet';
 import './css/style.scss';
 import Header from './components/header';
 import Main from './components/main';
-import Footer from './components/footer';
 
 const App = () => (
-  <div className="app">
+  <section className="hero is-primary is-medium">
     <Helmet>
       <meta charset="utf-8" />
       <title>Amazoff</title>
@@ -16,12 +15,9 @@ const App = () => (
       <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Helmet>
-    <section className="hero is-primary is-medium">
-      <Header />
-      <Main />
-      <Footer />
-    </section>
-  </div>
+    <Header />
+    <Main />
+  </section>
 );
 
 export default App;

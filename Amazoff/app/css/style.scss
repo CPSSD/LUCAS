@@ -1,15 +1,11 @@
 @charset "utf-8";
+$family-sans-serif: "Proxima Nova", sans-serif;
 @import "~bulma/bulma";
+@import "./helpers";
 
-html,
-body,
-.app {
-  height: 100%;
-  font-family: 'Roboto', sans-serif;
-}
 
-.hero {
-  height: 100%;
+body, .hero{
+  min-height: 100vh;
 }
 
 .hero-body {
@@ -20,6 +16,23 @@ body,
   padding-bottom: 20px;
 }
 
-.main-fakereview-input {
+.main-fakereview-container {
   padding: 0 30vw 0 30vw;
+};
+
+.main-fakereview-textarea {
+  padding-bottom: 10px;
+  transition: height 0.2s ease;
+  max-height: 100% !important;
+  min-height: 50px !important;
+  overflow: hidden;
+};
+
+.textarea--ghost {
+  height: auto !important;
+  max-height: 100% !important;
+  min-height: 50px !important;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  visibility: hidden;
 }
