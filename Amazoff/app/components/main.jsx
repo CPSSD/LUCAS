@@ -15,23 +15,19 @@ class Main extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.mounted = true;
-
+  componentDidUpdate() {
     this.setFilledTextareaHeight();
   }
 
   setFilledTextareaHeight() {
-    if (this.mounted) {
-      this.ghost.style.display = 'block';
-      if (this.ghost.clientHeight > 0) {
-        this.setState({
-          height: this.ghost.clientHeight,
-        });
-      }
-
-      this.ghost.style.display = 'none';
+    this.ghost.style.display = 'block';
+    if (this.ghost.clientHeight > 0 && this.state.height !== this.ghost.clientHeight) {
+      this.setState({
+        height: this.ghost.clientHeight,
+      });
     }
+
+    this.ghost.style.display = 'none';
   }
 
   setValue(event) {
@@ -55,7 +51,7 @@ class Main extends React.Component {
           resize: isOneLine ? 'none' : null
         }}
         onChange={(e) => this.setValue(e)}
-        onKeyUp={() => this.setFilledTextareaHeight()}
+        onKeyDown={() => this.setFilledTextareaHeight()}
       />
     );
   }
