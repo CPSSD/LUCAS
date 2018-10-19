@@ -1,0 +1,25 @@
+@charset "utf-8";
+@import "~bulma/bulma";
+
+html,
+body,
+.app {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+.hero {
+  height: 100%;
+}
+
+.hero-body {
+  padding-top: 0px !important;
+}
+
+.main-title-container {
+  padding-bottom: 20px;
+}
+
+.main-fakereview-input {
+  padding: 0 30vw 0 30vw;
+}
