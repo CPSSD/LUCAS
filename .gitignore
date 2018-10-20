@@ -5,3 +5,5 @@ logs
 LUCAS/data/*
 *.pkl
 *.ipynb_checkpoints/
+*__pycache__
+*.pytest_cache

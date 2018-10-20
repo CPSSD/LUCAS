@@ -1,5 +1,7 @@
 from formatting import format_yelp_nyc_review
 from formatting import format_yelp_chi_review
+from formatting import format_amazonBooks_review
+import json
 from protos import review_pb2
 from id_map_service import IDMapService
 
@@ -100,4 +102,73 @@ def test_formatting_yelp_chi_gives_correct_fake_label():
 def test_formatting_yelp_chi_gives_correct_genuine_label():
   review = review_pb2.Review()
   _format_yelp_chi_review(review, metadata=_get_chi_metadata(label="N"))
+  assert review.label == False
+
+
+# Amazon\
+
+def _get_amazon_reviewobject(review_body = 'Fantastic book', title='Siddhartha', writer = 'Hermann Hesse', author='DavidGrey', date = 'December 9, 2009', realclass=1):
+  testDict = {}
+  testDict['review_body'] = review_body
+  testDict['title'] = title
+  testDict['writer'] = writer
+  testDict['author'] = author
+  testDict['date'] = date
+  testDict['realclass'] = realclass
+  testObj = json.loads(json.dumps(testDict))
+  
+  return testObj
+
+def _get_id_map_service():
+  def get_id(map, key):
+    return 1
+  return IDMapService(get_id)
+
+def _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(),
+                            userid_map_service=_get_id_map_service(),
+                            productid_map_service=_get_id_map_service()):
+  return format_amazonBooks_review(review, reviewObject, userid_map_service, productid_map_service)
+
+def test_formatting_amazonBook_gives_correct_review_content():
+  review = review_pb2.Review()
+  _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(review_body="Terrible book"))
+  assert review.review_content == "Terrible book"
+
+def test_formatting_amazonBook_gives_correct_date():
+  review = review_pb2.Review()
+  _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(date="October 19, 2018"))
+  assert review.date == "10/19/2018"
+
+def test_formatting_amazonBook_reviewAuthor_gives_correct_userId():
+  test_author = "NiallWalsh"
+  def get_id(map, key):
+    if key == test_author:
+      return 1221
+  map_service = IDMapService(get_id)
+
+  review = review_pb2.Review()
+  test_reviewObj=_get_amazon_reviewobject(author=test_author)
+  _format_amazonBook_review(review, reviewObject=test_reviewObj, userid_map_service=map_service)
+  assert review.user_id == 1221
+
+def test_formatting_amazonBook_title_gives_correct_productId():
+  test_bookTitle = "Crime and Punishment"
+  def get_id(map, key):
+    if key == test_bookTitle:
+      return 42069
+  map_service = IDMapService(get_id)
+
+  review = review_pb2.Review()
+  test_reviewObj=_get_amazon_reviewobject(title=test_bookTitle)
+  _format_amazonBook_review(review, reviewObject=test_reviewObj, productid_map_service=map_service)
+  assert review.product_id == 42069
+
+def test_formatting_amazonBook_gives_correct_fake_label():
+  review = review_pb2.Review()
+  _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(realclass="0"))
+  assert review.label == True
+
+def test_formatting_amazonBook_gives_correct_genuine_label():
+  review = review_pb2.Review()
+  _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(realclass="2"))
   assert review.label == False

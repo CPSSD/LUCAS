@@ -3,23 +3,29 @@ jobs:
   build_amazoff:
     docker:
       - image: circleci/node:7.10
-
     working_directory: ~/Amazoff
     steps:
       - checkout
       - run: npm install
+      
   build_lucas:
     docker:
-      - image: circleci/python:3.6.6-jessie-browsers
-
+      - image: continuumio/miniconda3
     working_directory: ~/LUCAS
     steps:
       - checkout
-      - run: echo "in LUCAS"
+      - run:
+          name: setup conda and run tests
+          command: |
+            cd LUCAS
+            conda update conda
+            conda env create -f environment.yml
+            source activate classify
+            cd scripts
+            pytest
 workflows:
   version: 2
   build:
     jobs:
       - build_amazoff
       - build_lucas
-
