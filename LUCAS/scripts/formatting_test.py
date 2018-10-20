@@ -136,8 +136,8 @@ def test_formatting_amazonBook_gives_correct_review_content():
 
 def test_formatting_amazonBook_gives_correct_date():
   review = review_pb2.Review()
-  _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(date="19 October, 2018"))
-  assert review.date == "19 October, 2018"
+  _format_amazonBook_review(review, reviewObject=_get_amazon_reviewobject(date="October 19, 2018"))
+  assert review.date == "10/19/2018"
 
 def test_formatting_amazonBook_reviewAuthor_gives_correct_userId():
   test_author = "NiallWalsh"
