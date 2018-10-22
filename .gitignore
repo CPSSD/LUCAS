@@ -3,6 +3,7 @@ dist
 package-lock.json
 logs
 LUCAS/data/*
+LUCAS/notebooks/data/
 *.pkl
 *.ipynb_checkpoints/
 *__pycache__
