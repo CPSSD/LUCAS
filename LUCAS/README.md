@@ -40,4 +40,4 @@ It will do this by using a combination of machine learning and deep learning met
 
 * Execute `python app/lucas.py` to start the Flask server inside the container. Visit 0.0.0.0 to check the status.
 
-* Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:3005/classify` to query the local endpoint with a custom review. The endpoint will run the review over the model and return a classification.
+* Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:80/classify` to query the local endpoint with a custom review. The endpoint will run the review over the model and return a classification.
