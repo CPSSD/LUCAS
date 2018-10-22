@@ -1,6 +1,8 @@
 import sys
 import os
 import json
+from os.path import dirname, join, abspath
+sys.path.insert(0, abspath(join(dirname(__file__), '..')))
 from protos import review_set_pb2
 from formatting import format_yelp_nyc_review
 from formatting import format_yelp_chi_review
@@ -20,8 +22,8 @@ with open(os.path.normpath(data_directory + '/YelpData/YelpNYC/reviewContent'), 
     for line in f1:
       format_yelp_nyc_review(review_set.reviews.add(), line, f2.readline())
 
-with open(os.path.normpath(data_directory + '/normalizedData/yelpNYC'), 'w') as f:
-  f.write(str(review_set))
+with open(os.path.normpath(data_directory + '/normalizedData/yelpNYC'), 'wb') as f:
+  f.write(review_set.SerializeToString())
 
 # Chicago
 
