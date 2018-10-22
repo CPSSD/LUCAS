@@ -36,7 +36,7 @@ It will do this by using a combination of machine learning and deep learning met
 
 * Execute `docker build -t classifyreviews .` This will build the docker image.
 
-* Execute `docker run -p 80:3005 -it classifyreviews`. This will start the docker image with port 80 exposed, allowing you to query it from the host machine.
+* Execute `docker run -p 80:80 -it classifyreviews`. This will start the docker image with port 80 exposed, allowing you to query it from the host machine.
 
 * Execute `python app/lucas.py` to start the Flask server inside the container. Visit 0.0.0.0 to check the status.
 
