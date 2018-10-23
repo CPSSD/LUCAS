@@ -5,5 +5,6 @@ message Review {
   string date = 2;
   uint32 user_id = 3;
   uint32 product_id = 4;
+  float rating = 6;
   bool label = 5;
 }
