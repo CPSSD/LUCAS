@@ -25,7 +25,6 @@ def reviews_by_reviewer(reviews):
   reviewer_map = {}
   for review in reviews:
     reviewer = review.user_id
-    print ("Reviewer is", reviewer)
     if reviewer not in reviewer_map:
       reviewer_map[reviewer] = []
     reviewer_map[reviewer].append(review)
