@@ -2,6 +2,7 @@ node_modules
 dist
 package-lock.json
 logs
+npm-debug.log
 LUCAS/data/*
 *.pkl
 *.ipynb_checkpoints/

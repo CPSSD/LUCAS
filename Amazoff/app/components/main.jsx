@@ -11,7 +11,7 @@ class Main extends React.Component {
     this.state = {
       height: DEFAULT_HEIGHT,
       placeholder: 'Enter your Review',
-      value: 'Enter your Review',
+      value: null,
     };
   }
 
@@ -66,6 +66,22 @@ class Main extends React.Component {
       </div>
     );
   }
+
+  sendRequest() {
+    fetch('/api/review', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        review: this.state.value
+      })
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        this.setState({ accuracy: result.class_probs[0], result: result.result});
+      });
+  }
   render() {
     return (
       <div className="hero-body">
@@ -79,14 +95,15 @@ class Main extends React.Component {
         </div>
         <div className="main-fakereview-container has-text-centered">
           {this.getExpandableField()}
-          {this.getGhostField()}
-          <a className="button is-link is-medium">
+          <button className="button is-link is-medium" onClick={() => this.sendRequest()}>
             <span>
               Submit Review
             </span>
             <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
-          </a>
+          </button>
+          {this.getGhostField()}
         </div>
+        <div>{this.state.accuracy} and result {this.state.result}</div>
       </div>
     );
   }
