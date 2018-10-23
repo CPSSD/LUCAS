@@ -2,6 +2,7 @@ from exp2_feature_extraction import find_capitalised_word_ratio
 from exp2_feature_extraction import find_avg_token_length
 from exp2_feature_extraction import find_numerals_ratio
 from exp2_feature_extraction import reviews_by_reviewer
+from exp2_feature_extraction import max_date_occurrences
 
 import sys
 from os.path import dirname, join, abspath
@@ -75,3 +76,24 @@ def test_reviews_by_reviewer_maps_reviews_with_different_reviewers():
   assert list(mapped.keys()) == [101, 102]
   assert reviews_equal(mapped[101], [review1])
   assert reviews_equal(mapped[102], [review2])
+
+def test_max_date_occurrences_counts_single_review_date():
+  review = review_pb2.Review()
+  review.date = "2000-01-01"
+  assert max_date_occurrences([review]) == 1
+
+def test_max_date_occurrences_counts_review_date_twice():
+  review1 = review_pb2.Review()
+  review1.date = "2000-01-01"
+  review2 = review_pb2.Review()
+  review2.date = "2000-01-01"
+  assert max_date_occurrences([review1, review2]) == 2
+
+def test_max_date_occurences_chooses_highest_date_count():
+  review1 = review_pb2.Review()
+  review1.date = "2000-01-01"
+  review2 = review_pb2.Review()
+  review2.date = "2000-02-01"
+  review3 = review_pb2.Review()
+  review3.date = "2000-02-01"
+  assert max_date_occurrences([review1, review2, review3]) == 2
