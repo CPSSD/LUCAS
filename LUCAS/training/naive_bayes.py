@@ -49,14 +49,14 @@ for i in range(1,6):
       contents = f.read()
       reviews.append(contents)
 
-data_fm = pd.DataFrame({'sentiment_class':sentiment_class,'review':reviews,'deceptive_class':deceptive_class})
+data_fm = pd.DataFrame({'sentiment':sentiment_class,'review':reviews,'deceptive':deceptive_class})
 
-data_fm.loc[data_fm['deceptive_class']=='d','deceptive_class']=0
-data_fm.loc[data_fm['deceptive_class']=='t','deceptive_class']=1
+data_fm.loc[data_fm['deceptive']=='d','deceptive']=1
+data_fm.loc[data_fm['deceptive']=='t','deceptive']=0
 
 data_x = data_fm['review']
 
-data_y = np.asarray(data_fm['deceptive_class'],dtype=int)
+data_y = np.asarray(data_fm['deceptive'],dtype=int)
 
 X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.3)
 
@@ -69,13 +69,13 @@ nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
 
-joblib.dump(nbayes, "lucas_model.pkl")
-joblib.dump(cv, 'countVectorizer.pkl')
+joblib.dump(nbayes, "../models/nb_chihotels.pkl")
+joblib.dump(cv, '../models/nb_chihotels_cv.pkl')
 
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
-yp=["True" if a==1 else "Deceptive" for a in y_predictions_nbayes]
-output_fm = pd.DataFrame({'Review':list(X_test) ,'True(1)/Deceptive(0)':yp})
+yp=["Genuine" if a==0 else "Deceptive" for a in y_predictions_nbayes]
+output_fm = pd.DataFrame({'Review':list(X_test) ,'Genuine(0)/Deceptive(1)':yp})
 
 print(output_fm)
 

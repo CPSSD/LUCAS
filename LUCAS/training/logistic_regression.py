@@ -8,7 +8,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_selection import chi2
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -63,56 +63,32 @@ data_fm.loc[data_fm['deceptive']=='t','deceptive']=0
 data_fm.loc[data_fm['sentiment']=='positive','sentiment']=1
 data_fm.loc[data_fm['sentiment']=='negative','sentiment']=0
 
-print(data_fm.head())
-
-tfidf = TfidfVectorizer(sublinear_tf=True, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 2), stop_words='english')
-features = tfidf.fit_transform(data_fm['review']).toarray()
-labels = np.asarray(data_fm['deceptive'],dtype=int)
-print(features.shape)
-
-N = 10
-for i in range(0, 2):
-  features_chi2 = chi2(features, labels)
-  indices = np.argsort(features_chi2[i])
-  feature_names = np.array(tfidf.get_feature_names())[indices]
-  unigrams = [v for v in feature_names if len(v.split(' ')) == 1]
-  bigrams = [v for v in feature_names if len(v.split(' ')) == 2]
-  print("# '{}':".format('Genuine' if i == 0 else 'Deceptive'))
-  print("  . Most correlated unigrams:\n. {}".format('\n. '.join(unigrams[-N:])))
-  print("  . Most correlated bigrams:\n. {}".format('\n. '.join(bigrams[-N:])))
-
-quit()
-
 data_x = data_fm['review']
 
-data_y = np.asarray(data_fm['deceptive_class'],dtype=int)
+data_y = np.asarray(data_fm['deceptive'],dtype=int)
 
-X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.3, random_state=0)
 
-cv = CountVectorizer() # Works better than tf-idf
+cv = CountVectorizer()
+tfidf = TfidfTransformer()
 
-X_traincv = cv.fit_transform(X_train)
-X_testcv = cv.transform(X_test)
+X_train_count = cv.fit_transform(X_train) # Transforming the Training reviews to count vectors and fitting for TF-idf
+X_test_count = cv.transform(X_test) # Only transforming the test reviews to count vectors
 
-nbayes = ComplementNB()
+X_train_tfidf = tfidf.fit_transform(X_train_count) # Transforming the fitted training Count Vectors
+X_test_tfidf = tfidf.transform(X_test_count) 
 
-nbayes.fit(X_traincv, y_train)
+logreg = LogisticRegression(random_state=0) # Starting seed
+logreg.fit(X_train_tfidf, y_train) 
 
-joblib.dump(nbayes, "lucas_model.pkl")
-joblib.dump(cv, 'countVectorizer.pkl')
+joblib.dump(logreg, "../models/logreg_chihotels.pkl")
+joblib.dump(cv, '../models/logreg_chihotels_cv.pkl')
+joblib.dump(tfidf, '../models/logreg_chihotels_tfidf.pkl')
 
-y_predictions_nbayes = list(nbayes.predict(X_testcv))
+y_predictions_logreg = logreg.predict(X_test_tfidf)
 
-yp=["True" if a==0 else "Deceptive" for a in y_predictions_nbayes]
-output_fm = pd.DataFrame({'Review':list(X_test) ,'True(1)/Deceptive(0)':yp})
+yp=["Genuine" if a==0 else "Deceptive" for a in list(y_predictions_logreg)]
+output_fm = pd.DataFrame({'Review':list(X_test) ,'True(0)/Deceptive(1)':yp})
 
 print(output_fm)
-
-print(nbayes.feature_log_prob_)
-print(nbayes.class_count_)
-print(nbayes.feature_all_)
-
-print("Accuracy % :",metrics.accuracy_score(y_test, y_predictions_nbayes)*100)
-print("Precision Score: ", precision_score(y_test, y_predictions_nbayes, average='micro'))
-print("Recall Score: ",recall_score(y_test, y_predictions_nbayes, average='micro') )
-print("F1 Score: ",f1_score(y_test, y_predictions_nbayes, average='micro') )
+print(metrics.classification_report(y_test, y_predictions_logreg, target_names=set(yp)))
