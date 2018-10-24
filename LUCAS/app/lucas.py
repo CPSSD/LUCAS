@@ -14,7 +14,7 @@ def classify_review(data):
   predicted_class = 'Truthful' if nbayes.predict(reviewcv) == 1 else 'Deceptive'
   class_probs = nbayes.predict_proba(reviewcv)
 
-  return jsonify(result= predicted_class, class_probs= class_probs.tolist())
+  return jsonify(result= predicted_class, classProbs= class_probs.tolist())
         
 @app.route('/')
 def return_status():
@@ -26,4 +26,3 @@ def classify():
 
 if __name__ == '__main__':
   app.run(debug=True,host='0.0.0.0', port=80)
-probability

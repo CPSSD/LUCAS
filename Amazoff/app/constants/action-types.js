@@ -1,0 +1,1 @@
+export const TOGGLE_REVIEW = 'TOGGLE_REVIEW';
