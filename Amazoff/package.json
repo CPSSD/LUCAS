@@ -27,6 +27,7 @@
     "body-parser": "^1.18.3",
     "bulma": "^0.7.2",
     "chalk": "^2.3.2",
+    "classnames": "^2.2.6",
     "compression": "1.7.2",
     "cors": "^2.8.4",
     "cross-env": "^5.1.6",

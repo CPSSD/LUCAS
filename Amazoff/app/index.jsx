@@ -11,7 +11,7 @@ import store from './store/index';
 
 const App = () => (
   <Provider store={store}>
-    <section className="hero is-primary is-medium">
+    <section className="hero is-medium">
       <Helmet>
         <meta charset="utf-8" />
         <title>Amazoff</title>

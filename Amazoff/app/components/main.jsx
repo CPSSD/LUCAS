@@ -107,6 +107,7 @@ class Main extends React.Component {
 
       .then((response) => {
         const { classProbs, result } = response;
+        console.log(classProbs);
         this.setState({ accuracy: classProbs[0][0].toFixed(2) * 100, result });
         this.props.toggleReview(true);
       });
@@ -133,7 +134,7 @@ class Main extends React.Component {
           </button>
           {this.getGhostField()}
         </ReviewContainer>
-        <ResultsContainer className="has-text-centered" pose={this.props.showResults ? 'visible' : 'hidden'}>
+        <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
           {this.props.showResults &&
             <Results
               accuracy={this.state.accuracy}
