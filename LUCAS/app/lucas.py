@@ -5,8 +5,8 @@ from flask import json
 from sklearn.externals import joblib
 
 app = Flask(__name__)
-nbayes = joblib.load("../experiments/naive_bayes/chi-hotels-only-classify.pkl")
-cv = joblib.load("../experiments/naive_bayes/chi-hotels-only-countvec.pkl")
+nbayes = joblib.load("../models/nbayes.pkl")
+cv = joblib.load("../models/nbayes_cv.pkl")
 
 def classify_review(data):
   review = data["review"]
