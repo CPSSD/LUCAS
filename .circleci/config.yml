@@ -20,7 +20,7 @@ jobs:
             cd LUCAS
             conda update conda
             conda env create -f environment.yml
-            source activate classify
+            source activate lucas
             cd scripts
             pytest
 workflows:
