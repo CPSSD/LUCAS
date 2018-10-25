@@ -2,54 +2,14 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import f1_score
+
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import ComplementNB
 from sklearn.model_selection import train_test_split
+from get_df import get_data_frame
 
-neg_deceptive_folder_path = r"../data/hotels/negative_polarity/deceptive_from_MTurk/"
-neg_true_folder_path = r'../data/hotels/negative_polarity/truthful_from_Web/'
-pos_deceptive_folder_path = r'../data/hotels/positive_polarity/deceptive_from_MTurk/'
-pos_true_folder_path = r'../data/hotels/positive_polarity/truthful_from_TripAdvisor/'
-
-sentiment_class = []
-reviews = []
-deceptive_class =[]
-
-for i in range(1,6):
-  positive_true = pos_true_folder_path + 'fold' + str(i) 
-  positive_deceptive = pos_deceptive_folder_path + 'fold' + str(i)
-  negative_true = neg_true_folder_path + 'fold' + str(i) 
-  negative_deceptive = neg_deceptive_folder_path + 'fold' + str(i) 
-  for data_file in sorted(os.listdir(negative_deceptive)):
-    sentiment_class.append('negative')
-    deceptive_class.append(str(data_file.split('_')[0]))
-    with open(os.path.join(negative_deceptive, data_file)) as f:
-      contents = f.read()
-      reviews.append(contents)
-  for data_file in sorted(os.listdir(negative_true)):
-    sentiment_class.append('negative')
-    deceptive_class.append(str(data_file.split('_')[0]))
-    with open(os.path.join(negative_true, data_file)) as f:
-      contents = f.read()
-      reviews.append(contents)
-  for data_file in sorted(os.listdir(positive_deceptive)):
-    sentiment_class.append('positive')
-    deceptive_class.append(str(data_file.split('_')[0]))
-    with open(os.path.join(positive_deceptive, data_file)) as f:
-      contents = f.read()
-      reviews.append(contents)
-  for data_file in sorted(os.listdir(positive_true)):
-    sentiment_class.append('positive')
-    deceptive_class.append(str(data_file.split('_')[0]))
-    with open(os.path.join(positive_true, data_file)) as f:
-      contents = f.read()
-      reviews.append(contents)
-
-data_fm = pd.DataFrame({'sentiment':sentiment_class,'review':reviews,'deceptive':deceptive_class})
+data_fm = get_data_frame()
 
 data_fm.loc[data_fm['deceptive']=='d','deceptive']=1
 data_fm.loc[data_fm['deceptive']=='t','deceptive']=0
@@ -76,14 +36,5 @@ y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
 yp=["Genuine" if a==0 else "Deceptive" for a in y_predictions_nbayes]
 output_fm = pd.DataFrame({'Review':list(X_test) ,'Genuine(0)/Deceptive(1)':yp})
-
 print(output_fm)
-
-print(nbayes.feature_log_prob_)
-print(nbayes.class_count_)
-print(nbayes.feature_all_)
-
-print("Accuracy % :",metrics.accuracy_score(y_test, y_predictions_nbayes)*100)
-print("Precision Score: ", precision_score(y_test, y_predictions_nbayes, average='micro'))
-print("Recall Score: ",recall_score(y_test, y_predictions_nbayes, average='micro') )
-print("F1 Score: ",f1_score(y_test, y_predictions_nbayes, average='micro') )
+print(metrics.classification_report(y_test, y_predictions_nbayes, target_names=set(yp)))
