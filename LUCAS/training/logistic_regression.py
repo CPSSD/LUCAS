@@ -65,7 +65,7 @@ data_fm.loc[data_fm['sentiment']=='negative','sentiment']=0
 
 data_x = data_fm['review']
 
-data_y = np.asarray(data_fm['deceptive'],dtype=int)
+data_y = np.asarray(data_fm['sentiment'],dtype=int)
 
 X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.3, random_state=0)
 
@@ -87,7 +87,7 @@ joblib.dump(tfidf, '../models/logreg_chihotels_tfidf.pkl')
 
 y_predictions_logreg = logreg.predict(X_test_tfidf)
 
-yp=["Genuine" if a==0 else "Deceptive" for a in list(y_predictions_logreg)]
+yp=["Negative" if a==0 else "Positive" for a in list(y_predictions_logreg)]
 output_fm = pd.DataFrame({'Review':list(X_test) ,'True(0)/Deceptive(1)':yp})
 
 print(output_fm)

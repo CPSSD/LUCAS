@@ -5,8 +5,8 @@ from flask import json
 from sklearn.externals import joblib
 
 app = Flask(__name__)
-nbayes = joblib.load("../training/lucas_model.pkl")
-cv = joblib.load("../training/countVectorizer.pkl")
+nbayes = joblib.load("../models/nb_chihotels.pkl")
+cv = joblib.load("../models/nb_chihotels_cv.pkl")
 
 def classify_review(data):
   review = data["review"]
@@ -26,4 +26,3 @@ def classify():
 
 if __name__ == '__main__':
   app.run(debug=True,host='0.0.0.0', port=80)
-probability
