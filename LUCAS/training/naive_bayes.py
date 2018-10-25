@@ -10,10 +10,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import ComplementNB
 from sklearn.model_selection import train_test_split
 
-neg_deceptive_folder_path = r"../../data/hotels/negative_polarity/deceptive_from_MTurk/"
-neg_true_folder_path = r'../../data/hotels/negative_polarity/truthful_from_Web/'
-pos_deceptive_folder_path = r'../../data/hotels/positive_polarity/deceptive_from_MTurk/'
-pos_true_folder_path = r'../../data/hotels/positive_polarity/truthful_from_TripAdvisor/'
+neg_deceptive_folder_path = r"../data/hotels/negative_polarity/deceptive_from_MTurk/"
+neg_true_folder_path = r'../data/hotels/negative_polarity/truthful_from_Web/'
+pos_deceptive_folder_path = r'../data/hotels/positive_polarity/deceptive_from_MTurk/'
+pos_true_folder_path = r'../data/hotels/positive_polarity/truthful_from_TripAdvisor/'
 
 sentiment_class = []
 reviews = []
@@ -69,8 +69,8 @@ nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
 
-joblib.dump(nbayes, "chi-hotels-only-classify.pkl")
-joblib.dump(cv, 'chi-hotels-only-countvec.pkl')
+joblib.dump(nbayes, "../models/nbayes.pkl")
+joblib.dump(cv, '../models/nbayes_cv.pkl')
 
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
