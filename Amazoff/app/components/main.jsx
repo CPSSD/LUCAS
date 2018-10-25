@@ -1,9 +1,35 @@
 import React from 'react';
+import posed from 'react-pose';
+import { connect } from 'react-redux';
+
+import { toggleReview } from '../actions/index';
+import Results from './results';
 
 const logo = require('../../public/lucasoff.png');
 
 const DEFAULT_HEIGHT = 50;
 
+const ReviewContainer = posed.div({
+  visible: {
+    opacity: 1,
+    applyAtStart: { display: 'block' },
+    delay: 400,
+  },
+  hidden: {
+    opacity: 0,
+    applyAtEnd: { display: 'none' },
+  }
+});
+
+const ResultsContainer = posed.div({
+  visible: {
+    opacity: 1,
+    delay: 400,
+  },
+  hidden: {
+    opacity: 0,
+  }
+});
 class Main extends React.Component {
   constructor(props) {
     super(props);
@@ -78,14 +104,19 @@ class Main extends React.Component {
       })
     })
       .then((res) => res.json())
-      .then((result) => {
-        this.setState({ accuracy: result.class_probs[0], result: result.result});
+
+      .then((response) => {
+        const { classProbs, result } = response;
+        console.log(classProbs);
+        this.setState({ accuracy: classProbs[0][0].toFixed(2) * 100, result });
+        this.props.toggleReview(true);
       });
   }
+
   render() {
     return (
       <div className="hero-body">
-        <div className="container has-text-centered main-title-container">
+        <div className="has-text-centered main-title-container">
           <h1 className="title">
             <img src={logo} alt="Logo" />
           </h1>
@@ -93,7 +124,7 @@ class Main extends React.Component {
             This is the flagship app, demonstrating the power of the LUCAS API.
           </h2>
         </div>
-        <div className="main-fakereview-container has-text-centered">
+        <ReviewContainer className="has-text-centered" pose={!this.props.showResults ? 'visible' : 'hidden'}>
           {this.getExpandableField()}
           <button className="button is-link is-medium" onClick={() => this.sendRequest()}>
             <span>
@@ -102,12 +133,30 @@ class Main extends React.Component {
             <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
           </button>
           {this.getGhostField()}
-        </div>
-        <div>{this.state.accuracy} and result {this.state.result}</div>
+        </ReviewContainer>
+        <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
+          {this.props.showResults &&
+            <Results
+              accuracy={this.state.accuracy}
+              result={this.state.result}
+              text={this.state.value}
+            />
+          }
+        </ResultsContainer>
       </div>
     );
   }
 }
 
-export default Main;
+const mapStateToProps = (state) => {
+  return { showResults: state.toggleReview };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    toggleReview: (value) => dispatch(toggleReview(value))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
 
