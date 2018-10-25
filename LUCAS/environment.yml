@@ -1,4 +1,4 @@
-name: classify
+name: lucas
 dependencies:
   - python
   - nomkl # prefers the non-mkl version of numpy and pandas, saving ~500mb
@@ -9,3 +9,4 @@ dependencies:
   - matplotlib
   - pytest
   - protobuf
+  - pylint
