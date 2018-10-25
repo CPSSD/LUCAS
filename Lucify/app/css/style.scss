@@ -13,10 +13,6 @@ body, .hero{
   padding: 0 30vw 0 30vw;
 }
 
-.main-title-container {
-  padding-bottom: 20px;
-}
-
 .main-fakereview-textarea {
   padding-bottom: 10px;
   transition: height 0.2s ease;
@@ -45,4 +41,12 @@ body, .hero{
 .results-review-text {
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.main-title {
+  font-weight: bold;
+  background-color: lightgrey;
+  font-size: 9rem;
+  font-family: 'Playfair Display', serif;
+  border-radius: 90px;
 }
