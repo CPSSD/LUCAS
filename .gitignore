@@ -4,6 +4,7 @@ package-lock.json
 logs
 npm-debug.log
 LUCAS/data/*
+LUCAS/notebooks/data/
 *.pkl
 *.ipynb_checkpoints/
 *__pycache__
