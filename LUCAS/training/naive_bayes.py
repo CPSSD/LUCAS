@@ -2,11 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import ComplementNB
 from sklearn.model_selection import train_test_split
+
 from get_df import get_data_frame
 
 data_fm = get_data_frame()
@@ -28,6 +28,7 @@ X_testcv = cv.transform(X_test)
 nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
+
 
 joblib.dump(nbayes, "../models/nb_chihotels.pkl")
 joblib.dump(cv, '../models/nb_chihotels_cv.pkl')

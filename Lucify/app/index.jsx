@@ -14,7 +14,7 @@ const App = () => (
     <section className="hero is-medium">
       <Helmet>
         <meta charset="utf-8" />
-        <title>Amazoff</title>
+        <title>Lucify</title>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
         <link rel="stylesheet" href="style.scss" />
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
