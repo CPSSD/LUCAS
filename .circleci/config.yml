@@ -1,9 +1,9 @@
 version: 2
 jobs:
-  build_amazoff:
+  build_lucify:
     docker:
       - image: circleci/node:7.10
-    working_directory: ~/Amazoff
+    working_directory: ~/Lucify
     steps:
       - checkout
       - run: npm install
@@ -27,5 +27,5 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_amazoff
+      - build_lucify
       - build_lucas
