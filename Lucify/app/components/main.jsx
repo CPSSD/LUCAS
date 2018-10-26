@@ -67,7 +67,7 @@ class Main extends React.Component {
     const { height, placeholder } = this.state;
     return (
       <textarea
-        className="textarea main-fakereview-textarea mb20"
+        className="textarea main-fakereview-textarea mb20 mt20"
         name="textarea"
         id="textarea"
         autoFocus
@@ -104,10 +104,8 @@ class Main extends React.Component {
       })
     })
       .then((res) => res.json())
-
       .then((response) => {
         const { classProbs, result } = response;
-        console.log(classProbs);
         this.setState({ accuracy: classProbs[0][0].toFixed(2) * 100, result });
         this.props.toggleReview(true);
       });
@@ -115,25 +113,25 @@ class Main extends React.Component {
 
   render() {
     return (
-      <div className="hero-body">
-        <div className="has-text-centered main-title-container">
-          <h1 className="title">
-            <img src={logo} alt="Logo" />
-          </h1>
-          <h2 className="subtitle">
-            This is the flagship app, demonstrating the power of the LUCAS API.
-          </h2>
-        </div>
+      <div className="hero-body has-text-centered">
         <ReviewContainer className="has-text-centered" pose={!this.props.showResults ? 'visible' : 'hidden'}>
-          {this.getExpandableField()}
-          <button className="button is-link is-medium" onClick={() => this.sendRequest()}>
-            <span>
-              Submit Review
-            </span>
-            <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
-          </button>
-          {this.getGhostField()}
+          <div className="has-text-centered main-title-container pt20 pb20">
+            <h1 className="title main-title is-rounded">
+              Lucify
+            </h1>
+            <h2 className="subtitle pt20">
+              This is the flagship app, demonstrating the power of the LUCAS API.
+          </h2>
+          </div>
         </ReviewContainer>
+        {this.getExpandableField()}
+        <button className="button is-link is-medium" onClick={() => this.sendRequest()}>
+          <span>
+            Submit Review
+          </span>
+          <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
+        </button>
+        {this.getGhostField()}
         <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
           {this.props.showResults &&
             <Results
