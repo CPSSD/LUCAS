@@ -33,7 +33,7 @@ X_test_count = cv.transform(X_test) # Only transforming the test reviews to coun
 X_train_tfidf = tfidf.fit_transform(X_train_count) # Transforming the fitted training Count Vectors
 X_test_tfidf = tfidf.transform(X_test_count) 
 
-logreg = LogisticRegression(random_state=0) # Starting seed
+logreg = LogisticRegression(random_state=0, solver='lbfgs', multi_class='multinomial') # Starting seed
 logreg.fit(X_train_tfidf, y_train) 
 
 joblib.dump(logreg, "../models/logreg_chihotels.pkl")

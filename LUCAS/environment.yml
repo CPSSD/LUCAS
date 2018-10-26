@@ -5,6 +5,9 @@ dependencies:
   - flask
   - numpy
   - pandas
+  - jupyter
+  - nb_conda
+  - ipykernel
   - scikit-learn
   - matplotlib
   - pytest
