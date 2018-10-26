@@ -9,3 +9,4 @@ dependencies:
   - matplotlib
   - pytest
   - protobuf
+  - gensim
