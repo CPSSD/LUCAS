@@ -8,7 +8,7 @@ router.post('/', (req, res) => {
 
   const options = {
     method: 'POST',
-    uri: 'http://localhost:3005/classify',
+    uri: 'http://localhost:3008/classify',
     body: {
       review: req.body.review,
     },
