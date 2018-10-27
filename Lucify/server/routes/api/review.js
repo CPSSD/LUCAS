@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
     method: 'POST',
     uri: 'http://localhost:3005/classify',
     body: {
-      review: 'Hello how are you',
+      review: req.body.review,
     },
     json: true
   };
