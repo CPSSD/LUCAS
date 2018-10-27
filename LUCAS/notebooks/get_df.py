@@ -41,4 +41,11 @@ def get_data_frame():
         contents = f.read()
         reviews.append(contents)
 
-    return pd.DataFrame({'sentiment':sentiment_class,'review':reviews,'deceptive':deceptive_class})
+  df = pd.DataFrame({'sentiment':sentiment_class,'review':reviews,'deceptive':deceptive_class})
+  df.loc[df['deceptive']=='d','deceptive']=1
+  df.loc[df['deceptive']=='t','deceptive']=0
+
+  df.loc[df['sentiment']=='positive','sentiment']=1
+  df.loc[df['sentiment']=='negative','sentiment']=0
+
+  return df
