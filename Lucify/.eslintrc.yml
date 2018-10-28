@@ -26,10 +26,6 @@
         "error",
         "always"
       ],
-      "arrow-body-style": [
-        2,
-        "never"
-      ],
       "comma-dangle": [
         "error",
         "only-multiline"
