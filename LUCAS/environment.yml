@@ -13,4 +13,5 @@ dependencies:
   - seaborn
   - pytest
   - protobuf
+  - gensim
   - pylint

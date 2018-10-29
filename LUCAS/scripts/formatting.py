@@ -8,6 +8,7 @@ def format_yelp_nyc_review(review, content, metadata):
   review.product_id = int(split_tokens[1])
 
   metadata_tokens = metadata.split("\t")
+  review.rating = float(metadata_tokens[2])
   review.label = metadata_tokens[3] == "-1"
 
 def format_yelp_chi_review(review, content, metadata, userid_map_service, productid_map_service):
