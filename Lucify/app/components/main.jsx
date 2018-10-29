@@ -5,21 +5,29 @@ import { connect } from 'react-redux';
 import { toggleReview } from '../actions/index';
 import Results from './results';
 
-const logo = require('../../public/lucasoff.png');
-
 const DEFAULT_HEIGHT = 50;
 
-const ReviewContainer = posed.div({
+const TitleContainer = posed.div({
   visible: {
     opacity: 1,
     applyAtStart: { display: 'block' },
     delay: 400,
   },
   hidden: {
+    height: 0,
+    margin: 0,
     opacity: 0,
+    transition: { ease: 'easeOut', duration: 500 },
     applyAtEnd: { display: 'none' },
   }
 });
+
+const InputContainter = posed.div({
+  move: {
+    delay: 400,
+    transition: { duration: 500 },
+  }
+})
 
 const ResultsContainer = posed.div({
   visible: {
@@ -114,33 +122,40 @@ class Main extends React.Component {
   render() {
     return (
       <div className="hero-body has-text-centered">
-        <ReviewContainer className="has-text-centered" pose={!this.props.showResults ? 'visible' : 'hidden'}>
+        <TitleContainer className="has-text-centered" pose={!this.props.showResults ? 'visible' : 'hidden'}>
           <div className="has-text-centered main-title-container pt20 pb20">
-            <h1 className="title main-title is-rounded">
+            <h1 className="title main-title is-rounded pb10">
               Lucify
             </h1>
             <h2 className="subtitle pt20">
               This is the flagship app, demonstrating the power of the LUCAS API.
           </h2>
           </div>
-        </ReviewContainer>
-        {this.getExpandableField()}
-        <button className="button is-link is-medium" onClick={() => this.sendRequest()}>
-          <span>
-            Submit Review
-          </span>
-          <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
-        </button>
-        {this.getGhostField()}
+        </TitleContainer>
         <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
           {this.props.showResults &&
-            <Results
-              accuracy={this.state.accuracy}
-              result={this.state.result}
-              text={this.state.value}
-            />
+            <p className="title is-1 pt20">Your Review</p>
           }
         </ResultsContainer>
+        <InputContainter pose={this.props.showResults ? 'move' : null}>
+          {this.getExpandableField()}
+          <button className="button is-primary is-rounded is-medium" onClick={() => this.sendRequest()}>
+            <span>
+              Submit Review
+            </span>
+            <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
+          </button>
+          {this.getGhostField()}
+          <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
+            {this.props.showResults &&
+              <Results
+                accuracy={this.state.accuracy}
+                result={this.state.result}
+                text={this.state.value}
+              />
+            }
+          </ResultsContainer>
+        </InputContainter>
       </div>
     );
   }
