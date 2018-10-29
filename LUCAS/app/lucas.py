@@ -5,6 +5,7 @@ from flask import json
 from sklearn.externals import joblib
 
 app = Flask(__name__)
+
 nbayes = joblib.load("../models/nbayes.pkl")
 cv = joblib.load("../models/nbayes_cv.pkl")
 
