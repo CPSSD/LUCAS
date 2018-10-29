@@ -1,11 +1,16 @@
-name: classify
+name: lucas
 dependencies:
-  - python=3.6
+  - python
   - nomkl # prefers the non-mkl version of numpy and pandas, saving ~500mb
   - flask
   - numpy
   - pandas
-  - scikit-learn=0.20.0
+  - jupyter
+  - nb_conda
+  - ipykernel
+  - scikit-learn
   - matplotlib
+  - seaborn
   - pytest
   - protobuf
+  - pylint
