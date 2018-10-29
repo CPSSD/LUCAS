@@ -1,1 +1,2 @@
 export const TOGGLE_REVIEW = 'TOGGLE_REVIEW';
+export const TOGGLE_MODAL = 'TOGGLE_MODAL';

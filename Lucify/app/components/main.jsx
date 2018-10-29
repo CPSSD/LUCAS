@@ -10,15 +10,19 @@ const DEFAULT_HEIGHT = 50;
 const TitleContainer = posed.div({
   visible: {
     opacity: 1,
+    transition: {
+      opacity: { ease: 'easeOut', duration: 300 },
+    },
     applyAtStart: { display: 'block' },
-    delay: 400,
   },
   hidden: {
     height: 0,
-    margin: 0,
     opacity: 0,
     transition: { ease: 'easeOut', duration: 500 },
-    applyAtEnd: { display: 'none' },
+    applyAtEnd: {
+      display: 'none',
+      height: '100%',
+    },
   }
 });
 
@@ -27,7 +31,7 @@ const InputContainter = posed.div({
     delay: 400,
     transition: { duration: 500 },
   }
-})
+});
 
 const ResultsContainer = posed.div({
   visible: {
@@ -129,7 +133,7 @@ class Main extends React.Component {
             </h1>
             <h2 className="subtitle pt20">
               This is the flagship app, demonstrating the power of the LUCAS API.
-          </h2>
+            </h2>
           </div>
         </TitleContainer>
         <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
