@@ -69,8 +69,8 @@ nbayes = ComplementNB()
 
 nbayes.fit(X_traincv, y_train)
 
-joblib.dump(nbayes, "lucas_model.pkl")
-joblib.dump(cv, 'countVectorizer.pkl')
+joblib.dump(nbayes, "../models/nbayes.pkl")
+joblib.dump(cv, '../models/nbayes_cv.pkl')
 
 y_predictions_nbayes = list(nbayes.predict(X_testcv))
 
@@ -84,6 +84,6 @@ print(nbayes.class_count_)
 print(nbayes.feature_all_)
 
 print("Accuracy % :",metrics.accuracy_score(y_test, y_predictions_nbayes)*100)
-print("Precision Score: ", precision_score(y_test, y_predictions_nbayes, average='micro'))
-print("Recall Score: ",recall_score(y_test, y_predictions_nbayes, average='micro') )
-print("F1 Score: ",f1_score(y_test, y_predictions_nbayes, average='micro') )
+print("Precision Score: ", precision_score(y_test, y_predictions_nbayes))
+print("Recall Score: ",recall_score(y_test, y_predictions_nbayes) )
+print("F1 Score: ",f1_score(y_test, y_predictions_nbayes) )

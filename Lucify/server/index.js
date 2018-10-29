@@ -7,17 +7,27 @@ const argv = require('./util/argv');
 const port = require('./util//port');
 const setup = require('./middlewares/frontendMiddleware');
 const { resolve } = require('path');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
 
+app.use(cors());
+
+// Normal express config defaults
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
+app.use(require('./routes'));
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
   outputPath: resolve(process.cwd(), 'build'),
   publicPath: '/',
 });
+
 
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = argv.host || process.env.HOST;
@@ -31,3 +41,5 @@ app.listen(port, host, (err) => {
   }
   logger.appStarted(port, prettyHost);
 });
+
+module.exports = app;
