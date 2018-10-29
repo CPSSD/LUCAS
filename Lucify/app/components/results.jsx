@@ -1,17 +1,9 @@
 /* eslint-disable no-console */
 import React, { Component } from 'react';
 import CountUp from 'react-countup';
-import { connect } from 'react-redux';
 import cx from 'classnames';
 
-import { toggleReview } from '../actions/index';
-
-
 class Results extends Component {
-
-  returnToReview() {
-    this.props.toggleReview(false);
-  }
 
   renderAccuracy() {
     const accuracyClasses = cx({
@@ -28,14 +20,26 @@ class Results extends Component {
   renderVerdict() {
     const verdictClasses = cx({
       'is-size-1': true,
-      'has-text-danger': this.props.result === "Deceptive",
-      'has-text-success': this.props.result === "Truthful",
+      'has-text-danger': this.props.result === 'Deceptive',
+      'has-text-success': this.props.result === 'Truthful',
     });
+
+    const iconClasses = cx({
+      'fas': true,
+      'mr20': true,
+      'fa-times-circle': this.props.result === 'Deceptive',
+      'fa-check-circle': this.props.result === 'Truthful',
+    });
+
     return (
-      <p className={verdictClasses}>{this.props.result}</p>
+      <p className={verdictClasses}>
+        <span className="pl10"><i className={iconClasses}></i></span>
+        <span>
+          {this.props.result}
+        </span>
+      </p>
     );
   }
-  
 
   render() {
     return (
@@ -73,15 +77,5 @@ class Results extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return { showResults: state.toggleReview };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    toggleReview: (value) => dispatch(toggleReview(value))
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Results);
+export default Results;
 
