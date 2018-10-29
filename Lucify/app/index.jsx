@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import './css/style.scss';
 import Header from './components/header';
 import Main from './components/main';
+import WhatIsModal from './components/modal';
 import store from './store/index';
 
 
@@ -23,6 +24,7 @@ const App = () => (
       </Helmet>
       <Header />
       <Main />
+      <WhatIsModal />
     </section>
   </Provider>
 );
