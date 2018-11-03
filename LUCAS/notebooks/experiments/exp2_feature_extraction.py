@@ -39,3 +39,19 @@ def max_date_occurrences(reviews):
     else: 
       date_count_map[date] = 1
   return functools.reduce(lambda x, y: x if x > y else y, date_count_map.values())
+
+import nltk
+find_words = lambda text: nltk.tokenize.word_tokenize(text)
+
+def structural_features(review):
+  review_content = review.review_content
+  length_of_review = len(review_content)
+  words = find_words(review_content)
+  avg_word_length = find_avg_token_length(words)
+  sentences = nltk.tokenize.sent_tokenize(review_content)
+  sentence_length_of_review = len(sentences)
+  avg_sentence_length = find_avg_token_length(sentences)
+  numerals_ratio = find_numerals_ratio(words)
+  capitalised_word_ratio = find_capitalised_word_ratio(words)
+  return (length_of_review, avg_word_length, sentence_length_of_review,
+          avg_sentence_length, numerals_ratio, capitalised_word_ratio)

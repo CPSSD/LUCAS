@@ -97,3 +97,33 @@ def test_max_date_occurences_chooses_highest_date_count():
   review3 = review_pb2.Review()
   review3.date = "2000-02-01"
   assert max_date_occurrences([review1, review2, review3]) == 2
+
+def test_extracting_structural_features_gives_review_length():
+  review = review_pb2.Review()
+  review.review_content = "lol"
+  assert structural_features(review)[0] == 3
+
+def test_extracting_structural_features_gives_avg_word_length():
+  review = review_pb2.Review()
+  review.review_content = "silly spot"
+  assert structural_features(review)[1] == 4.5
+
+def test_extracting_structural_features_gives_sentence_length():
+  review = review_pb2.Review()
+  review.review_content = "Cool place. Smelled funny"
+  assert structural_features(review)[2] == 2
+
+def test_extracting_structural_features_gives_avg_sentence_length():
+  review = review_pb2.Review()
+  review.review_content = "Cool place. Smelled funny."
+  assert structural_features(review)[3] == 12.5
+
+def test_extracting_structural_features_gives_numerals_ratio():
+  review = review_pb2.Review()
+  review.review_content = "10 days later, i'm still waiting on my 2 kebabs"
+  assert structural_features(review)[4] == 0.5
+
+def test_extracting_structural_features_gives_numerals_ratio():
+  review = review_pb2.Review()
+  review.review_content = "Aul James said he likes Ireland"
+  assert structural_features(review)[5] == 0.5
