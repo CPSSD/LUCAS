@@ -3,6 +3,13 @@ from exp2_feature_extraction import find_avg_token_length
 from exp2_feature_extraction import find_numerals_ratio
 from exp2_feature_extraction import reviews_by_reviewer
 from exp2_feature_extraction import max_date_occurrences
+from exp2_feature_extraction import structural_features
+from exp2_feature_extraction import preprocess_words
+from exp2_feature_extraction import topic_features
+from exp2_feature_extraction import sentiment_features
+
+from unittest.mock import Mock
+import nltk
 
 import sys
 from os.path import dirname, join, abspath
@@ -22,7 +29,7 @@ def test_avg_token_length_of_two_tokens_can_be_decimal():
   assert find_avg_token_length(['a', 'ab']) == 1.5
 
 def test_find_capitalised_word_ratio_gives_neg_1_if_no_input():
-  assert find_capitalised_word_ratio([]) == -1
+  assert find_capitalised_word_ratio([]) == 0
 
 def test_find_capitalised_word_ratio_gives_1_if_only_word_capitalised():
   assert find_capitalised_word_ratio(['Blarg']) == 1
@@ -34,7 +41,7 @@ def test_find_capitalised_word_ratio_gives_0_5_if_half_words_capitalised():
   assert find_capitalised_word_ratio(['Blarg', 'booger']) == 0.5
 
 def test_find_numerals_ratio_is_0_on_empty_input():
-  assert find_numerals_ratio([]) == -1
+  assert find_numerals_ratio([]) == 0
 
 def test_find_numerals_ratio_is_0_on_input_with_no_numerals():
   assert find_numerals_ratio(['abc']) == 0
@@ -98,32 +105,102 @@ def test_max_date_occurences_chooses_highest_date_count():
   review3.date = "2000-02-01"
   assert max_date_occurrences([review1, review2, review3]) == 2
 
-def test_extracting_structural_features_gives_review_length():
+def review_tuple(content=""):
   review = review_pb2.Review()
-  review.review_content = "lol"
+  review.review_content = content
+  return (review, [x for x in nltk.tokenize.word_tokenize(content) if x.isalnum()])
+
+def test_extracting_structural_features_gives_review_length():
+  review = review_tuple(content="lol")
   assert structural_features(review)[0] == 3
 
 def test_extracting_structural_features_gives_avg_word_length():
-  review = review_pb2.Review()
-  review.review_content = "silly spot"
+  review = review_tuple(content="silly spot")
   assert structural_features(review)[1] == 4.5
 
+def test_extracting_structural_features_gives_avg_word_length_when_no_words():
+  review = review_tuple(content="")
+  assert structural_features(review)[1] == 0
+
 def test_extracting_structural_features_gives_sentence_length():
-  review = review_pb2.Review()
-  review.review_content = "Cool place. Smelled funny"
+  review = review_tuple(content="Cool place. Smelled funny")
   assert structural_features(review)[2] == 2
 
 def test_extracting_structural_features_gives_avg_sentence_length():
-  review = review_pb2.Review()
-  review.review_content = "Cool place. Smelled funny."
+  review = review_tuple(content="Sweet place. Smelled funny")
   assert structural_features(review)[3] == 12.5
 
 def test_extracting_structural_features_gives_numerals_ratio():
-  review = review_pb2.Review()
-  review.review_content = "10 days later, i'm still waiting on my 2 kebabs"
-  assert structural_features(review)[4] == 0.5
+  review = review_tuple(
+      content="10 days later, im still waiting on my 2 kebabs")
+  print(review[1])
+  assert structural_features(review)[4] == 0.2
 
-def test_extracting_structural_features_gives_numerals_ratio():
-  review = review_pb2.Review()
-  review.review_content = "Aul James said he likes Ireland"
+def test_extracting_structural_features_gives_numerals_ratio_when_none():
+  review = review_tuple(content="days later, i'm still waiting on my kebabs")
+  assert structural_features(review)[4] == 0
+
+def test_extracting_structural_features_gives_capitalised_ratio():
+  review = review_tuple(content="Aul James said he likes Ireland")
   assert structural_features(review)[5] == 0.5
+
+def test_extracting_structural_features_gives_capitalised_ratio_when_none():
+  review = review_tuple(content="aul james said he likes ireland")
+  assert structural_features(review)[5] == 0
+
+def return_word(word, *args, **kwargs):
+  return word
+
+def noop_stemmer(mocker):
+  mock = Mock()
+  mock.stem = return_word
+  return mock
+
+def noop_lemmatizer(mocker):
+  mock = Mock()
+  mock.lemmatize = return_word
+  return mock
+
+def test_preprocess_words_removes_lt_3_char_words(mocker):
+  stemmer = noop_stemmer(mocker)
+  lemmatizer = noop_lemmatizer(mocker)
+  assert preprocess_words(["help", "me"], stemmer, lemmatizer, []) == ["help"]
+
+def test_preprocess_words_removes_stopwords(mocker):
+  stemmer = noop_stemmer(mocker)
+  lemmatizer = noop_lemmatizer(mocker)
+  assert preprocess_words(["Test", "YOLO"], stemmer, lemmatizer, ["YOLO"])\
+      == ["Test"]
+
+def test_preprocess_words_lemmatizes_words(mocker):
+  stemmer = noop_stemmer(mocker)
+  lemmatizer = Mock()
+  lemmatizer.lemmatize = lambda word, **kwargs: "a" if word == "bbbb" else word
+
+  assert preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])\
+      == ["a", "dddd"]
+
+def test_preprocess_words_stems_words(mocker):
+  stemmer = Mock()
+  stemmer.stem = lambda word: "1" if word == "aaaa" else word
+  lemmatizer = noop_lemmatizer(mocker)
+
+  assert preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])\
+      == ["1", "bbbb"]
+
+def test_topic_features_creates_vector_of_topic_counts():
+  assert topic_features([(1, 2), (2, 4), (8, 3)], 9)\
+      == [0, 2, 4, 0, 0, 0, 0, 0, 3]
+
+def test_sentiment_features_gives_pos_neg_percentages():
+  analyzer = Mock()
+  def analyze(word):
+    return { "compound": {
+      "good": 0.71,
+      "bad": -0.3,
+      "ok": 0.0
+    }[word] }
+  analyzer.polarity_scores = analyze
+
+  assert sentiment_features(["good", "good", "ok", "bad"], analyzer)\
+      == (0.5, 0.25)
