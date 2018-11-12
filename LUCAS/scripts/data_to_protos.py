@@ -15,7 +15,6 @@ def id_func(map, key):
 # NYC
 
 data_directory = sys.argv[1]
-
 review_set = review_set_pb2.ReviewSet()
 with open(os.path.normpath(data_directory + '/YelpData/YelpNYC/reviewContent'), 'r') as f1:
   with open(os.path.normpath(data_directory + '/YelpData/YelpNYC/metadata'), 'r') as f2:
@@ -23,6 +22,17 @@ with open(os.path.normpath(data_directory + '/YelpData/YelpNYC/reviewContent'), 
       format_yelp_nyc_review(review_set.reviews.add(), line, f2.readline())
 
 with open(os.path.normpath(data_directory + '/normalizedData/yelpNYC'), 'wb') as f:
+  f.write(review_set.SerializeToString())
+
+# Zip
+
+review_set = review_set_pb2.ReviewSet()
+with open(os.path.normpath(data_directory + '/YelpData/YelpZip/reviewContent'), 'r') as f1:
+  with open(os.path.normpath(data_directory + '/YelpData/YelpZip/metadata'), 'r') as f2:
+    for line in f1:
+      format_yelp_nyc_review(review_set.reviews.add(), line, f2.readline())
+
+with open(os.path.normpath(data_directory + '/normalizedData/yelpZip'), 'wb') as f:
   f.write(review_set.SerializeToString())
 
 # Chicago
