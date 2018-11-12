@@ -53,7 +53,7 @@ X_test_tfidf = tfidf.transform(X_test_count)
 feature_names = cv.get_feature_names()
 print(tfidf._get_param_names())
 
-model = LinearSVC(random_state=0, probability = True) # Starting seed
+model = LinearSVC(random_state=0) # Starting seed
 model.fit(X_train_tfidf, y_train) 
 
 # joblib.dump(logreg, "../models/logreg_chihotels.pkl")
