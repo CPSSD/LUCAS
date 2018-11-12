@@ -8,6 +8,7 @@ from exp2_feature_extraction import preprocess_words
 from exp2_feature_extraction import topic_features
 from exp2_feature_extraction import sentiment_features
 from exp2_feature_extraction import pos_features
+from exp2_feature_extraction import reviewer_features
 
 from unittest.mock import Mock
 import nltk
@@ -106,10 +107,16 @@ def test_max_date_occurences_chooses_highest_date_count():
   review3.date = "2000-02-01"
   assert max_date_occurrences([review1, review2, review3]) == 2
 
-def review_tuple(content=""):
+def get_review(content="", date="2000-01-01", rating=3.0):
   review = review_pb2.Review()
   review.review_content = content
-  return (review, [x for x in nltk.tokenize.word_tokenize(content) if x.isalnum()])
+  review.date = date 
+  review.rating = rating
+  return review
+
+def review_tuple(content=""):
+  return (get_review(content),
+          [x for x in nltk.tokenize.word_tokenize(content) if x.isalnum()])
 
 def test_extracting_structural_features_gives_review_length():
   review = review_tuple(content="lol")
@@ -239,3 +246,30 @@ def test_pos_features_gives_correct_tag_percentages():
   assert features[location_VBZ] == 0.2
   location_VBN = 28
   assert features[location_VBN] == 0.2
+
+def test_reviewer_features_gives_max_date_occurrences():
+  reviewer_review_map = {
+    324: [get_review(date="2010-01-01"), get_review(date="2010-01-01"),
+          get_review(date="2012-02-03")],
+    101: [get_review(date="2001-01-01")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[0] == 2
+
+def test_reviewer_features_gives_average_review_length():
+  reviewer_review_map = {
+    324: [get_review(content="22"), get_review(content="55555")],
+    101: [get_review(content="99999999")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[1] == 3.5
+
+def test_reviewer_features_gives_rating_stdevation():
+  reviewer_review_map = {
+    101: [get_review(rating=0), get_review(rating=2), get_review(rating=4)]
+  }
+  assert reviewer_features(101, reviewer_review_map)[2] == 2
+
+def test_reviewer_features_gives_rating_stdevation_0_if_one_review():
+  reviewer_review_map = {
+    101: [get_review(rating=1)]
+  }
+  assert reviewer_features(101, reviewer_review_map)[2] == 0
