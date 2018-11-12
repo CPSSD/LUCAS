@@ -7,6 +7,7 @@ from exp2_feature_extraction import structural_features
 from exp2_feature_extraction import preprocess_words
 from exp2_feature_extraction import topic_features
 from exp2_feature_extraction import sentiment_features
+from exp2_feature_extraction import pos_features
 
 from unittest.mock import Mock
 import nltk
@@ -151,39 +152,39 @@ def test_extracting_structural_features_gives_capitalised_ratio_when_none():
 def return_word(word, *args, **kwargs):
   return word
 
-def noop_stemmer(mocker):
+def noop_stemmer():
   mock = Mock()
   mock.stem = return_word
   return mock
 
-def noop_lemmatizer(mocker):
+def noop_lemmatizer():
   mock = Mock()
   mock.lemmatize = return_word
   return mock
 
-def test_preprocess_words_removes_lt_3_char_words(mocker):
-  stemmer = noop_stemmer(mocker)
-  lemmatizer = noop_lemmatizer(mocker)
+def test_preprocess_words_removes_lt_3_char_words():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
   assert preprocess_words(["help", "me"], stemmer, lemmatizer, []) == ["help"]
 
-def test_preprocess_words_removes_stopwords(mocker):
-  stemmer = noop_stemmer(mocker)
-  lemmatizer = noop_lemmatizer(mocker)
+def test_preprocess_words_removes_stopwords():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
   assert preprocess_words(["Test", "YOLO"], stemmer, lemmatizer, ["YOLO"])\
       == ["Test"]
 
-def test_preprocess_words_lemmatizes_words(mocker):
-  stemmer = noop_stemmer(mocker)
+def test_preprocess_words_lemmatizes_words():
+  stemmer = noop_stemmer()
   lemmatizer = Mock()
   lemmatizer.lemmatize = lambda word, **kwargs: "a" if word == "bbbb" else word
 
   assert preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])\
       == ["a", "dddd"]
 
-def test_preprocess_words_stems_words(mocker):
+def test_preprocess_words_stems_words():
   stemmer = Mock()
   stemmer.stem = lambda word: "1" if word == "aaaa" else word
-  lemmatizer = noop_lemmatizer(mocker)
+  lemmatizer = noop_lemmatizer()
 
   assert preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])\
       == ["1", "bbbb"]
@@ -204,3 +205,37 @@ def test_sentiment_features_gives_pos_neg_percentages():
 
   assert sentiment_features(["good", "good", "ok", "bad"], analyzer)\
       == (0.5, 0.25)
+
+def test_pos_features_gives_found_tag_percentage():
+  tagger = Mock()
+  def tag(words):
+    tag_map = { "Hi": "NN" }
+    return [(x, tag_map[x]) for x in words]
+  tagger.pos_tag = tag
+  features = pos_features(["Hi"], tagger)
+  location_NN = 10
+  print(features)
+  assert features[location_NN] == 1
+
+def test_pos_features_gives_correct_tag_percentages():
+  tagger = Mock()
+  def tag(words):
+    tag_map = {
+      "Hi": "NN",
+      "my": "PRP$",
+      "name": "NN",
+      "is": "VBZ",
+      "fred": "VBN"
+    }
+    return [(x, tag_map[x]) for x in words]
+  tagger.pos_tag = tag
+  features = pos_features(["Hi", "my", "name", "is", "fred"], tagger)
+  print(features)
+  location_NN = 10
+  assert features[location_NN] == 0.4
+  location_PRPdollar = 17
+  assert features[location_PRPdollar] == 0.2
+  location_VBZ = 30
+  assert features[location_VBZ] == 0.2
+  location_VBN = 28
+  assert features[location_VBN] == 0.2
