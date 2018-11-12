@@ -99,3 +99,29 @@ def sentiment_features(words, sentiment_analyzer):
   if total == 0:
     return (0, 0)
   return (num_positive / total, num_negative / total)
+
+import nltk
+
+def pos_features(words, pos_tagger):
+  tag_map = {
+    "CD":  0, "DT":  0, "EX":  0, "FW":   0, "IN":  0, "JJ":   0, "JJR": 0,
+    "JJS": 0, "LS":  0, "MD":  0, "NN":   0, "NNP": 0, "NNPS": 0, "NNS": 0,
+    "PDT": 0, "POS": 0, "PRP": 0, "PRP$": 0, "RB":  0, "RBR":  0, "RBS": 0,
+    "RP":  0, "SYM": 0, "TO":  0, "UH":   0, "VB":  0, "VBD":  0, "VBG": 0,
+    "VBN": 0, "VBP": 0, "VBZ": 0, "WDT":  0, "WP":  0, "WP$":  0, "WRB": 0,
+    "CC":  0
+  }
+  tags = pos_tagger.pos_tag(words)
+  total = 0
+  for tag in tags:
+    key = tag[1]
+    if key in tag_map:
+      tag_map[key] += 1
+      total += 1
+  if total == 0:
+    return [0] * 36
+  order = list(tag_map.keys())#["CD", "DT", "EX", "FW", "IN", "JJ", "JJR", "JJS", "LS", "MD", "NN",
+         #  "NNP", "NNPS", "NNS", "PDT", "POS", "PRP", "PRP$", "RB", "RBR",
+          # "RBS", "RP", "SYM", "TO", "UH", "VB", "VBD", "VBG", "VBN", "VBP",
+           #"VBZ", "WDT", "WP", "WP$", "WRB", "CC"]
+  return [tag_map[x]/total for x in order]
