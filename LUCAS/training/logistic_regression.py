@@ -45,4 +45,5 @@ y_predictions_logreg = logreg.predict(X_test_tfidf)
 yp=["Genuine" if prediction == 0 else "Deceptive" for prediction in list(y_predictions_logreg)]
 output_fm = pd.DataFrame({'Review':list(X_test) ,'True(0)/Deceptive(1)':yp})
 print(output_fm)
+print(np.std(X_train_tfidf, 0)*logreg.coef_)
 print(metrics.classification_report(y_test, y_predictions_logreg, target_names=set(yp)))
