@@ -120,3 +120,19 @@ def pos_features(words, pos_tagger):
     return [0] * 36
   order = list(tag_map.keys())
   return [tag_map[x]/total for x in order]
+
+import statistics
+import functools
+
+def reviewer_features(reviewer_id, reviews_by_reviewer):
+  reviews = reviews_by_reviewer[reviewer_id]
+  max_reviews_in_day = max_date_occurrences(reviews)
+  average_review_length = functools.reduce(
+      lambda total, review: total + len(review.review_content),
+      reviews,
+      0) / len(reviews)
+  if len(reviews) == 1:
+    ratings_stdev = 0
+  else:
+    ratings_stdev = statistics.stdev([x.rating for x in reviews])
+  return (max_reviews_in_day, average_review_length, ratings_stdev)
