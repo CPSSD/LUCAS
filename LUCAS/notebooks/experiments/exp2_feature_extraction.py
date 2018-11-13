@@ -76,10 +76,6 @@ def preprocess_words(words, stemmer=SnowballStemmer("english"),
                      lemmatizer = WordNetLemmatizer(),
                      stopwords=gensim.parsing.preprocessing.STOPWORDS,
                      bigrams=False):
-  """
-    This needs to be tested with two mocks chaining interactions. Not
-    ideal.
-  """
   lemmatized = lemmatize_words(
     [x for x in words if len(x) > 3 and x not in stopwords],
     stemmer,

@@ -30,7 +30,7 @@ def test_avg_token_length_of_two_tokens_is_average():
 def test_avg_token_length_of_two_tokens_can_be_decimal():
   assert find_avg_token_length(['a', 'ab']) == 1.5
 
-def test_find_capitalised_word_ratio_gives_neg_1_if_no_input():
+def test_find_capitalised_word_ratio_gives_zerzerono_input():
   assert find_capitalised_word_ratio([]) == 0
 
 def test_find_capitalised_word_ratio_gives_1_if_only_word_capitalised():
@@ -169,18 +169,25 @@ def noop_lemmatizer():
   mock.lemmatize = return_word
   return mock
 
-def test_preprocess_words_gives_unigrams_and_bigrams():
+def test_preprocess_words_gives_unigrams():
   stemmer = noop_stemmer()
   lemmatizer = noop_lemmatizer()
   processed = preprocess_words(["alright", "welcome", "everyone"],
                                stemmer, lemmatizer, [])
-  assert list(processed) == ["alright", "welcome", "everyone",
-                             "alright welcome", "welcome everyone"]
+  assert set(processed) == set(["alright", "welcome", "everyone"])
+
+
+def test_preprocess_words_gives_bigrams():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["alright", "welcome", "everyone"],
+                               stemmer, lemmatizer, [], bigrams=True)
+  assert set(processed) == set(["alright welcome", "welcome everyone"])
 
 def test_preprocess_words_handles_getting_bigrams_from_empty_word_list():
   stemmer = noop_stemmer()
   lemmatizer = noop_lemmatizer()
-  processed = preprocess_words([], stemmer, lemmatizer, [])
+  processed = preprocess_words([], stemmer, lemmatizer, [], bigrams=True)
   assert list(processed) == []
 
 def test_preprocess_words_removes_lt_3_char_words():
@@ -202,14 +209,14 @@ def test_preprocess_words_lemmatizes_words():
   lemmatizer = Mock()
   lemmatizer.lemmatize = lambda word, **kwargs: "a" if word == "bbbb" else word
   processed = preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])
-  assert list(processed) == ["a", "dddd", "a dddd"]
+  assert list(processed) == ["a", "dddd"]
 
 def test_preprocess_words_stems_words():
   stemmer = Mock()
   stemmer.stem = lambda word: "1" if word == "aaaa" else word
   lemmatizer = noop_lemmatizer()
   processed = preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])
-  assert list(processed)  == ["1", "bbbb", "1 bbbb"]
+  assert list(processed)  == ["1", "bbbb"]
 
 def test_topic_features_creates_vector_of_topic_counts():
   assert topic_features([(1, 2), (2, 4), (8, 3)], 9)\
