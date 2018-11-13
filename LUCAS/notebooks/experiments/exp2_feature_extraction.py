@@ -67,17 +67,26 @@ def lemmatize_words(words, stemmer, lemmatizer):
     lemmatized.append(stemmer.stem(lemmatizer.lemmatize(word, pos='v')))
   return lemmatized
 
+def _get_bigrams(words):
+  if len(words) == 0:
+    return []
+  return [" ".join(x) for x in nltk.bigrams(words)]
+
 def preprocess_words(words, stemmer=SnowballStemmer("english"),
                      lemmatizer = WordNetLemmatizer(),
-                     stopwords=gensim.parsing.preprocessing.STOPWORDS):
+                     stopwords=gensim.parsing.preprocessing.STOPWORDS,
+                     bigrams=False):
   """
     This needs to be tested with two mocks chaining interactions. Not
     ideal.
   """
-  return lemmatize_words(
+  lemmatized = lemmatize_words(
     [x for x in words if len(x) > 3 and x not in stopwords],
     stemmer,
     lemmatizer)
+  if bigrams:
+    return _get_bigrams(lemmatized)
+  return lemmatized
 
 def topic_features(topics, num_topics):
   t = [0] * num_topics
@@ -135,4 +144,9 @@ def reviewer_features(reviewer_id, reviews_by_reviewer):
     ratings_stdev = 0
   else:
     ratings_stdev = statistics.stdev([x.rating for x in reviews])
-  return (max_reviews_in_day, average_review_length, ratings_stdev)
+  percent_pos_reviews =\
+      len(list(filter(lambda x: x.rating > 3.0, reviews))) / len(reviews)
+  percent_neg_reviews =\
+      len(list(filter(lambda x: x.rating < 3.0, reviews))) / len(reviews)
+  return (max_reviews_in_day, average_review_length, ratings_stdev,
+          percent_pos_reviews, percent_neg_reviews)
