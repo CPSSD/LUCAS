@@ -169,32 +169,47 @@ def noop_lemmatizer():
   mock.lemmatize = return_word
   return mock
 
+def test_preprocess_words_gives_unigrams_and_bigrams():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["alright", "welcome", "everyone"],
+                               stemmer, lemmatizer, [])
+  assert list(processed) == ["alright", "welcome", "everyone",
+                             "alright welcome", "welcome everyone"]
+
+def test_preprocess_words_handles_getting_bigrams_from_empty_word_list():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words([], stemmer, lemmatizer, [])
+  assert list(processed) == []
+
 def test_preprocess_words_removes_lt_3_char_words():
   stemmer = noop_stemmer()
   lemmatizer = noop_lemmatizer()
-  assert preprocess_words(["help", "me"], stemmer, lemmatizer, []) == ["help"]
+  processed = preprocess_words(["help", "me"],
+                               stemmer, lemmatizer, [])
+  assert list(processed) == ["help"]
 
 def test_preprocess_words_removes_stopwords():
   stemmer = noop_stemmer()
   lemmatizer = noop_lemmatizer()
-  assert preprocess_words(["Test", "YOLO"], stemmer, lemmatizer, ["YOLO"])\
-      == ["Test"]
+  processed = preprocess_words(["Test", "YOLO"], stemmer, lemmatizer,
+                               ["YOLO"])
+  assert list(processed) == ["Test"]
 
 def test_preprocess_words_lemmatizes_words():
   stemmer = noop_stemmer()
   lemmatizer = Mock()
   lemmatizer.lemmatize = lambda word, **kwargs: "a" if word == "bbbb" else word
-
-  assert preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])\
-      == ["a", "dddd"]
+  processed = preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])
+  assert list(processed) == ["a", "dddd", "a dddd"]
 
 def test_preprocess_words_stems_words():
   stemmer = Mock()
   stemmer.stem = lambda word: "1" if word == "aaaa" else word
   lemmatizer = noop_lemmatizer()
-
-  assert preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])\
-      == ["1", "bbbb"]
+  processed = preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])
+  assert list(processed)  == ["1", "bbbb", "1 bbbb"]
 
 def test_topic_features_creates_vector_of_topic_counts():
   assert topic_features([(1, 2), (2, 4), (8, 3)], 9)\
@@ -273,3 +288,20 @@ def test_reviewer_features_gives_rating_stdevation_0_if_one_review():
     101: [get_review(rating=1)]
   }
   assert reviewer_features(101, reviewer_review_map)[2] == 0
+
+def test_reviewer_features_gives_percentage_pos_ratings():
+  reviewer_review_map = {
+    324: [get_review(rating=5.0), get_review(rating=3.0),
+          get_review(rating=4.0), get_review(rating=1.0)],
+    101: [get_review(date="2001-01-01")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[3] == 0.5
+
+def test_reviewer_features_gives_percentage_neg_ratings():
+  reviewer_review_map = {
+    324: [get_review(rating=5.0), get_review(rating=3.0),
+          get_review(rating=4.0), get_review(rating=1.0),
+          get_review(rating=3.0)],
+    101: [get_review(date="2001-01-01")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[4] == 0.2
