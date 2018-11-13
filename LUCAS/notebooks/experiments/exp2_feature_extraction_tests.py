@@ -30,7 +30,7 @@ def test_avg_token_length_of_two_tokens_is_average():
 def test_avg_token_length_of_two_tokens_can_be_decimal():
   assert find_avg_token_length(['a', 'ab']) == 1.5
 
-def test_find_capitalised_word_ratio_gives_zerzerono_input():
+def test_find_capitalised_word_ratio_gives_zero_when_no_input():
   assert find_capitalised_word_ratio([]) == 0
 
 def test_find_capitalised_word_ratio_gives_1_if_only_word_capitalised():
