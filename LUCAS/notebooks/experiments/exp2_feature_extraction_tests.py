@@ -7,6 +7,8 @@ from exp2_feature_extraction import structural_features
 from exp2_feature_extraction import preprocess_words
 from exp2_feature_extraction import topic_features
 from exp2_feature_extraction import sentiment_features
+from exp2_feature_extraction import pos_features
+from exp2_feature_extraction import reviewer_features
 
 from unittest.mock import Mock
 import nltk
@@ -28,7 +30,7 @@ def test_avg_token_length_of_two_tokens_is_average():
 def test_avg_token_length_of_two_tokens_can_be_decimal():
   assert find_avg_token_length(['a', 'ab']) == 1.5
 
-def test_find_capitalised_word_ratio_gives_neg_1_if_no_input():
+def test_find_capitalised_word_ratio_gives_zero_when_no_input():
   assert find_capitalised_word_ratio([]) == 0
 
 def test_find_capitalised_word_ratio_gives_1_if_only_word_capitalised():
@@ -105,10 +107,16 @@ def test_max_date_occurences_chooses_highest_date_count():
   review3.date = "2000-02-01"
   assert max_date_occurrences([review1, review2, review3]) == 2
 
-def review_tuple(content=""):
+def get_review(content="", date="2000-01-01", rating=3.0):
   review = review_pb2.Review()
   review.review_content = content
-  return (review, [x for x in nltk.tokenize.word_tokenize(content) if x.isalnum()])
+  review.date = date 
+  review.rating = rating
+  return review
+
+def review_tuple(content=""):
+  return (get_review(content),
+          [x for x in nltk.tokenize.word_tokenize(content) if x.isalnum()])
 
 def test_extracting_structural_features_gives_review_length():
   review = review_tuple(content="lol")
@@ -151,42 +159,64 @@ def test_extracting_structural_features_gives_capitalised_ratio_when_none():
 def return_word(word, *args, **kwargs):
   return word
 
-def noop_stemmer(mocker):
+def noop_stemmer():
   mock = Mock()
   mock.stem = return_word
   return mock
 
-def noop_lemmatizer(mocker):
+def noop_lemmatizer():
   mock = Mock()
   mock.lemmatize = return_word
   return mock
 
-def test_preprocess_words_removes_lt_3_char_words(mocker):
-  stemmer = noop_stemmer(mocker)
-  lemmatizer = noop_lemmatizer(mocker)
-  assert preprocess_words(["help", "me"], stemmer, lemmatizer, []) == ["help"]
+def test_preprocess_words_gives_unigrams():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["alright", "welcome", "everyone"],
+                               stemmer, lemmatizer, [])
+  assert set(processed) == set(["alright", "welcome", "everyone"])
 
-def test_preprocess_words_removes_stopwords(mocker):
-  stemmer = noop_stemmer(mocker)
-  lemmatizer = noop_lemmatizer(mocker)
-  assert preprocess_words(["Test", "YOLO"], stemmer, lemmatizer, ["YOLO"])\
-      == ["Test"]
 
-def test_preprocess_words_lemmatizes_words(mocker):
-  stemmer = noop_stemmer(mocker)
+def test_preprocess_words_gives_bigrams():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["alright", "welcome", "everyone"],
+                               stemmer, lemmatizer, [], bigrams=True)
+  assert set(processed) == set(["alright welcome", "welcome everyone"])
+
+def test_preprocess_words_handles_getting_bigrams_from_empty_word_list():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words([], stemmer, lemmatizer, [], bigrams=True)
+  assert list(processed) == []
+
+def test_preprocess_words_removes_lt_3_char_words():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["help", "me"],
+                               stemmer, lemmatizer, [])
+  assert list(processed) == ["help"]
+
+def test_preprocess_words_removes_stopwords():
+  stemmer = noop_stemmer()
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["Test", "YOLO"], stemmer, lemmatizer,
+                               ["YOLO"])
+  assert list(processed) == ["Test"]
+
+def test_preprocess_words_lemmatizes_words():
+  stemmer = noop_stemmer()
   lemmatizer = Mock()
   lemmatizer.lemmatize = lambda word, **kwargs: "a" if word == "bbbb" else word
+  processed = preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])
+  assert list(processed) == ["a", "dddd"]
 
-  assert preprocess_words(["bbbb", "dddd"], stemmer, lemmatizer, [])\
-      == ["a", "dddd"]
-
-def test_preprocess_words_stems_words(mocker):
+def test_preprocess_words_stems_words():
   stemmer = Mock()
   stemmer.stem = lambda word: "1" if word == "aaaa" else word
-  lemmatizer = noop_lemmatizer(mocker)
-
-  assert preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])\
-      == ["1", "bbbb"]
+  lemmatizer = noop_lemmatizer()
+  processed = preprocess_words(["aaaa", "bbbb"], stemmer, lemmatizer, [])
+  assert list(processed)  == ["1", "bbbb"]
 
 def test_topic_features_creates_vector_of_topic_counts():
   assert topic_features([(1, 2), (2, 4), (8, 3)], 9)\
@@ -204,3 +234,81 @@ def test_sentiment_features_gives_pos_neg_percentages():
 
   assert sentiment_features(["good", "good", "ok", "bad"], analyzer)\
       == (0.5, 0.25)
+
+def test_pos_features_gives_found_tag_percentage():
+  tagger = Mock()
+  def tag(words):
+    tag_map = { "Hi": "NN" }
+    return [(x, tag_map[x]) for x in words]
+  tagger.pos_tag = tag
+  features = pos_features(["Hi"], tagger)
+  location_NN = 10
+  print(features)
+  assert features[location_NN] == 1
+
+def test_pos_features_gives_correct_tag_percentages():
+  tagger = Mock()
+  def tag(words):
+    tag_map = {
+      "Hi": "NN",
+      "my": "PRP$",
+      "name": "NN",
+      "is": "VBZ",
+      "fred": "VBN"
+    }
+    return [(x, tag_map[x]) for x in words]
+  tagger.pos_tag = tag
+  features = pos_features(["Hi", "my", "name", "is", "fred"], tagger)
+  print(features)
+  location_NN = 10
+  assert features[location_NN] == 0.4
+  location_PRPdollar = 17
+  assert features[location_PRPdollar] == 0.2
+  location_VBZ = 30
+  assert features[location_VBZ] == 0.2
+  location_VBN = 28
+  assert features[location_VBN] == 0.2
+
+def test_reviewer_features_gives_max_date_occurrences():
+  reviewer_review_map = {
+    324: [get_review(date="2010-01-01"), get_review(date="2010-01-01"),
+          get_review(date="2012-02-03")],
+    101: [get_review(date="2001-01-01")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[0] == 2
+
+def test_reviewer_features_gives_average_review_length():
+  reviewer_review_map = {
+    324: [get_review(content="22"), get_review(content="55555")],
+    101: [get_review(content="99999999")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[1] == 3.5
+
+def test_reviewer_features_gives_rating_stdevation():
+  reviewer_review_map = {
+    101: [get_review(rating=0), get_review(rating=2), get_review(rating=4)]
+  }
+  assert reviewer_features(101, reviewer_review_map)[2] == 2
+
+def test_reviewer_features_gives_rating_stdevation_0_if_one_review():
+  reviewer_review_map = {
+    101: [get_review(rating=1)]
+  }
+  assert reviewer_features(101, reviewer_review_map)[2] == 0
+
+def test_reviewer_features_gives_percentage_pos_ratings():
+  reviewer_review_map = {
+    324: [get_review(rating=5.0), get_review(rating=3.0),
+          get_review(rating=4.0), get_review(rating=1.0)],
+    101: [get_review(date="2001-01-01")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[3] == 0.5
+
+def test_reviewer_features_gives_percentage_neg_ratings():
+  reviewer_review_map = {
+    324: [get_review(rating=5.0), get_review(rating=3.0),
+          get_review(rating=4.0), get_review(rating=1.0),
+          get_review(rating=3.0)],
+    101: [get_review(date="2001-01-01")]
+  }
+  assert reviewer_features(324, reviewer_review_map)[4] == 0.2

@@ -61,7 +61,7 @@ class Results extends Component {
                 <div className="tile is-child">
                   <div className="card">
                     <div className="card-header">
-                      <p className="card-header-title is-2">Accuracy</p>
+                      <p className="card-header-title is-2">Confidence Score</p>
                     </div>
                     <div className="card-content">
                       {this.renderAccuracy()}

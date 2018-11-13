@@ -67,17 +67,22 @@ def lemmatize_words(words, stemmer, lemmatizer):
     lemmatized.append(stemmer.stem(lemmatizer.lemmatize(word, pos='v')))
   return lemmatized
 
+def _get_bigrams(words):
+  if len(words) == 0:
+    return []
+  return [" ".join(x) for x in nltk.bigrams(words)]
+
 def preprocess_words(words, stemmer=SnowballStemmer("english"),
                      lemmatizer = WordNetLemmatizer(),
-                     stopwords=gensim.parsing.preprocessing.STOPWORDS):
-  """
-    This needs to be tested with two mocks chaining interactions. Not
-    ideal.
-  """
-  return lemmatize_words(
+                     stopwords=gensim.parsing.preprocessing.STOPWORDS,
+                     bigrams=False):
+  lemmatized = lemmatize_words(
     [x for x in words if len(x) > 3 and x not in stopwords],
     stemmer,
     lemmatizer)
+  if bigrams:
+    return _get_bigrams(lemmatized)
+  return lemmatized
 
 def topic_features(topics, num_topics):
   t = [0] * num_topics
@@ -99,3 +104,45 @@ def sentiment_features(words, sentiment_analyzer):
   if total == 0:
     return (0, 0)
   return (num_positive / total, num_negative / total)
+
+def pos_features(words, pos_tagger):
+  tag_map = {
+    "CD":  0, "DT":  0, "EX":  0, "FW":   0, "IN":  0, "JJ":   0, "JJR": 0,
+    "JJS": 0, "LS":  0, "MD":  0, "NN":   0, "NNP": 0, "NNPS": 0, "NNS": 0,
+    "PDT": 0, "POS": 0, "PRP": 0, "PRP$": 0, "RB":  0, "RBR":  0, "RBS": 0,
+    "RP":  0, "SYM": 0, "TO":  0, "UH":   0, "VB":  0, "VBD":  0, "VBG": 0,
+    "VBN": 0, "VBP": 0, "VBZ": 0, "WDT":  0, "WP":  0, "WP$":  0, "WRB": 0,
+    "CC":  0
+  }
+  tags = pos_tagger.pos_tag(words)
+  total = 0
+  for tag in tags:
+    key = tag[1]
+    if key in tag_map:
+      tag_map[key] += 1
+      total += 1
+  if total == 0:
+    return [0] * 36
+  order = list(tag_map.keys())
+  return [tag_map[x]/total for x in order]
+
+import statistics
+import functools
+
+def reviewer_features(reviewer_id, reviews_by_reviewer):
+  reviews = reviews_by_reviewer[reviewer_id]
+  max_reviews_in_day = max_date_occurrences(reviews)
+  average_review_length = functools.reduce(
+      lambda total, review: total + len(review.review_content),
+      reviews,
+      0) / len(reviews)
+  if len(reviews) == 1:
+    ratings_stdev = 0
+  else:
+    ratings_stdev = statistics.stdev([x.rating for x in reviews])
+  percent_pos_reviews =\
+      len(list(filter(lambda x: x.rating > 3.0, reviews))) / len(reviews)
+  percent_neg_reviews =\
+      len(list(filter(lambda x: x.rating < 3.0, reviews))) / len(reviews)
+  return (max_reviews_in_day, average_review_length, ratings_stdev,
+          percent_pos_reviews, percent_neg_reviews)
