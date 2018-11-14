@@ -1,3 +1,5 @@
+# This file is a work in progress, and will not work correctly right now.
+
 import sys
 import os
 from os.path import dirname, join, abspath
