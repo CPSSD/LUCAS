@@ -29,8 +29,11 @@ def plot_coefficients(model, top_features=20):
 def fit_model(model, X, y):
   model.fit(X, y)
 
-def get_importance(feature_weights, k):
-  top_positive_coefficients = [(k,v) for k,v in sorted(feature_weights.items(), key=lambda x: x[1]) if v < 0][:k]
+def get_importance(feature_weights, k, cls):
+  if cls:
+    top_positive_coefficients = [(k,v) for k,v in sorted(feature_weights.items(), key=lambda x: x[1], reverse = True) if v > 0][:k]
+  else:
+    top_positive_coefficients = [(k,v) for k,v in sorted(feature_weights.items(), key=lambda x: x[1]) if v < 0][:k]
   return top_positive_coefficients
 
 def pickle_model(model, name):
