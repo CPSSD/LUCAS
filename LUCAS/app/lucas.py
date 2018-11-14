@@ -6,11 +6,11 @@ from flask import json
 from sklearn.externals import joblib
 from os.path import dirname, join, abspath
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
-from scripts.model_helpers import get_feature_weights, get_classification, get_confidence
+from scripts.training_helpers import get_feature_weights, get_classification, get_confidence
 
 app = Flask(__name__)
 
-model = joblib.load("./models/pipe_svc_1.0.pkl")  
+model = joblib.load("../models/pipe_svc_1.0.pkl")  
         
 @app.route('/')
 def return_status():
