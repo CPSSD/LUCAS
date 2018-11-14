@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.svm import LinearSVC
 from os.path import dirname, join, abspath
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
-from scripts.model_helpers import get_data_frame, fit_model, pickle_model, get_accuracy, classify_new, plot_coefficients
+from scripts.training_helpers import get_data_frame, fit_model, pickle_model, get_accuracy, classify_new, plot_coefficients, get_strat_kfolds
 
 def train(model_name=None):
   data_fm = get_data_frame()
