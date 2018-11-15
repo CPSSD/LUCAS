@@ -10,11 +10,10 @@ nbayes = joblib.load("../models/nbayes.pkl")
 cv = joblib.load("../models/nbayes_cv.pkl")
 
 def classify_review(data):
-  review = data["review"]
-  reviewcv = cv.transform([review])
+  reviewcv = cv.transform([data])
   predicted_class = 'Truthful' if nbayes.predict(reviewcv) == 1 else 'Deceptive'
   class_probs = nbayes.predict_proba(reviewcv)
-  return jsonify(result= predicted_class, classProbs= class_probs.tolist())
+  return {"result": predicted_class, "classProbs": class_probs.tolist()}
         
 @app.route('/')
 def return_status():
@@ -22,7 +21,17 @@ def return_status():
 
 @app.route('/classify', methods=['POST'])
 def classify():
-  return classify_review(request.get_json())
+  review = classify_review(request.get_json()["review"])
+  return jsonify(result= review["result"], classProbs= review["classProbs"])
+
+@app.route('/bulkClassify', methods=['POST'])
+def bulkClassify():
+  weights = []
+  for review in request.get_json()["reviews"]:
+    print(review)
+    weights.append(classify_review(review["text"]))
+  print(weights)
+  return jsonify(weights= weights)
 
 if __name__ == '__main__':
   app.run(debug=True,host='0.0.0.0', port=3005)

@@ -26,5 +26,30 @@ router.post('/', (req, res) => {
   return res;
 });
 
+router.post('/bulk', (req, res) => {
+  if (!req.body.reviews) {
+    return res.status(422).json({ errors: { reviews: "can't be blank" } });
+  }
+
+  const options = {
+    method: 'POST',
+    uri: 'http://localhost:3005/bulkClassify',
+    body: {
+      reviews: req.body.reviews,
+    },
+    json: true
+  };
+
+  rp(options)
+    .then((parsedBody) => {
+      res.status(200).json(parsedBody);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+
+  return res;
+});
+
 
 module.exports = router;
