@@ -36,11 +36,6 @@ router.post('/reviews', (req, res) => {
     reviews = JSON.parse(data);
     res.status(200).json(reviews);
   });
-  // client.reviews(req.body.alias).then((response) => {
-  //   res.status(200).json(response.jsonBody.reviews);
-  // }).catch((e) => {
-  //   res.status(500).json(e);
-  // });
 
   return res;
 });

@@ -28,9 +28,7 @@ def classify():
 def bulkClassify():
   weights = []
   for review in request.get_json()["reviews"]:
-    print(review)
     weights.append(classify_review(review["text"]))
-  print(weights)
   return jsonify(weights= weights)
 
 if __name__ == '__main__':
