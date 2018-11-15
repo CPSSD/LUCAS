@@ -2,6 +2,7 @@ name: lucas
 dependencies:
   - python
   - nomkl # prefers the non-mkl version of numpy and pandas, saving ~500mb
+  - nltk
   - flask
   - numpy
   - pandas
@@ -12,6 +13,7 @@ dependencies:
   - matplotlib
   - seaborn
   - pytest
+  - pytest-mock
   - protobuf
   - gensim
   - pylint
