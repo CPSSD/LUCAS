@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { toggleReview, toggleModal } from '../actions/index';
+import { toggleReview, toggleSearchReview, setBusiness, toggleModal } from '../actions/index';
 
 class Header extends React.Component {
 
   returnToReview() {
     this.props.toggleReview(false);
+    this.props.toggleSearchReview(false);
+    this.props.setBusiness(null);
   }
 
   toggleModal() {
@@ -14,12 +16,14 @@ class Header extends React.Component {
   }
 
   render() {
+    const { showReviewResults, showSearchResults } = this.props;
+    const showResults = showReviewResults || showSearchResults;
     return (
       <div className="hero-head">
         <nav className="navbar has-shadow">
           <div className="container">
             <div className="navbar-brand">
-              {this.props.showResults &&
+              {showResults &&
                 <a href="#" role="button" className="navbar-item title header-title is-rounded is-3" onClick={() => this.returnToReview()}>
                   Lucify
                 </a>
@@ -40,13 +44,18 @@ class Header extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { showResults: state.toggleReview };
+  return {
+    showReviewResults: state.toggleReview,
+    showSearchResults: state.toggleSearchReview
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     toggleReview: (value) => dispatch(toggleReview(value)),
-    toggleModal: () => dispatch(toggleModal())
+    toggleSearchReview: (value) => dispatch(toggleSearchReview(value)),
+    toggleModal: () => dispatch(toggleModal()),
+    setBusiness: (business) => dispatch(setBusiness(business))
   };
 };
 
