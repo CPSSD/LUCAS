@@ -1,6 +1,7 @@
 FROM continuumio/miniconda3
 
-COPY . /app
+COPY lucas /api
+COPY lucify /app
 WORKDIR /app
 
 ADD environment.yml /tmp/environment.yml

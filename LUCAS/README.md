@@ -16,9 +16,9 @@ It will do this by using a combination of machine learning and deep learning met
 * Docker
 * Conda [installed on your system](https://conda.io/docs/user-guide/install/index.html)
 
-### Steps to create the local conda environment for development / training
+### 1. Steps to create the local conda environment
 
-* Copy the datasets into the LUCAS/data/ folder. Recommended folder hierarchy looks like:
+* Download the datasets from Google Drive, and copy the datasets into the LUCAS/data/ folder. Recommended folder hierarchy looks like:
   * `Amazoff/LUCAS/data/amazonBooks/`
   * `Amazoff/LUCAS/data/hotels/`
   * `Amazoff/LUCAS/data/yelpData/`
@@ -29,15 +29,20 @@ It will do this by using a combination of machine learning and deep learning met
 
 * Once the dependencies have been downloaded and installed, execute `conda activate classify`. This will start the environment.
 
-* To run the a classifier, execute `python training/classifier_name.py`. This will produce an accuracy, and pickle the model.
-  * For best results, re-run the classifer until it pickles a model with the best accuracy.
+### 2. Steps to format the data, train a classifier and produce a hostable model
 
-### Steps to run the docker container with the model to test locally
+* To format the data into usable protobuffers, run `python scripts/data_to_protos.py` This will create protobuffers in the normalizedData directory in /data.
+
+* To run the a classifier, execute `python training/classifier_name.py`. This will produce an accuracy, and pickle the model.
+
+### 3. Steps to run the API locally
+
+* Execute `python app/lucas.py` to start the Flask server. Visit 0.0.0.0 to check the status. It should return the API version.
+
+* Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:3050/classify` to query the local endpoint with a review. The endpoint will run the review over the model and return a classification.
+
+#### (Optional) Steps to run the docker container
 
 * Execute `docker build -t classifyreviews .` This will build the docker image.
 
-* Execute `docker run -p 80:80 -it classifyreviews`. This will start the docker image with port 80 exposed, allowing you to query it from the host machine.
-
-* Execute `python app/lucas.py` to start the Flask server inside the container. Visit 0.0.0.0 to check the status.
-
-* Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:80/classify` to query the local endpoint with a custom review. The endpoint will run the review over the model and return a classification.
+* Execute `docker run -p 3050:3050 -it classifyreviews`. This will start the docker image with port 80 exposed, allowing you to query it from the host machine.
