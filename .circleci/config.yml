@@ -17,11 +17,10 @@ jobs:
       - run:
           name: setup conda and run tests
           command: |
-            cd LUCAS
             conda update conda
             conda env create -f environment.yml
             source activate lucas
-            cd scripts
+            cd LUCAS/scripts
             pytest
 workflows:
   version: 2
