@@ -14,16 +14,19 @@ model = joblib.load("../models/pipe_svc_1.0.pkl")
         
 @app.route('/')
 def return_status():
-  return 'LUCAS API v0.2.0'
+  return 'LUCAS API v0.2.1'
+
+def classify_review(review):
+  predicted_class = get_classification(model, review)
+  class_confidence = get_confidence(model, review)
+  feature_weights = get_feature_weights(model, review)
+  return{"result": predicted_class, "confidence": class_confidence, "feature_weights": feature_weights}
 
 @app.route('/classify', methods=['POST'])
 def classify():
   review = request.get_json()["review"]
-  predicted_class = get_classification(model, review)
-  class_confidence = get_confidence(model, review)
-  feature_weights = get_feature_weights(model, review)
-  return jsonify(result= predicted_class, confidence= class_confidence, feature_weights=feature_weights)
-
+  return json.dumps(classify_review(review), sort_keys=False)
+  
 @app.route('/bulkClassify', methods=['POST'])
 def bulkClassify():
   weights = []

@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.externals import joblib
+from collections import OrderedDict
 import re
 from os.path import dirname, join, abspath
 from sklearn.model_selection import cross_val_score
@@ -60,13 +61,13 @@ def get_strat_kfolds(X, y, k):
   return X_train, X_test, y_train, y_test
 
 def get_feature_weights(model, review):
-  feature_weights = {}
+  feature_weights = OrderedDict()
   cv = model.named_steps['cv']
   coef = model.named_steps['classifier'].coef_.ravel()
   pattern = re.compile('\W')
   for word in review.split():
-    word = re.sub(pattern, ' ', word)
-    index = cv.vocabulary_.get(word.lower())
+    _word = re.sub(pattern, ' ', word)
+    index = cv.vocabulary_.get(_word.lower())
     feature_weights[word] = coef[index] if index is not None else 0
   return feature_weights
 
