@@ -24,6 +24,13 @@ def classify():
   feature_weights = get_feature_weights(model, review)
   return jsonify(result= predicted_class, confidence= class_confidence, feature_weights=feature_weights)
 
+@app.route('/bulkClassify', methods=['POST'])
+def bulkClassify():
+  weights = []
+  for review in request.get_json()["reviews"]:
+    weights.append(classify_review(review["text"]))
+  return jsonify(weights= weights)
+
 def start():
   app.run(debug=True,host='0.0.0.0', port=3005)
 

@@ -1,2 +1,5 @@
 export const TOGGLE_REVIEW = 'TOGGLE_REVIEW';
+export const TOGGLE_SEARCH_REVIEW = 'TOGGLE_SEARCH_REVIEW';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
+export const SET_WEIGHTS = 'SET_WEIGHTS';
+export const SET_BUSINESS = 'SET_BUSINESS'
