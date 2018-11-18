@@ -45,30 +45,6 @@ class Search extends React.Component {
         this.getReviewWeight(response);
       });
   }
-  displayResults() {
-    const businesses = [];
-    forEach(this.state.yelpSearchResults, (business, index) => {
-      businesses.push(
-        <div key={`business-${index}`} className="box tile" onClick={() => this.getBusinessReviews(business)}>
-          <div className="tile is-parent is-2">
-            <figure className="image is-64x64 tile is-child">
-              <img className="is-rounded" src={business.image_url} />
-            </figure>
-          </div>
-          <div className="tile is-parent is-vertical">
-            <div className="tile is-child">
-              <a href={business.url} target="_blank" rel="noopener noreferrer" className="title">{business.name}</a>
-            </div>
-            <div className="tile is-child">
-              <div>Rating: {business.rating}</div>
-            </div>
-          </div>
-        </div>
-      );
-    });
-
-    return businesses;
-  }
 
   searchYelp() {
     const pattern = /^(https:\/\/www.yelp.(com|ie))/;
@@ -104,16 +80,51 @@ class Search extends React.Component {
         });
     }
   }
+  
 
   updateInputValue(evt) {
     this.setState({
       yelpSearchTerm: evt.target.value
     });
   }
+
+  displaySearchResults() {
+    const businesses = [];
+    forEach(this.state.yelpSearchResults, (business, index) => {
+      businesses.push(
+        <div key={`business-${index}`} className="card mb10" onClick={() => this.getBusinessReviews(business)}>
+          <div className="card-content">
+            <div className="media">
+              <div className="media-left">
+                <figure className="image is-64x64">
+                  <img src={business.image_url} />
+                </figure>
+              </div>
+              <div className="media-content columns">
+                <div className="column is-4">
+                  <a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a>
+                  <div className="has-text-success is-size-4">{business.price}</div>
+                </div>
+                <div className="column is-2">Rating: {business.rating}/5</div>
+                <div className="column is-3">
+                  <div>Address:</div>
+                  <div>{business.location.address1}</div>
+                  <div>{business.location.display_address[1]}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+
+    return businesses;
+  }
+
   render() {
     return (
       <div>
-        <h1 className="pb10 pt10"> Or Paste Yelp Link</h1>
+        <h1 className="pb10 pt10"> Search Yelp or Paste link</h1>
         <div className="field has-addons pb20">
           <div className="control width-100">
             <input className="input" type="text" placeholder="Search Yelp" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} />
@@ -124,8 +135,8 @@ class Search extends React.Component {
             </button>
           </div>
         </div>
-        <div className="tile is-ancestor is-vertical">
-          { this.state.showSearchResults && this.displayResults() }
+        <div>
+          { this.state.showSearchResults && this.displaySearchResults() }
         </div>
       </div>
     );
