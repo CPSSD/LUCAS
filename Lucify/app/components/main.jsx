@@ -14,41 +14,17 @@ const VisibilityContainer = posed.div({
     transition: {
       opacity: { ease: 'easeOut', duration: 300 },
     },
-    applyAtStart: { display: 'block' },
+    applyAtStart: { display: 'block', height: '100%' },
   },
   hidden: {
-    height: 0,
     opacity: 0,
     transition: { ease: 'easeOut', duration: 500 },
     applyAtEnd: {
       display: 'none',
-      height: '100%',
     },
   }
 });
 
-const ReviewInputContainer = posed.div({
-  move: {
-    delay: 400,
-    transition: { duration: 500 },
-  },
-  visible: {
-    opacity: 1,
-    transition: {
-      opacity: { ease: 'easeOut', duration: 300 },
-    },
-    applyAtStart: { display: 'block' },
-  },
-  hidden: {
-    height: 0,
-    opacity: 0,
-    transition: { ease: 'easeOut', duration: 500 },
-    applyAtEnd: {
-      display: 'none',
-      height: '100%',
-    },
-  }
-});
 
 const ResultsContainer = posed.div({
   visible: {
@@ -135,7 +111,7 @@ class Main extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        setReviewWeights({ weights: [response] });
+        setReviewWeights([response]);
         toggleReview(true);
       });
   }
@@ -172,14 +148,12 @@ class Main extends React.Component {
             <Search />
           </VisibilityContainer>
         </VisibilityContainer>
-        <ReviewInputContainer pose={showReviewResults ? 'move' : null}>
-          {this.getGhostField()}
-        </ReviewInputContainer>
         <ResultsContainer pose={showResults ? 'visible' : 'hidden'}>
           {showResults &&
             <Results />
           }
         </ResultsContainer>
+        {this.getGhostField()}
       </div>
     );
   }

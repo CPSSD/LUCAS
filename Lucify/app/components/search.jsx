@@ -109,9 +109,7 @@ class Search extends React.Component {
                 <div className="column is-3">
                   <div>Address:</div>
                   <div>{business.location.address1}</div>
-                  <div>{business.location.address2}</div>
-                  <div>{business.location.address3}</div>
-                  <div>{business.location.city}</div>
+                  <div>{business.location.display_address[1]}</div>
                 </div>
               </div>
             </div>

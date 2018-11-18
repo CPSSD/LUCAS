@@ -1,7 +1,6 @@
 import sys
 from flask import Flask
 from flask import request
-from flask import jsonify
 from flask import json
 from sklearn.externals import joblib
 from os.path import dirname, join, abspath
@@ -20,7 +19,7 @@ def classify_review(review):
   predicted_class = get_classification(model, review)
   class_confidence = get_confidence(model, review)
   feature_weights = get_feature_weights(model, review)
-  return{"result": predicted_class, "confidence": class_confidence, "feature_weights": feature_weights}
+  return{"result": predicted_class, "confidence": class_confidence, "feature_weights": feature_weights, "review": review}
 
 @app.route('/classify', methods=['POST'])
 def classify():
@@ -32,7 +31,7 @@ def bulkClassify():
   weights = []
   for review in request.get_json()["reviews"]:
     weights.append(classify_review(review["text"]))
-  return jsonify(weights= weights)
+  return json.dumps(weights, sort_keys=False)
 
 def start():
   app.run(debug=True,host='0.0.0.0', port=3005)
