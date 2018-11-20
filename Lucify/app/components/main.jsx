@@ -2,36 +2,29 @@ import React from 'react';
 import posed from 'react-pose';
 import { connect } from 'react-redux';
 
-import { toggleReview } from '../actions/index';
+import { toggleReview, setReviewWeights } from '../actions/index';
 import Results from './results';
+import Search from './search';
 
 const DEFAULT_HEIGHT = 50;
 
-const TitleContainer = posed.div({
+const VisibilityContainer = posed.div({
   visible: {
     opacity: 1,
     transition: {
       opacity: { ease: 'easeOut', duration: 300 },
     },
-    applyAtStart: { display: 'block' },
+    applyAtStart: { display: 'block', height: '100%' },
   },
   hidden: {
-    height: 0,
     opacity: 0,
     transition: { ease: 'easeOut', duration: 500 },
     applyAtEnd: {
       display: 'none',
-      height: '100%',
     },
   }
 });
 
-const InputContainter = posed.div({
-  move: {
-    delay: 400,
-    transition: { duration: 500 },
-  }
-});
 
 const ResultsContainer = posed.div({
   visible: {
@@ -106,6 +99,7 @@ class Main extends React.Component {
   }
 
   sendRequest() {
+    const { setReviewWeights, toggleReview} = this.props;
     fetch('/api/review', {
       method: 'POST',
       headers: {
@@ -117,16 +111,17 @@ class Main extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        const { classProbs, result } = response;
-        this.setState({ accuracy: classProbs[0][0].toFixed(2) * 100, result });
-        this.props.toggleReview(true);
+        setReviewWeights([response]);
+        toggleReview(true);
       });
   }
 
   render() {
+    const { showReviewResults, showSearchResults } = this.props;
+    const showResults = showReviewResults || showSearchResults;
     return (
       <div className="hero-body has-text-centered">
-        <TitleContainer className="has-text-centered" pose={!this.props.showResults ? 'visible' : 'hidden'}>
+        <VisibilityContainer className="has-text-centered" pose={!showResults ? 'visible' : 'hidden'}>
           <div className="has-text-centered main-title-container pt20 pb20">
             <h1 className="title main-title is-rounded pb10">
               Lucify
@@ -135,13 +130,13 @@ class Main extends React.Component {
               This is the flagship app, demonstrating the power of the LUCAS API.
             </h2>
           </div>
-        </TitleContainer>
-        <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
-          {this.props.showResults &&
-            <p className="title is-1 pt20">Your Review</p>
-          }
-        </ResultsContainer>
-        <InputContainter pose={this.props.showResults ? 'move' : null}>
+        </VisibilityContainer>
+        <VisibilityContainer pose={!showSearchResults ? 'visible' : 'hidden'}>
+          <ResultsContainer pose={showReviewResults ? 'visible' : 'hidden'}>
+            {showReviewResults &&
+              <p className="title is-1 pt20">Your Review</p>
+            }
+          </ResultsContainer>
           {this.getExpandableField()}
           <button className="button is-primary is-rounded is-medium" onClick={() => this.sendRequest()}>
             <span>
@@ -149,29 +144,32 @@ class Main extends React.Component {
             </span>
             <span className="pl10"><i className="fas fa-arrow-circle-right"></i></span>
           </button>
-          {this.getGhostField()}
-          <ResultsContainer pose={this.props.showResults ? 'visible' : 'hidden'}>
-            {this.props.showResults &&
-              <Results
-                accuracy={this.state.accuracy}
-                result={this.state.result}
-                text={this.state.value}
-              />
-            }
-          </ResultsContainer>
-        </InputContainter>
+          <VisibilityContainer className="has-text-centered" pose={!showReviewResults ? 'visible' : 'hidden'}>
+            <Search />
+          </VisibilityContainer>
+        </VisibilityContainer>
+        <ResultsContainer pose={showResults ? 'visible' : 'hidden'}>
+          {showResults &&
+            <Results />
+          }
+        </ResultsContainer>
+        {this.getGhostField()}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return { showResults: state.toggleReview };
+  return {
+    showReviewResults: state.toggleReview,
+    showSearchResults: state.toggleSearchReview
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    toggleReview: (value) => dispatch(toggleReview(value))
+    toggleReview: (value) => dispatch(toggleReview(value)),
+    setReviewWeights: (weights) => dispatch(setReviewWeights(weights))
   };
 };
 
