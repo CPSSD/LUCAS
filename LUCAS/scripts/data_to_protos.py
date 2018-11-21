@@ -13,7 +13,9 @@ def id_func(map, key):
   return len(map)
 
 def protify_data(data_directory):
+
   # NYC
+
   review_set = review_set_pb2.ReviewSet()
   with open(os.path.normpath(data_directory + '/YelpData/YelpNYC/reviewContent'), 'r') as f1:
     with open(os.path.normpath(data_directory + '/YelpData/YelpNYC/metadata'), 'r') as f2:
