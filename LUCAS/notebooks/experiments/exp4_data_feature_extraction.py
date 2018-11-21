@@ -48,7 +48,7 @@ def dense_features_maker(reviews_words, num_topics=100):
 
 def get_balanced_dataset():
   review_set = review_set_pb2.ReviewSet()
-  with open("data/yelpZip", 'rb') as f:
+  with open("../../data/normalizedData/yelpZip", 'rb') as f:
     review_set.ParseFromString(f.read())
 
   fake_reviews = list(filter(lambda x: x.label, review_set.reviews))
