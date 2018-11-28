@@ -3,6 +3,7 @@ from scipy.sparse import coo_matrix, hstack
 from sklearn.utils import shuffle
 from protos import review_set_pb2, review_pb2
 import gensim
+import exp2_feature_extraction
 from exp2_feature_extraction import reviews_by_reviewer
 from exp2_feature_extraction import reviewer_features
 from exp2_feature_extraction import preprocess_words, topic_features
@@ -48,7 +49,7 @@ def dense_features_maker(reviews_words, num_topics=100):
 
 def get_balanced_dataset():
   review_set = review_set_pb2.ReviewSet()
-  with open("data/yelpZip", 'rb') as f:
+  with open("../../data/normalizedData/yelpZip", 'rb') as f:
     review_set.ParseFromString(f.read())
 
   fake_reviews = list(filter(lambda x: x.label, review_set.reviews))
@@ -66,4 +67,3 @@ def get_balanced_dataset():
       unused_genuine_reviews.append(review)
   return shuffle(fake_reviews + genuine_reviews), fake_reviews,\
          genuine_reviews, unused_genuine_reviews
-  
