@@ -13,6 +13,7 @@ class Search extends React.Component {
   }
 
   getReviewWeight(reviews) {
+
     fetch('/api/review/bulk', {
       method: 'POST',
       headers: {
@@ -29,20 +30,38 @@ class Search extends React.Component {
       });
   }
 
-  getBusinessReviews(business) {
-    fetch('/api/yelp/reviews', {
+  getReviewsFromGoogle(response) {
+    const placeId = JSON.parse(response).candidates[0].place_id;
+    fetch('/api/places/details', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        alias: business.alias
+        placeId
+      })
+    })
+      .then((res) => res.json())
+      .then((reviewRes) => {
+        const { reviews } = JSON.parse(reviewRes).result;
+        this.getReviewWeight(reviews);
+      });
+  }
+
+  getBusinessReviews(business) {
+    fetch('/api/places/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        input: [business.name, business.location.display_address].join()
       })
     })
       .then((res) => res.json())
       .then((response) => {
         this.props.setBusiness(business);
-        this.getReviewWeight(response);
+        this.getReviewsFromGoogle(response);
       });
   }
 

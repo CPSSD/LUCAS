@@ -4,5 +4,7 @@ router.use('/review', require('./review'));
 
 router.use('/yelp', require('./yelp'));
 
+router.use('/places', require('./places'));
+
 
 module.exports = router;
