@@ -3,6 +3,7 @@ from scipy.sparse import coo_matrix, hstack
 from sklearn.utils import shuffle
 from protos import review_set_pb2, review_pb2
 import gensim
+import exp2_feature_extraction
 from exp2_feature_extraction import reviews_by_reviewer
 from exp2_feature_extraction import reviewer_features
 from exp2_feature_extraction import preprocess_words, topic_features
@@ -66,4 +67,3 @@ def get_balanced_dataset():
       unused_genuine_reviews.append(review)
   return shuffle(fake_reviews + genuine_reviews), fake_reviews,\
          genuine_reviews, unused_genuine_reviews
-  
