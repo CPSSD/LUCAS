@@ -1,12 +1,14 @@
 name: lucas
 dependencies:
-  - python
+  - python=3.6
   - nomkl # prefers the non-mkl version of numpy and pandas, saving ~500mb
   - nltk
   - flask
   - numpy
+  - keras
   - pandas
   - jupyter
+  - tensorflow
   - nb_conda
   - ipykernel
   - scikit-learn
