@@ -10,3 +10,5 @@ LUCAS/notebooks/data/
 *__pycache__
 *.pytest_cache
 .vscode/*
+*.npy
+*.kv
