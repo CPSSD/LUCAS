@@ -1,10 +1,6 @@
 const router = require('express').Router();
 const rp = require('request-promise');
 
-
-const API_KEY = 'AIzaSyB7PR5Uv46LMRc44pUkQ7r2R5ZJI7BaXa8';
-
-
 router.post('/search', (req, res) => {
 
   if (!req.body.input) {
@@ -15,7 +11,7 @@ router.post('/search', (req, res) => {
     method: 'POST',
     uri: 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
     qs: {
-      key: API_KEY,
+      key: process.env.GOOGLE_API_KEY,
       inputtype: 'textquery',
       input: req.body.input
     },
@@ -37,7 +33,7 @@ router.post('/details', (req, res) => {
     method: 'POST',
     uri: 'https://maps.googleapis.com/maps/api/place/details/json',
     qs: {
-      key: API_KEY,
+      key: process.env.GOOGLE_API_KEY,
       placeid: req.body.placeId,
       fields: 'review'
     },
