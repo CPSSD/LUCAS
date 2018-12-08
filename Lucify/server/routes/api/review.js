@@ -8,8 +8,7 @@ router.post('/', (req, res) => {
 
   const options = {
     method: 'POST',
-    uri: 'http://localconst rp = require('request-promise');
-host:3005/classify',
+    uri: 'http://localconsthost:3005/classify',
     body: {
       review: req.body.review,
     },

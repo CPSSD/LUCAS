@@ -2,6 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const logger = require('./util//logger');
+const mongodb = require('./db/mongo');
 
 const argv = require('./util/argv');
 const port = require('./util//port');
@@ -41,5 +42,7 @@ app.listen(port, host, (err) => {
   }
   logger.appStarted(port, prettyHost);
 });
+
+mongodb.connectDB();
 
 module.exports = app;
