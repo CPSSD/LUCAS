@@ -19,7 +19,7 @@ const PALETTE = [
 
 class Results extends Component {
   getWordColour(confidence) {
-    const fixedConfidence = confidence.toFixed(2);
+    const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
     switch (true) {
       case (fixedConfidence > 0.75):
         return PALETTE[0];

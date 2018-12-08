@@ -2,9 +2,7 @@ const router = require('express').Router();
 const yelp = require('yelp-fusion');
 const fs = require('fs');
 
-
-const API_KEY = 'yXN2VdMz6Vlc0cGMiQVg3SsMqMhaqgr9uxtXEI95RvC74UBMfu7OoxyJ6GhOdaXA7-fWIWBA_KyPI8VwYketxsQ_eLXrqlsOyktgQSRvaXOhkdFV_MnAQ2wR8NnqW3Yx';
-const client = yelp.client(API_KEY);
+const client = yelp.client(process.env.YELP_API_KEY);
 
 router.post('/search', (req, res) => {
 
