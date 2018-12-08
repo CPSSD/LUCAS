@@ -2,19 +2,25 @@
 import React, { Component } from 'react';
 import CountUp from 'react-countup';
 import cx from 'classnames';
-import { forEach } from 'lodash';
+import Slider from 'react-slick';
+import { forEach, groupBy } from 'lodash';
 import { connect } from 'react-redux';
+import ShowMore from '@tedconf/react-show-more';
+
+const googleLogo = require('../../public/google.svg');
+
+const yelpLogo = require('../../public/yelp.svg');
 
 const PALETTE = [
-  '#e0312f',
-  '#e65b22',
-  '#ed9217',
-  '#e2a822',
+  '#8b0000',
+  '#cd3205',
+  '#f67527',
+  '#ffbe73',
   '#000000',
-  '#b0c323',
-  '#75bb25',
-  '#47d131',
-  '#46bc48'
+  '#81e973',
+  '#3abf2f',
+  '#0f910a',
+  '#006400'
 ];
 
 class Results extends Component {
@@ -77,7 +83,7 @@ class Results extends Component {
     );
   }
 
-  renderVerdict(verdict, index) {
+  renderVerdict(verdict) {
     const verdictClasses = cx({
       pl10: true,
       'has-text-danger': verdict === 'Deceptive',
@@ -95,7 +101,6 @@ class Results extends Component {
 
     return (
       <p className="card-header-title is-2">
-        Review {index + 1}:
         <span className={verdictClasses}> {verdict}</span>
         <span className="pl10"><i className={iconClasses}></i></span>
       </p>
@@ -109,7 +114,7 @@ class Results extends Component {
       const wordValue = featureWeights[value];
       const color = this.getWordColour(wordValue);
       reviewText.push(
-        <span key={`${value}-${index}`} style={{ color: color }}>{value}</span>
+        <span key={`${value}-${index}`} style={{ color }}>{value}</span>
       );
       reviewText.push(<span key={`${value}-${index}-2`}> </span>);
     });
@@ -118,64 +123,191 @@ class Results extends Component {
     );
   }
 
-  render() {
-    const { weights, business } = this.props;
-    const resultsArray = [];
-    weights.sort((first, second) => this.compareConfidence(first, second));
-    forEach(weights, (weight, index) => {
-      const { confidence, result, feature_weights, review} = weight;
-      resultsArray.push(
-        <div className="is-fluid pt20" key={`result-${index}`}>
-          <div className="tile is-ancestor">
-            <div className="tile is-parent">
-              <div className="tile is-child">
-                <div className="card">
-                  <div className="card-header">
-                    {this.renderVerdict(result, index)}
-                    <div className="card-header-title is-3">
-                      Confidence:
-                      {this.renderAccuracy(this.calculateAccuracy(confidence))}
-                    </div>
-                  </div>
-                  <div className="card-content">
-                    {this.renderReview(feature_weights, review)}
-                  </div>
+  renderCarousel(business) {
+    const photos = business.photos ? business.photos : [business.image_url];
+    const businessPhotos = photos.map((photo, index) => {
+      return (
+        <img className="is-background" src={photo} alt="" width="100" height="100" key={index} />
+      );
+    });
+
+    const settings = {
+      dots: true,
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+    };
+
+    return (
+      <div className="tile is-child is-12">
+        <Slider {...settings}>
+          {businessPhotos}
+        </Slider>
+      </div>
+    );
+  }
+
+  renderBusiness(business) {
+    return (
+      <section className="section">
+        <h1 className="title is-1"><a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a></h1>
+        <div className="container tile is-ancestor">
+          <div className="tile is-parent is-2">
+            {this.renderCarousel(business)}
+          </div>
+          <div className="tile is-parent is-vertical is-10">
+            <div className="level tile is-child columns">
+              <div className="level-item has-text-centered column">
+                <div>
+                  <p className="heading">Rating</p>
+                  <p className="title">{business.rating}/5</p>
+                </div>
+              </div>
+              <div className="level-item has-text-centered column">
+                <div>
+                  <p className="heading">Price</p>
+                  <p className="title">{business.price}</p>
+                </div>
+              </div>
+              <div className="level-item has-text-centered column">
+                <div>
+                  <p className="heading">Phone</p>
+                  <p>{business.phone}</p>
+                </div>
+              </div>
+              <div className="level-item has-text-centered column">
+                <div>
+                  <p className="heading">Address</p>
+                  <p>{business.location.display_address[0]}</p>
+                  <p>{business.location.display_address[1]}</p>
+                  <p>{business.location.display_address[2]}</p>
+                  <p>{business.location.display_address[3]}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      );
-    });
+      </section>
+    );
+  }
 
+  renderResults(weights) {
+    weights.sort((first, second) => this.compareConfidence(first, second));
     return (
-      <div>
-        {business &&
-          <div className="card mb10">
-            <div className="card-content">
-              <div className="media">
-                <div className="media-left">
-                  <figure className="image is-64x64">
-                    <img src={business.image_url} />
-                  </figure>
-                </div>
-                <div className="media-content columns">
-                  <div className="column is-4">
-                    <a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a>
-                    <div className="has-text-success is-size-4">{business.price}</div>
-                  </div>
-                  <div className="column is-2">Rating: {business.rating}/5</div>
-                  <div className="column is-3">
-                    <div>Address:</div>
-                    <div>{business.location.address1}</div>
-                    <div>{business.location.display_address[1]}</div>
-                  </div>
-                </div>
+      <div className="tile is-child">
+        <ShowMore items={weights}>
+          {({ current, onMore }) => (
+            <div>
+              {current.map((weight, index) => {
+                const {
+                  confidence, result, feature_weights, review
+                } = weight;
+                if (review !== '') {
+                  return (
+                    <div className="is-fluid pt20" key={`result-${index}`}>
+                      <div className="tile is-ancestor">
+                        <div className="tile is-parent">
+                          <div className="tile is-child">
+                            <div className="card">
+                              <div className="card-header">
+                                {this.renderVerdict(result, index)}
+                                <div className="card-header-title is-3">
+                                  Confidence:
+                                  {this.renderAccuracy(this.calculateAccuracy(confidence))}
+                                </div>
+                              </div>
+                              <div className="card-content">
+                                {this.renderReview(feature_weights, review)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+              <button
+                className="button is-outlined is-primary mt20"
+                disabled={!onMore}
+                onClick={() => onMore()}
+              >
+                Show More
+              </button>
+            </div>
+          )}
+        </ShowMore>
+      </div>
+    );
+  }
+
+  renderYelpResults(weights) {
+    const { datasetWeightsLoaded } = this.props;
+    if (!datasetWeightsLoaded) {
+      return (
+        <div className="tile is-child">
+          <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+          <div className="heading">Please Wait getting Yelp reviews..</div>
+        </div>
+      );
+    }
+    return this.renderResults(weights);
+  }
+
+  render() {
+    const { weights, datasetWeights } = this.props;
+    const sortedWeights = groupBy(weights, 'result');
+    const sortedDatasetWeights = groupBy(datasetWeights, 'result');
+    return (
+      <div className="container">
+        {this.props.business &&
+          this.renderBusiness(this.props.business)
+        }
+        <div className="level">
+          <div className="level-left">
+            <div className="level-item has-text-centered">
+              <figure className="image logo">
+                <img src={googleLogo} />
+              </figure>
+            </div>
+          </div>
+          <div className="level-right">
+            <div className="level-item">
+              <div className="level-item has-text-centered">
+                <figure className="image logo">
+                  <img src={yelpLogo} />
+                </figure>
               </div>
             </div>
           </div>
-        }
-        {resultsArray}
+        </div>
+        <div className="level">
+          <div className="level-item has-text-centered">
+            <p className="title">Best Reviews</p>
+          </div>
+        </div>
+        <div className="tile is-ancestor">
+          <div className="tile is-parent">
+            {this.renderResults(sortedWeights.Genuine)}
+          </div>
+          <div className="tile is-parent">
+            {this.renderYelpResults(sortedDatasetWeights.Genuine)}
+          </div>
+        </div>
+        <div className="level">
+          <div className="level-item has-text-centered">
+            <p className="title">Worst Reviews</p>
+          </div>
+        </div>
+        <div className="tile is-ancestor">
+          <div className="tile is-parent">
+            {this.renderResults(sortedWeights.Deceptive)}
+          </div>
+          <div className="tile is-parent">
+            {this.renderYelpResults(sortedDatasetWeights.Deceptive)}
+          </div>
+        </div>
       </div>
     );
   }
@@ -185,7 +317,9 @@ class Results extends Component {
 const mapStateToProps = (state) => {
   return {
     weights: state.weights,
-    business: state.business
+    business: state.business,
+    datasetWeightsLoaded: state.datasetWeightsLoaded,
+    datasetWeights: state.datasetWeights
   };
 };
 

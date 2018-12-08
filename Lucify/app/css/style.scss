@@ -1,6 +1,7 @@
 @charset "utf-8";
 $family-sans-serif: "Proxima Nova", sans-serif;
 @import "~bulma/bulma";
+@import "./loader";
 @import "./helpers";
 
 
@@ -10,7 +11,6 @@ body, .hero{
 
 .hero-body {
   padding-top: 0px !important;
-  padding: 0 20vw 0 20vw;
 }
 
 .main-fakereview-textarea {
@@ -46,7 +46,7 @@ body, .hero{
 .main-title {
   font-weight: bold;
   background-color: lightgrey;
-  font-size: 9rem;
+  font-size: 7rem;
   font-family: 'Playfair Display', serif;
   border-radius: 90px;
 }
@@ -58,4 +58,23 @@ body, .hero{
   border-radius: 90px;
   padding: 0 30px 0 30px;
   margin: 5px 0 5px 0;
+}
+
+.single-review-button {
+  text-decoration: underline;
+  color: darkgray;
+  font: 0.5em;
+}
+
+.slick-next {
+  background-color: grey !important;
+  border-radius: 90px !important;
+}
+.slick-prev {
+  background-color: grey !important;
+  border-radius: 90px !important;
+}
+
+.logo {
+  width: 128px;
 }

@@ -18,6 +18,8 @@ const App = () => (
         <title>Lucify</title>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet"></link>
+        <link rel="stylesheet" type="text/css" charset="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
         <link rel="stylesheet" href="style.scss" />
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
