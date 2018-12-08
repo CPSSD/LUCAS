@@ -14,38 +14,18 @@ module.exports = {
     });
   },
   findBusinessById: (business_id) => {
-    Business.find({ business_id })
-      .then((err, business) => {
-        if (err) return console.log(err);
-        return business;
-      });
+    return Business.findOne({ business_id });
   },
   findUserById: (user_id) => {
-    User.find({ user_id })
-      .then((err, user) => {
-        if (err) return console.log(err);
-        return user;
-      });
+    return User.findOne({ user_id });
   },
   findReviewsByBusinessId: (business_id) => {
-    Review.find({ business_id })
-      .then((err, reviews) => {
-        if (err) return console.log(err);
-        return reviews;
-      });
+    return Review.find({ business_id }, { user_id: 1, date: 1, stars: 1, text: 1 });
   },
   findReviewsByUserId: (user_id) => {
-    Review.find({ user_id })
-      .then((err, reviews) => {
-        if (err) return console.log(err);
-        return reviews;
-      });
+    return Review.find({ user_id }, { business_id: 1, date: 1, stars: 1, text: 1 });
   },
   findReviewsByBusinessIdAndUserId: (business_id, user_id) => {
-    Review.find({ business_id, user_id })
-      .then((err, reviews) => {
-        if (err) return console.log(err);
-        return reviews;
-      });
+    return Review.find({ business_id, user_id }, { date: 1, stars: 1, text: 1 });
   },
 };
