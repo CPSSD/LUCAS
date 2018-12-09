@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import CountUp from 'react-countup';
 import cx from 'classnames';
 import Slider from 'react-slick';
-import { forEach, groupBy } from 'lodash';
+import { forEach, groupBy, map, pickBy, union } from 'lodash';
 import { connect } from 'react-redux';
 import ShowMore from '@tedconf/react-show-more';
+import WordCloud from 'react-d3-cloud';
+
 
 const googleLogo = require('../../public/google.svg');
 
@@ -255,6 +257,26 @@ class Results extends Component {
     return this.renderResults(weights);
   }
 
+  renderWordCloud(weights, datasetWeights) {
+    const featureWeights1 = map(weights, 'feature_weights');
+    const featureWeights2 = map(datasetWeights, 'feature_weights');
+    const mergedFeatureWeights = Object.assign(...union(featureWeights1,featureWeights2));
+    const filteredFeatureWeights = pickBy(mergedFeatureWeights, (val) =>{
+      return val !== 0;
+    });
+    const data = [];
+    for (let key in filteredFeatureWeights) {
+      const currentVal = this.calculateAccuracy(filteredFeatureWeights[key]);
+      data.push({ text: key, value: currentVal});
+    }
+    return (<WordCloud
+      data={data}
+      width={1400}
+      height={300}
+    />);
+  }
+
+
   render() {
     const { weights, datasetWeights } = this.props;
     const sortedWeights = groupBy(weights, 'result');
@@ -307,6 +329,14 @@ class Results extends Component {
           <div className="tile is-parent">
             {this.renderYelpResults(sortedDatasetWeights.Deceptive)}
           </div>
+        </div>
+        <div className="level">
+          <div className="level-item has-text-centered">
+            <p className="title">Word Cloud</p>
+          </div>
+        </div>
+        <div>
+          {this.renderWordCloud(weights, datasetWeights)}
         </div>
       </div>
     );
