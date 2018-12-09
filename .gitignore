@@ -14,3 +14,4 @@ wordvec
 *.npy
 *.kv
 .env
+*.h5
