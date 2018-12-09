@@ -53,8 +53,11 @@ class Results extends Component {
   }
 
   setFontWeight(confidence) {
-    const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
-    return 500;
+    const fixedConfidence = confidence ? Math.abs(confidence.toFixed(2)) + 1 : 0;
+    if (500 * fixedConfidence > 900) {
+      return 900;
+    }
+    return 500 * fixedConfidence;
   }
 
   calculateAccuracy(confidence) {
@@ -66,7 +69,6 @@ class Results extends Component {
     return positiveConfidence * 100;
   }
   
-
   compareConfidence(first, second) {
     const firstAccuracy = this.calculateAccuracy(first.confidence);
     const secondAccuracy = this.calculateAccuracy(second.confidence);
@@ -115,8 +117,6 @@ class Results extends Component {
       </p>
     );
   }
-
-
 
   renderReview(featureWeights, review) {
     const splitReview = review.split(' ');
