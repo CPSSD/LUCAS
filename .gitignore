@@ -9,6 +9,9 @@ LUCAS/notebooks/data/
 *__pycache__
 *.pytest_cache
 .vscode
+wordvec
+*.npy
+*.kv
 .env
 wordvec
 models

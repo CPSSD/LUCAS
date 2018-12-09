@@ -52,7 +52,7 @@ def get_accuracy(model, X, y, cv):
 
 def get_strat_kfolds(X, y, k):
   from sklearn.model_selection import StratifiedKFold
-  skf = StratifiedKFold(n_splits=5, random_state=None)
+  skf = StratifiedKFold(n_splits=k, random_state=None)
   # X is the feature set and y is the target
   for train_index, test_index in skf.split(X,y): 
     print("Train:", train_index, "Validation:", test_index) 
