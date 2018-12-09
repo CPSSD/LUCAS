@@ -3,9 +3,6 @@ import keras
 from keras import regularizers
 from keras.preprocessing import text
 import numpy as np
-import os
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from scripts.training_helpers import pickle_model, get_data_frame
 
