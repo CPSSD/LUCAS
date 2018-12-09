@@ -41,6 +41,7 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
+        console.log(response);
         this.props.setDatasetReviewWeights(response);
         this.props.datasetWeightsLoaded(true);
       });

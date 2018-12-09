@@ -52,13 +52,20 @@ class Results extends Component {
     }
   }
 
+  setFontWeight(confidence) {
+    const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
+    return 500;
+  }
+
   calculateAccuracy(confidence) {
-    let positiveConfidence = Math.abs(confidence.toFixed(2));
+    const number = parseFloat(confidence);
+    let positiveConfidence = Math.abs(number.toFixed(2));
     if (positiveConfidence > 1) {
       positiveConfidence = 1;
     }
     return positiveConfidence * 100;
   }
+  
 
   compareConfidence(first, second) {
     const firstAccuracy = this.calculateAccuracy(first.confidence);
@@ -109,6 +116,8 @@ class Results extends Component {
     );
   }
 
+
+
   renderReview(featureWeights, review) {
     const splitReview = review.split(' ');
     const reviewText = [];
@@ -116,7 +125,7 @@ class Results extends Component {
       const wordValue = featureWeights[value];
       const color = this.getWordColour(wordValue);
       reviewText.push(
-        <span key={`${value}-${index}`} style={{ color }}>{value}</span>
+        <span key={`${value}-${index}`} style={{ color, fontWeight: this.setFontWeight(wordValue) }}>{value}</span>
       );
       reviewText.push(<span key={`${value}-${index}-2`}> </span>);
     });
@@ -194,6 +203,11 @@ class Results extends Component {
   }
 
   renderResults(weights) {
+    if (!weights) {
+      return (
+        <h1>No Review Matched</h1>
+      );
+    }
     weights.sort((first, second) => this.compareConfidence(first, second));
     return (
       <div className="tile is-child">
@@ -218,7 +232,7 @@ class Results extends Component {
                                   {this.renderAccuracy(this.calculateAccuracy(confidence))}
                                 </div>
                               </div>
-                              <div className="card-content">
+                              <div className="card-content review">
                                 {this.renderReview(feature_weights, review)}
                               </div>
                             </div>
