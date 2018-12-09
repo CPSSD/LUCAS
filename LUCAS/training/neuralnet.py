@@ -48,24 +48,4 @@ final_model.compile(optimizer='adam',
 history = final_model.fit(X, y, epochs=12, batch_size=16, validation_split=0.3, verbose=1)
 final_model.save('../models/mlp_opspam_86.h5')
 
-acc = history.history['acc']
-val_acc = history.history['val_acc']
-loss = history.history['loss']
-val_loss = history.history['val_loss']
-
-epochs = range(1, len(acc) + 1)
-
-# "bo" is for "blue dot"
-plt.plot(epochs, loss, 'b', label='Training loss')
-# b is for "solid blue line"
-plt.plot(epochs, val_loss, 'bo', label='Validation loss')
-plt.plot(epochs, acc, 'r', label='Training acc')
-plt.plot(epochs, val_acc, 'ro', label='Validation acc')
-
-plt.title('Training and validation losses and accuracies')
-plt.xlabel('Epochs')
-plt.ylabel('Loss & Acc')
-plt.legend()
-plt.show()
-
 

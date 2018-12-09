@@ -2,7 +2,6 @@ import sys
 from flask import Flask
 from flask import request
 from flask import json
-import numpy as np
 import keras
 from keras.preprocessing import text
 from sklearn.externals import joblib
@@ -22,7 +21,7 @@ def return_status():
   return 'LUCAS API v0.3.0'
 
 def classify_review(review):
-  tokenized_review = np.array(tokenizer.texts_to_matrix([review], mode='tfidf'))
+  tokenized_review = tokenizer.texts_to_matrix([review], mode='tfidf')
   class_confidence = get_classification(neural_model, tokenized_review)[0][0]
   predicted_class = 'Genuine' if class_confidence < 0 else 'Deceptive'
   feature_weights = get_feature_weights(stat_model, review)
