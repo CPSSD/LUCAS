@@ -99,7 +99,6 @@ class SingleReview extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
         setReviewWeights([response]);
         toggleReview(true);
       });

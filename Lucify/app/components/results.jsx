@@ -68,7 +68,7 @@ class Results extends Component {
     }
     return positiveConfidence * 100;
   }
-  
+
   compareConfidence(first, second) {
     const firstAccuracy = this.calculateAccuracy(first.confidence);
     const secondAccuracy = this.calculateAccuracy(second.confidence);
