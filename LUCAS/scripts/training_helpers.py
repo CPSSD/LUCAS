@@ -72,7 +72,7 @@ def get_feature_weights(model, review):
   return feature_weights
 
 def get_classification(model, review):
-  return ('Genuine' if model.predict([review]) == 0 else 'Deceptive')
+  return model.predict([review])
 
 def get_confidence(model, review):
   return (model.decision_function([review])[0])

@@ -5,13 +5,15 @@ logs
 npm-debug.log
 LUCAS/data/*
 LUCAS/notebooks/data/
-*.pkl
 *.ipynb_checkpoints/
 *__pycache__
 *.pytest_cache
-.vscode/*
+.vscode
 wordvec
 *.npy
 *.kv
 .env
 *.h5
+wordvec
+models
+
