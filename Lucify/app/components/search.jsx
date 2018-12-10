@@ -224,7 +224,7 @@ class Search extends React.Component {
       <div className="container">
         <div className="field has-addons pb20">
           <div className="control width-100">
-            <input className="input" type="text" placeholder="Search Yelp" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
+            <input className="input" type="text" placeholder="‘Search Yelp or enter a link to a Yelp business page" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
           </div>
           <div className="control">
             <button className="button is-primary" onClick={() => this.searchYelp()}>
