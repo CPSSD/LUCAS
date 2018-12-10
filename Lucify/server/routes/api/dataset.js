@@ -19,21 +19,38 @@ router.post('/getUser', (req, res) => {
 });
 
 router.post('/getBusiness', (req, res) => {
-
-  if (!req.body.business_id) {
-    return res.status(422).json({ errors: { business_id: "can't be blank" } });
+  const { business_id, categories } = req.body;
+  if (!business_id && !categories) {
+    return res.status(422).json({ errors: { fields: "can't be blank" } });
   }
 
-  mongodb.findBusinessById(req.body.business_id).exec()
-    .then((business) => {
-      res.status(200).json(business);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+  if (business_id) {
+    mongodb.findBusinessById(business_id).exec()
+      .then((business) => {
+        res.status(200).json(business);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
+  } else {
+    mongodb.getRandomBusiness(categories).exec()
+      .then((count) => {
+        mongodb.findBusinessByCategories(categories, count).exec()
+          .then((business) => {
+            res.status(200).json(business);
+          })
+          .catch((err) => {
+            res.status(500).json(err);
+          });
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
+  }
 
   return res;
 });
+
 
 router.post('/getReviews', (req, res) => {
   const { user_id, business_id } = req.body;

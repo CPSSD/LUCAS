@@ -2,6 +2,8 @@ import sys
 from flask import Flask
 from flask import request
 from flask import json
+import keras
+from keras.preprocessing import text
 from sklearn.externals import joblib
 from os.path import dirname, join, abspath
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
@@ -9,17 +11,22 @@ from scripts.training_helpers import get_feature_weights, get_classification, ge
 
 app = Flask(__name__)
 
-model = joblib.load("../models/pipe_svc_1.0.pkl")  
+stat_model = joblib.load("../models/pipe_svc_1.0.pkl")  
+neural_model = keras.models.load_model('../models/mlp_opspam_86.h5')
+neural_model._make_predict_function()
+tokenizer = joblib.load('../models/opspam_tokenizer.pkl')
         
 @app.route('/')
 def return_status():
-  return 'LUCAS API v0.2.1'
+  return 'LUCAS API v0.3.0'
 
 def classify_review(review):
-  predicted_class = get_classification(model, review)
-  class_confidence = get_confidence(model, review)
-  feature_weights = get_feature_weights(model, review)
-  return{"result": predicted_class, "confidence": class_confidence, "feature_weights": feature_weights, "review": review}
+  tokenized_review = tokenizer.texts_to_matrix([review], mode='tfidf')
+  classification = get_classification(neural_model, tokenized_review)[0][0]
+  class_confidence = abs(classification - 0.5)*2
+  predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
+  feature_weights = get_feature_weights(stat_model, review)
+  return{"result": predicted_class, "confidence": str(class_confidence), "feature_weights": feature_weights, "review": review}
 
 @app.route('/classify', methods=['POST'])
 def classify():
