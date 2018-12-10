@@ -13,5 +13,7 @@ wordvec
 *.npy
 *.kv
 .env
+*.h5
 wordvec
 models
+

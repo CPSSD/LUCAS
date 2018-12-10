@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { forEach } from 'lodash';
 
-import { toggleSearchReview, setReviewWeights, setBusiness } from '../actions/index';
+import { toggleSearchReview, setReviewWeights, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
@@ -13,7 +13,6 @@ class Search extends React.Component {
   }
 
   getReviewWeight(reviews) {
-
     fetch('/api/review/bulk', {
       method: 'POST',
       headers: {
@@ -27,6 +26,23 @@ class Search extends React.Component {
       .then((response) => {
         this.props.setReviewWeights(response);
         this.props.toggleSearchReview(true);
+      });
+  }
+
+  getDatasetReviewWeights(reviews) {
+    fetch('/api/review/bulk', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        reviews
+      })
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        this.props.setDatasetReviewWeights(response);
+        this.props.datasetWeightsLoaded(true);
       });
   }
 
@@ -48,7 +64,64 @@ class Search extends React.Component {
       });
   }
 
+  getReviewsFromDataset(business_id) {
+    fetch('/api/dataset/getReviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        business_id,
+      })
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        this.getDatasetReviewWeights(response);
+      });
+  }
+
+  getRandomBusiness(categories) {
+    fetch('/api/dataset/getBusiness', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        categories,
+      })
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        this.getReviewsFromDataset(response.business_id);
+      });
+  }
+
+  getReviewsFromDB(business_id,categories) {
+    const query = [];
+    forEach(categories, (category) => {
+      query.push(category.title);
+    });
+    fetch('/api/dataset/getBusiness', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        business_id,
+      })
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (!response) {
+          this.getRandomBusiness(query.join());
+        } else {
+          this.getReviewsFromDataset(response.business_id);
+        }
+      });
+  }
+
   getBusinessReviews(business) {
+    this.getReviewsFromDB(business.id, business.categories);
     fetch('/api/places/search', {
       method: 'POST',
       headers: {
@@ -82,7 +155,7 @@ class Search extends React.Component {
           this.setState({ yelpSearchResults: response, showSearchResults: true });
         });
     } else {
-      const urlPattern = /(?<=biz\/)(.*?)(?=\?)/;
+      const urlPattern = /(?<=biz\/)(.*?)(?=(\?|$))/;
       const alias = urlPattern.exec(this.state.yelpSearchTerm);
       fetch('/api/yelp/business', {
         method: 'POST',
@@ -140,13 +213,18 @@ class Search extends React.Component {
     return businesses;
   }
 
+  handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      this.searchYelp();
+    }
+  }
+
   render() {
     return (
-      <div>
-        <h1 className="pb10 pt10"> Search Yelp or Paste link</h1>
+      <div className="container">
         <div className="field has-addons pb20">
           <div className="control width-100">
-            <input className="input" type="text" placeholder="Search Yelp" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} />
+            <input className="input" type="text" placeholder="‘Search Yelp or enter a link to a Yelp business page" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
           </div>
           <div className="control">
             <button className="button is-primary" onClick={() => this.searchYelp()}>
@@ -155,6 +233,9 @@ class Search extends React.Component {
           </div>
         </div>
         <div>
+          <a role="button" onClick={() => this.props.toggleSingleReview(!this.props.showSingleReview)} className="pb10 single-review-button">or submit your own review</a>
+        </div>
+        <div className="mt30">
           { this.state.showSearchResults && this.displaySearchResults() }
         </div>
       </div>
@@ -163,13 +244,19 @@ class Search extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { showResults: state.toggleReview };
+  return {
+    showResults: state.toggleReview,
+    showSingleReview: state.toggleSingleReview
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     toggleSearchReview: (value) => dispatch(toggleSearchReview(value)),
+    toggleSingleReview: (value) => dispatch(toggleSingleReview(value)),
+    datasetWeightsLoaded: (value) => dispatch(datasetWeightsLoaded(value)),
     setReviewWeights: (weights) => dispatch(setReviewWeights(weights)),
+    setDatasetReviewWeights: (weights) => dispatch(setDatasetReviewWeights(weights)),
     setBusiness: (business) => dispatch(setBusiness(business))
   };
 };
