@@ -28,5 +28,5 @@ final_model = keras.Sequential([
 final_model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
-history = final_model.fit(X, y, epochs=12, batch_size=16, validation_split=0.3, verbose=1)
+history = final_model.fit(X, y, epochs=12, batch_size=16, validation_split=0.1, verbose=1)
 final_model.save('../models/mlp_opspam_86.h5')
