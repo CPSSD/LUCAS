@@ -22,8 +22,9 @@ def return_status():
 
 def classify_review(review):
   tokenized_review = tokenizer.texts_to_matrix([review], mode='tfidf')
-  class_confidence = get_classification(neural_model, tokenized_review)[0][0]
-  predicted_class = 'Genuine' if class_confidence < 0 else 'Deceptive'
+  classification = get_classification(neural_model, tokenized_review)[0][0]
+  class_confidence = abs(classification - 0.5)*2
+  predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
   feature_weights = get_feature_weights(stat_model, review)
   return{"result": predicted_class, "confidence": str(class_confidence), "feature_weights": feature_weights, "review": review}
 
