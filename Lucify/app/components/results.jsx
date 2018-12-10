@@ -285,7 +285,7 @@ class Results extends Component {
     }
     return (<WordCloud
       data={data}
-      width={1400}
+      width={900}
       height={300}
     />);
   }
@@ -303,24 +303,22 @@ class Results extends Component {
         <div className="level">
           <div className="level-left">
             <div className="level-item has-text-centered">
-              <figure className="image logo">
-                <img src={googleLogo} />
-              </figure>
+              <p className="title">Best Reviews</p>
             </div>
           </div>
           <div className="level-right">
             <div className="level-item">
               <div className="level-item has-text-centered">
-                <figure className="image logo">
-                  <img src={yelpLogo} />
-                </figure>
+                <p className="title">Worst Reviews</p>
               </div>
             </div>
           </div>
         </div>
         <div className="level">
           <div className="level-item has-text-centered">
-            <p className="title">Best Reviews</p>
+            <figure className="image logo">
+              <img src={googleLogo} />
+            </figure>
           </div>
         </div>
         <div className="tile is-ancestor">
@@ -328,17 +326,20 @@ class Results extends Component {
             {this.renderResults(sortedWeights.Genuine)}
           </div>
           <div className="tile is-parent">
-            {this.renderYelpResults(sortedDatasetWeights.Genuine)}
+            {this.renderResults(sortedWeights.Deceptive)}
           </div>
         </div>
         <div className="level">
           <div className="level-item has-text-centered">
-            <p className="title">Worst Reviews</p>
+            <figure className="image logo">
+              <img src={yelpLogo} />
+            </figure>
           </div>
         </div>
         <div className="tile is-ancestor">
           <div className="tile is-parent">
-            {this.renderResults(sortedWeights.Deceptive)}
+            {this.renderYelpResults(sortedDatasetWeights.Genuine)}
+
           </div>
           <div className="tile is-parent">
             {this.renderYelpResults(sortedDatasetWeights.Deceptive)}
