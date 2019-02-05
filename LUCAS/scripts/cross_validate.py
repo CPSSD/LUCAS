@@ -1,5 +1,9 @@
+import numpy as np
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from tensorflow.keras.callbacks import EarlyStopping
+
 def run_cross_validate(get_model, X, y, cv=5, categorical=False,
-                       add_target_dim=False):
+                       add_target_dim=False, verbose=1):
   skfSplitter = StratifiedKFold(n_splits=cv, shuffle=True)
   metrics = {
     "accuracies": [],
@@ -22,7 +26,7 @@ def run_cross_validate(get_model, X, y, cv=5, categorical=False,
     print("Fitting with: ", np.array(training_X).shape, "labels",
           np.array(training_y).shape)
     model.fit(np.array(training_X), training_y, epochs=12, batch_size=16,
-              validation_split=0.3,
+              validation_split=0.3, verbose=verbose,
               callbacks=[EarlyStopping(monitor='val_loss', patience=4)])
     metrics["accuracies"].append(model.evaluate(np.array(test_X), test_y)[1])
   return metrics
