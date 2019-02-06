@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.utils import to_categorical
 
 def run_cross_validate(get_model, X, y, cv=5, categorical=False,
                        add_target_dim=False, verbose=1):
