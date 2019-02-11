@@ -1,4 +1,14 @@
-import { TOGGLE_REVIEW, TOGGLE_SINGLE_REVIEW, TOGGLE_SEARCH_REVIEW, TOGGLE_MODAL, SET_WEIGHTS, SET_BUSINESS, SET_REVIEW_WEIGHTS, DATASET_WEIGHTS_LOADED } from '../constants/action-types';
+import { groupBy } from 'lodash';
+import {
+  TOGGLE_REVIEW,
+  TOGGLE_SINGLE_REVIEW,
+  TOGGLE_SEARCH_REVIEW,
+  TOGGLE_MODAL, SET_WEIGHTS,
+  SET_BUSINESS,
+  SET_REVIEW_WEIGHTS,
+  DATASET_WEIGHTS_LOADED,
+  SET_FILTERED_REIEWS,
+} from '../constants/action-types';
 
 const initialState = {
   toggleReview: false,
@@ -24,7 +34,9 @@ const rootReducer = (state = initialState, action) => {
     case SET_WEIGHTS:
       return { ...state, weights: action.payload };
     case SET_REVIEW_WEIGHTS:
-      return { ...state, datasetWeights: action.payload };
+      return { ...state, datasetWeights: groupBy(action.payload, 'result') };
+    case SET_FILTERED_REIEWS:
+      return { ...state, filteredReviews: groupBy(action.payload, 'result') };
     case SET_BUSINESS:
       return { ...state, business: action.payload };
   }

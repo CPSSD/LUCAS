@@ -3,6 +3,7 @@ $family-sans-serif: "Proxima Nova", sans-serif;
 @import "~bulma/bulma";
 @import "./loader";
 @import "./helpers";
+@import "./charts";
 
 
 body, .hero{
@@ -11,6 +12,7 @@ body, .hero{
 
 .hero-body {
   padding-top: 0px !important;
+  padding: 0 15% 0 15%;
 }
 
 .main-fakereview-textarea {
@@ -81,4 +83,10 @@ body, .hero{
 
 .review {
     font-family: 'Playfair Display', serif;
+}
+
+.dotchart-tooltip {
+    padding: 5px;
+    width: 250px;
+    white-space: normal;
 }
