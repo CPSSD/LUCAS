@@ -90,3 +90,11 @@ body, .hero{
     width: 250px;
     white-space: normal;
 }
+
+.dotchart-title {
+  width: 62vw;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  font-weight: bold;
+}

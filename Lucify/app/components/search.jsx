@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { forEach, groupBy } from 'lodash';
 
-import { toggleSearchReview, setReviewWeights, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded } from '../actions/index';
+import { toggleSearchReview, setReviewWeights, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
@@ -42,6 +42,7 @@ class Search extends React.Component {
       .then((res) => res.json())
       .then((response) => {
         this.props.setDatasetReviewWeights(response);
+        this.props.setFilteredReviews(response, false);
         this.props.datasetWeightsLoaded(true);
       });
   }
@@ -257,7 +258,8 @@ const mapDispatchToProps = (dispatch) => {
     datasetWeightsLoaded: (value) => dispatch(datasetWeightsLoaded(value)),
     setReviewWeights: (weights) => dispatch(setReviewWeights(weights)),
     setDatasetReviewWeights: (weights) => dispatch(setDatasetReviewWeights(weights)),
-    setBusiness: (business) => dispatch(setBusiness(business))
+    setBusiness: (business) => dispatch(setBusiness(business)),
+    setFilteredReviews: (reviews, filtered) => dispatch(setFilteredReviews(reviews, filtered)),
   };
 };
 

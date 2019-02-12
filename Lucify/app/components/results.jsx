@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import Slider from 'react-slick';
-import { groupBy, map, pickBy, union } from 'lodash';
+import { map, pickBy, union } from 'lodash';
 import { connect } from 'react-redux';
 import WordCloud from 'react-d3-cloud';
 import DotChart from './dotChart';
@@ -107,17 +107,15 @@ class Results extends Component {
 
 
   render() {
-    const { weights, datasetWeights } = this.props;
+    const { filteredReviews } = this.props;
     return (
       <div className="container is-fluid">
         {this.props.business &&
           this.renderBusiness(this.props.business)
         }
         <div className="level">
-          {datasetWeights &&
-          <DotChart
-            reviews={datasetWeights}
-          />
+          {filteredReviews &&
+            <DotChart />
           }
         </div>
         <Review />
@@ -126,9 +124,9 @@ class Results extends Component {
             <p className="title">Word Cloud</p>
           </div>
         </div>
-        <div>
+        {/* <div>
           {this.renderWordCloud(weights, datasetWeights)}
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -140,7 +138,7 @@ const mapStateToProps = (state) => {
     weights: state.weights,
     business: state.business,
     datasetWeightsLoaded: state.datasetWeightsLoaded,
-    datasetWeights: state.datasetWeights
+    filteredReviews: state.filteredReviews
   };
 };
 

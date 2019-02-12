@@ -2,9 +2,10 @@
 import React, { Component } from 'react';
 import CountUp from 'react-countup';
 import cx from 'classnames';
-import { forEach } from 'lodash';
+import { forEach, groupBy } from 'lodash';
 import { connect } from 'react-redux';
 import ShowMore from '@tedconf/react-show-more';
+import { resetFilteredReviews } from '../actions/index';
 
 const yelpLogo = require('../../public/yelp.svg');
 
@@ -129,27 +130,11 @@ class Review extends Component {
     );
   }
 
-  renderResults(weights, type) {
-    const { filteredReviews } = this.props;
-    const { datasetWeightsLoaded } = this.props;
-    const reviews = filteredReviews ? filteredReviews : weights;
-    if (!datasetWeightsLoaded) {
-      return (
-        <div className="tile is-child">
-          <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
-          <div className="heading">Please Wait getting Yelp reviews..</div>
-        </div>
-      );
-    }
-    if (!reviews[type]) {
-      return (
-        <h1>No Review Matched</h1>
-      );
-    }
-    reviews[type].sort((first, second) => this.compareConfidence(first, second));
+  renderReviews(reviews) {
+    reviews.sort((first, second) => this.compareConfidence(first, second));
     return (
       <div className="tile is-child">
-        <ShowMore items={reviews[type]}>
+        <ShowMore items={reviews}>
           {({ current, onMore }) => (
             <div>
               {current.map((weight, index) => {
@@ -196,10 +181,43 @@ class Review extends Component {
     );
   }
 
+  renderResults() {
+    const { filteredReviews, datasetWeightsLoaded } = this.props;
+    if (!datasetWeightsLoaded) {
+      return (
+        <div className="tile is-child">
+          <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+          <div className="heading">Please Wait getting Yelp reviews..</div>
+        </div>
+      );
+    }
+    const reviews = groupBy(filteredReviews, 'result');
+    const genuineReviews = reviews.Genuine ? this.renderReviews(reviews.Genuine) : <h1>No Review Matched</h1>;
+    const deceptiveReviews = reviews.Deceptive ? this.renderReviews(reviews.Deceptive) : <h1>No Review Matched</h1>;
+    return (
+      <div className="tile is-ancestor">
+        <div className="tile is-parent">
+          {genuineReviews}
+        </div>
+        <div className="tile is-parent">
+          {deceptiveReviews}
+        </div>
+      </div>
+    );
+  }
+
+  resetData() {
+    this.props.resetFilteredReviews();
+  }
+
   render() {
-    const { datasetWeights } = this.props;
     return (
       <div>
+        <div className="level">
+          <div className="level-right">
+            <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
+          </div>
+        </div>
         <div className="level">
           <div className="level-left">
             <div className="level-item has-text-centered">
@@ -214,14 +232,7 @@ class Review extends Component {
             </div>
           </div>
         </div>
-        <div className="tile is-ancestor">
-          <div className="tile is-parent">
-            {this.renderResults(datasetWeights, 'Genuine')}
-          </div>
-          <div className="tile is-parent">
-            {this.renderResults(datasetWeights, 'Deceptive')}
-          </div>
-        </div>
+        {this.renderResults()}
       </div>
     );
   }
@@ -238,5 +249,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(Review);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    resetFilteredReviews: () => dispatch(resetFilteredReviews()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Review);
 

@@ -5,8 +5,8 @@ import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsReact from 'highcharts-react-official';
 import { connect } from 'react-redux';
-import { forEach, findLast, cloneDeep, find, sortBy } from 'lodash';
-import { setFilteredReviews } from '../actions/index';
+import { forEach, findLast, cloneDeep, find, sortBy, groupBy } from 'lodash';
+import { setFilteredReviews, updateFilteredReviews } from '../actions/index';
 
 const colours = ['#8b0000', '#ac0002', '#cf0002', '#f30001', '#ff4300', '#ff6e00', '#ff9000', '#ffae2c', '#ffc96e', '#ffe4a7', '#d3d3d3', '#00e500', '#00d600', '#00c700', '#00b800', '#00aa00', '#009b00', '#008d00', '#007f00', '#007200', '#006400'];
 
@@ -20,14 +20,15 @@ class DotChart extends Component {
 
   componentDidMount() {
     const container = this.chartComponent.current.container.current;
-
     container.style.height = '100%';
     container.style.width = '100%';
     this.chartComponent.current.chart.reflow();
   }
 
   getOptions() {
-    const { Genuine, Deceptive } = this.props.reviews;
+    const { datasetWeights } = this.props;
+    const reviews = groupBy(datasetWeights, 'result');
+    const { Genuine, Deceptive } = reviews;
     let allReviews;
     const categories = ['100', '90', '80', '70', '60', '50', '40', '30', '20', '10', '0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'];
     if (Genuine && Deceptive) {
@@ -60,7 +61,9 @@ class DotChart extends Component {
         categories,
         title: {
           enabled: true,
-          text: 'Confidence'
+          useHTML: true,
+          align: 'left',
+          text: '<div class="dotchart-title"><span>Most Deceptive</span><span>Least Deceptive</span><span>Least Genuine</span><span>Most Genuine</span></div>'
         },
         labels: {
           format: '{value}%'
@@ -173,13 +176,22 @@ class DotChart extends Component {
 
 
   filterReview(point) {
-    this.props.setFilteredReviews([point.review]);
+    const { reviewsFiltered, setFilteredReviews, updateFilteredReviews } = this.props;
+    if (point.review) {
+      console.log(reviewsFiltered)
+      if (!reviewsFiltered) {
+        setFilteredReviews([point.review], true);
+      } else {
+        console.log(this.props.filteredReviews);
+        updateFilteredReviews(point.review);
+      }
+    }
   }
 
   render() {
     return (
       <div className="level-item">
-        {this.props.reviews ?
+        {this.props.filteredReviews ?
           <HighchartsReact
             highcharts={Highcharts}
             ref={this.chartComponent}
@@ -196,12 +208,15 @@ class DotChart extends Component {
 const mapStateToProps = (state) => {
   return {
     filteredReviews: state.filteredReviews,
+    datasetWeights: state.datasetWeights,
+    reviewsFiltered: state.reviewsFiltered
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setFilteredReviews: (reviews) => dispatch(setFilteredReviews(reviews)),
+    setFilteredReviews: (reviews, filtered) => dispatch(setFilteredReviews(reviews, filtered)),
+    updateFilteredReviews: (reviews) => dispatch(updateFilteredReviews(reviews)),
   };
 };
 
