@@ -9,9 +9,13 @@ router.post('/search', (req, res) => {
   if (!req.body.term) {
     return res.status(422).json({ errors: { term: "can't be blank" } });
   }
+
+  if (!req.body.location) {
+    return res.status(422).json({ errors: { location: "can't be blank" } });
+  }
   const options = {
     term: req.body.term,
-    location: 'Dublin'
+    location: req.body.location
   };
 
   client.search(options).then((response) => {

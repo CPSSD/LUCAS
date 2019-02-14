@@ -5,6 +5,7 @@ import { map, pickBy, union } from 'lodash';
 import { connect } from 'react-redux';
 import WordCloud from 'react-d3-cloud';
 import DotChart from './dotChart';
+import TrendChart from './trendChart';
 import Review from './reviews';
 
 class Results extends Component {
@@ -106,6 +107,29 @@ class Results extends Component {
   }
 
 
+  renderChartCarousel() {
+    const settings = {
+      dots: true,
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+    };
+
+    return (
+      <div className="tile is-child is-12">
+        <Slider {...settings}>
+          <div className="level">
+            <DotChart />
+          </div>
+          <div className="level">
+            <TrendChart />
+          </div>
+        </Slider>
+      </div>
+    );
+  }
+
+
   render() {
     const { filteredReviews } = this.props;
     return (
@@ -113,11 +137,7 @@ class Results extends Component {
         {this.props.business &&
           this.renderBusiness(this.props.business)
         }
-        <div className="level">
-          {filteredReviews &&
-            <DotChart />
-          }
-        </div>
+        {this.renderChartCarousel()}
         <Review />
         <div className="level">
           <div className="level-item has-text-centered">

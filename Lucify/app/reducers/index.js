@@ -2,7 +2,8 @@ import {
   TOGGLE_REVIEW,
   TOGGLE_SINGLE_REVIEW,
   TOGGLE_SEARCH_REVIEW,
-  TOGGLE_MODAL, SET_WEIGHTS,
+  TOGGLE_MODAL,
+  SET_REVIEWS,
   SET_BUSINESS,
   SET_REVIEW_WEIGHTS,
   DATASET_WEIGHTS_LOADED,
@@ -33,8 +34,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, toggleModal: !state.toggleModal };
     default:
       return state;
-    case SET_WEIGHTS:
-      return { ...state, weights: action.payload };
+    case SET_REVIEWS:
+      return { ...state, reviews: action.payload };
     case SET_REVIEW_WEIGHTS:
       return { ...state, datasetWeights: action.payload };
     case SET_FILTERED_REIEWS:

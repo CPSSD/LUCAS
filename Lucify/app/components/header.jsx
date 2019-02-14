@@ -5,12 +5,6 @@ import { toggleReview, toggleSearchReview, setBusiness, toggleModal } from '../a
 
 class Header extends React.Component {
 
-  returnToReview() {
-    this.props.toggleReview(false);
-    this.props.toggleSearchReview(false);
-    this.props.setBusiness(null);
-  }
-
   toggleModal() {
     this.props.toggleModal();
   }
@@ -24,7 +18,7 @@ class Header extends React.Component {
           <div className="container is-fluid">
             <div className="navbar-brand">
               {showResults &&
-                <a href="#" role="button" className="navbar-item title header-title is-rounded is-3" onClick={() => this.returnToReview()}>
+                <a href="/" role="button" className="navbar-item title header-title is-rounded is-3">
                   Lucify
                 </a>
               }
