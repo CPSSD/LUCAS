@@ -178,11 +178,9 @@ class DotChart extends Component {
   filterReview(point) {
     const { reviewsFiltered, setFilteredReviews, updateFilteredReviews } = this.props;
     if (point.review) {
-      console.log(reviewsFiltered)
       if (!reviewsFiltered) {
         setFilteredReviews([point.review], true);
       } else {
-        console.log(this.props.filteredReviews);
         updateFilteredReviews(point.review);
       }
     }
