@@ -21,7 +21,7 @@ class Header extends React.Component {
     return (
       <div className="hero-head">
         <nav className="navbar has-shadow">
-          <div className="container">
+          <div className="container is-fluid">
             <div className="navbar-brand">
               {showResults &&
                 <a href="#" role="button" className="navbar-item title header-title is-rounded is-3" onClick={() => this.returnToReview()}>

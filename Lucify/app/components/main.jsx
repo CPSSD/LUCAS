@@ -41,7 +41,7 @@ class Main extends React.Component {
     return (
       <div className="hero-body has-text-centered">
         <VisibilityContainer className="has-text-centered" pose={!showResults ? 'visible' : 'hidden'}>
-          <div className="has-text-centered container main-title-container pt20 pb20">
+          <div className="has-text-centered container main-title-container pt20 pb20 is-fluid">
             <h1 className="title main-title is-rounded pb10">
               Lucify
             </h1>

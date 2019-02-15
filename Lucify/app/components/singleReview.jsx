@@ -114,7 +114,7 @@ class SingleReview extends React.Component {
     const { showSingleReview, showReviewResults, showSearchResults } = this.props;
     const showResults = showReviewResults || showSearchResults;
     return (
-      <div className="container">
+      <div className="container is-fluid">
         <VisibilityContainer pose={showSingleReview && !showResults ? 'visible' : 'hidden'}>
           {this.getExpandableField()}
           <button className="button is-primary is-rounded is-medium" onClick={() => this.sendRequest()}>
