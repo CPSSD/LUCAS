@@ -53,6 +53,7 @@
     "react-places-autocomplete": "^7.2.0",
     "react-pose": "^3.3.7",
     "react-redux": "5.0.7",
+    "react-show-more-text": "^1.0.4",
     "react-slick": "^0.23.2",
     "redux": "3.7.2",
     "redux-saga": "0.16.0",

@@ -139,7 +139,7 @@ class Results extends Component {
         }
         {this.renderChartCarousel()}
         <Review />
-        <div className="level">
+        <div className="level pt40">
           <div className="level-item has-text-centered">
             <p className="title">Word Cloud</p>
           </div>

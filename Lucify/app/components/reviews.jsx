@@ -1,13 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import CountUp from 'react-countup';
+import ShowMoreText from 'react-show-more-text';
+import Slider from 'react-slick';
 import cx from 'classnames';
-import { forEach, groupBy } from 'lodash';
+import { forEach, chunk } from 'lodash';
 import { connect } from 'react-redux';
-import ShowMore from '@tedconf/react-show-more';
 import { resetFilteredReviews } from '../actions/index';
-
-const yelpLogo = require('../../public/yelp.svg');
 
 const PALETTE = [
   '#8b0000',
@@ -130,56 +129,115 @@ class Review extends Component {
     );
   }
 
-  renderReviews(reviews) {
-    reviews.sort((first, second) => this.compareConfidence(first, second));
-    return (
-      <div className="tile is-child">
-        <ShowMore items={reviews}>
-          {({ current, onMore }) => (
-            <div>
-              {current.map((weight, index) => {
-                const {
-                  confidence, result, feature_weights, review
-                } = weight;
-                if (review !== '') {
-                  return (
-                    <div className="is-fluid pt20" key={`result-${index}`}>
-                      <div className="tile is-ancestor">
-                        <div className="tile is-parent">
-                          <div className="tile is-child">
-                            <div className="card">
-                              <div className="card-header">
-                                {this.renderVerdict(result, index)}
-                                <div className="card-header-title is-3">
-                                  Confidence:
-                                  {this.renderAccuracy(this.calculateAccuracy(confidence))}
-                                </div>
-                              </div>
-                              <div className="card-content review">
-                                {this.renderReview(feature_weights, review)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
-              })}
-              <button
-                className="button is-outlined is-primary mt20"
-                disabled={!onMore}
-                onClick={() => onMore()}
-              >
-                Show More
-              </button>
+  renderCards(reviews) {
+    if (!reviews) { return null; }
+    return reviews.map((reviewInfo, index) => {
+      const { confidence, result, feature_weights, review } = reviewInfo;
+      return (
+        <div className="tile is-child pr5 pl5 pb5" key={`card-${index}`}>
+          <div className="card">
+            <div className="card-header">
+              {this.renderVerdict(result, index)}
+              <div className="card-header-title is-3">
+                Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence))}
+              </div>
             </div>
-          )}
-        </ShowMore>
+            <div className="card-content review">
+              <ShowMoreText
+                lines={3}
+                more="Show more"
+                less="Show less"
+              >
+                {this.renderReview(feature_weights, review)}
+              </ShowMoreText>
+            </div>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  renderReviews(reviews) {
+    const settings = {
+      dots: true,
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+    };
+    reviews.sort((first, second) => this.compareConfidence(first, second));
+    const chunkedReviews = chunk(reviews, 4);
+    const reviewHTML = chunkedReviews.map((reviews, index) => {
+      const chunkedSlide = chunk(reviews, 2);
+      return (
+        <div className="is-fluid pt20" key={`result-${index}`}>
+          <div className="tile is-ancestor is-vertical">
+            <div className="tile is-parent width-100">
+              {this.renderCards(chunkedSlide[0])}
+            </div>
+            <div className="tile is-parent width-100">
+              {this.renderCards(chunkedSlide[1])}
+            </div>
+          </div>
+        </div>
+      );
+    });
+
+    return (
+      <div className="tile is-child is-12">
+        <Slider {...settings}>
+          {reviewHTML}
+        </Slider>
       </div>
     );
   }
+
+  // renderReviews(reviews) {
+  //   reviews.sort((first, second) => this.compareConfidence(first, second));
+  //   return (
+  //     <div className="tile is-child">
+  //       <ShowMore items={reviews}>
+  //         {({ current, onMore }) => (
+  //           <div>
+  //             {current.map((weight, index) => {
+  //               const {
+  //                 confidence, result, feature_weights, review
+  //               } = weight;
+  //               return (
+  //                 <div className="is-fluid pt20" key={`result-${index}`}>
+  //                   <div className="tile is-ancestor">
+  //                     <div className="tile is-parent">
+  //                       <div className="tile is-child">
+  //                         <div className="card">
+  //                           <div className="card-header">
+  //                             {this.renderVerdict(result, index)}
+  //                             <div className="card-header-title is-3">
+  //                               Confidence:
+  //                               {this.renderAccuracy(this.calculateAccuracy(confidence))}
+  //                             </div>
+  //                           </div>
+  //                           <div className="card-content review">
+  //                             {this.renderReview(feature_weights, review)}
+  //                           </div>
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               );
+  //             })}
+  //             <button
+  //               className="button is-outlined is-primary mt20"
+  //               disabled={!onMore}
+  //               onClick={() => onMore()}
+  //             >
+  //               Show More
+  //             </button>
+  //           </div>
+  //         )}
+  //       </ShowMore>
+  //     </div>
+  //   );
+  // }
 
   renderResults() {
     const { filteredReviews, datasetWeightsLoaded } = this.props;
@@ -191,16 +249,11 @@ class Review extends Component {
         </div>
       );
     }
-    const reviews = groupBy(filteredReviews, 'result');
-    const genuineReviews = reviews.Genuine ? this.renderReviews(reviews.Genuine) : <h1>No Review Matched</h1>;
-    const deceptiveReviews = reviews.Deceptive ? this.renderReviews(reviews.Deceptive) : <h1>No Review Matched</h1>;
+
     return (
       <div className="tile is-ancestor">
-        <div className="tile is-parent">
-          {genuineReviews}
-        </div>
-        <div className="tile is-parent">
-          {deceptiveReviews}
+        <div className="tile is-parent width-100">
+          {this.renderReviews(filteredReviews)}
         </div>
       </div>
     );
@@ -214,22 +267,13 @@ class Review extends Component {
     return (
       <div>
         <div className="level">
-          <div className="level-right">
-            <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
-          </div>
-        </div>
-        <div className="level">
           <div className="level-left">
             <div className="level-item has-text-centered">
-              <p className="title">Most Genuine</p>
+              <p className="title">Reviews</p>
             </div>
           </div>
           <div className="level-right">
-            <div className="level-item">
-              <div className="level-item has-text-centered">
-                <p className="title">Most Deceptive</p>
-              </div>
-            </div>
+            <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
           </div>
         </div>
         {this.renderResults()}
