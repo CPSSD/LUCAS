@@ -1,32 +1,26 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { forEach, groupBy } from 'lodash';
+import { forEach } from 'lodash';
+import cx from 'classnames';
+import PlacesAutocomplete from 'react-places-autocomplete';
 
-import { toggleSearchReview, setReviewWeights, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews } from '../actions/index';
+import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       yelpSearchTerm: '',
+      address: '',
     };
   }
 
-  getReviewWeight(reviews) {
-    fetch('/api/review/bulk', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        reviews
-      })
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        this.props.setReviewWeights(response);
-        this.props.toggleSearchReview(true);
-      });
+  componentWillMount() {
+    document.addEventListener('mousedown', this.handleClick, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClick, false);
   }
 
   getDatasetReviewWeights(reviews) {
@@ -43,40 +37,24 @@ class Search extends React.Component {
       .then((response) => {
         this.props.setDatasetReviewWeights(response);
         this.props.setFilteredReviews(response, false);
+        this.props.toggleSearchReview(true);
         this.props.datasetWeightsLoaded(true);
       });
   }
 
-  getReviewsFromGoogle(response) {
-    const placeId = JSON.parse(response).candidates[0].place_id;
-    fetch('/api/places/details', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        placeId
-      })
-    })
-      .then((res) => res.json())
-      .then((reviewRes) => {
-        const { reviews } = JSON.parse(reviewRes).result;
-        this.getReviewWeight(reviews);
-      });
-  }
-
-  getReviewsFromDataset(business_id) {
+  getReviewsFromDataset(id) {
     fetch('/api/dataset/getReviews', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        business_id,
+        business_id: id,
       })
     })
       .then((res) => res.json())
       .then((response) => {
+        this.props.setReviews(response);
         this.getDatasetReviewWeights(response);
       });
   }
@@ -97,7 +75,8 @@ class Search extends React.Component {
       });
   }
 
-  getReviewsFromDB(business_id,categories) {
+  getReviewsFromDB(business) {
+    const { id, categories } = business;
     const query = [];
     forEach(categories, (category) => {
       query.push(category.title);
@@ -108,7 +87,7 @@ class Search extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        business_id,
+        business_id: id,
       })
     })
       .then((res) => res.json())
@@ -116,27 +95,17 @@ class Search extends React.Component {
         if (!response) {
           this.getRandomBusiness(query.join());
         } else {
+          this.props.setBusiness(business);
           this.getReviewsFromDataset(response.business_id);
         }
       });
   }
 
-  getBusinessReviews(business) {
-    this.getReviewsFromDB(business.id, business.categories);
-    fetch('/api/places/search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        input: [business.name, business.location.display_address].join()
-      })
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        this.props.setBusiness(business);
-        this.getReviewsFromGoogle(response);
-      });
+  handleClick = (e) => {
+    this.dropdownClasses = cx({
+      'dropdown-menu': true,
+      'activate-dropdown': this.node.contains(e.target),
+    });
   }
 
   searchYelp() {
@@ -148,7 +117,8 @@ class Search extends React.Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          term: this.state.yelpSearchTerm
+          term: this.state.yelpSearchTerm,
+          location: this.state.address,
         })
       })
         .then((res) => res.json())
@@ -169,7 +139,7 @@ class Search extends React.Component {
       })
         .then((res) => res.json())
         .then((response) => {
-          this.getBusinessReviews(response);
+          this.getReviewsFromDB(response);
         });
     }
   }
@@ -185,7 +155,7 @@ class Search extends React.Component {
     const businesses = [];
     forEach(this.state.yelpSearchResults, (business, index) => {
       businesses.push(
-        <div key={`business-${index}`} className="card mb10" onClick={() => this.getBusinessReviews(business)}>
+        <div key={`business-${index}`} className="card mb10" onClick={() => this.getReviewsFromDB(business)}>
           <div className="card-content">
             <div className="media">
               <div className="media-left">
@@ -220,13 +190,77 @@ class Search extends React.Component {
     }
   }
 
+  handleChange = (address) => {
+    this.dropdownClasses = cx({
+      'dropdown-menu': true,
+      'activate-dropdown': address ? true : false,
+    });
+    this.setState({ address });
+  };
+
+  handleSelect = (address) => {
+    this.dropdownClasses = cx({
+      'dropdown-menu': true,
+      'activate-dropdown': false,
+    });
+    this.setState({ address });
+  };
+
+  place() {
+    return (
+      <PlacesAutocomplete
+        value={this.state.address}
+        onChange={this.handleChange}
+        onSelect={this.handleSelect}
+        googleCallbackName="googleApi"
+      >
+        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+          <div className="dropdown pr10">
+            <div className="dropdown-trigger">
+              <input
+                ref={(node) => { this.node = node; }}
+                aria-controls="dropdown-menu"
+                {...getInputProps({
+                  placeholder: 'Location',
+                  className: 'input',
+                })}
+              />
+            </div>
+            <div className={`${this.dropdownClasses}`} id="dropdown-menu" role="menu">
+              <div className="dropdown-content">
+                {loading && <div>Loading...</div>}
+                {suggestions.map((suggestion) => {
+                  const className = suggestion.active
+                    ? 'dropdown-item is-active'
+                    : 'dropdown-item';
+
+                  return (
+                    <a
+                      {...getSuggestionItemProps((suggestion), {
+                        className,
+                      })}
+                    >
+                      {suggestion.description}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </PlacesAutocomplete>
+    );
+  }
+
   render() {
     return (
       <div className="container is-fluid">
         <div className="field has-addons pb20">
           <div className="control width-100">
-            <input className="input" type="text" placeholder="‘Search Yelp or enter a link to a Yelp business page" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
+            <input className="input" type="text" placeholder="Search Yelp or paste a Yelp link" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
           </div>
+          <div className="pr5 pl5 is-vertical-center">Near</div>
+          {this.place()}
           <div className="control">
             <button className="button is-primary" onClick={() => this.searchYelp()}>
               Search
@@ -244,23 +278,16 @@ class Search extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    showResults: state.toggleReview,
-    showSingleReview: state.toggleSingleReview
-  };
-};
-
 const mapDispatchToProps = (dispatch) => {
   return {
     toggleSearchReview: (value) => dispatch(toggleSearchReview(value)),
     toggleSingleReview: (value) => dispatch(toggleSingleReview(value)),
     datasetWeightsLoaded: (value) => dispatch(datasetWeightsLoaded(value)),
-    setReviewWeights: (weights) => dispatch(setReviewWeights(weights)),
+    setReviews: (reviews) => dispatch(setReviews(reviews)),
     setDatasetReviewWeights: (weights) => dispatch(setDatasetReviewWeights(weights)),
     setBusiness: (business) => dispatch(setBusiness(business)),
     setFilteredReviews: (reviews, filtered) => dispatch(setFilteredReviews(reviews, filtered)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default connect(null, mapDispatchToProps)(Search);

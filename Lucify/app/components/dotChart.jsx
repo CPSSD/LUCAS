@@ -176,12 +176,15 @@ class DotChart extends Component {
 
 
   filterReview(point) {
-    const { reviewsFiltered, setFilteredReviews, updateFilteredReviews } = this.props;
+    const { reviewsFiltered, setFilteredReviews, updateFilteredReviews, filteredReviews } = this.props;
     if (point.review) {
       if (!reviewsFiltered) {
         setFilteredReviews([point.review], true);
       } else {
-        updateFilteredReviews(point.review);
+        const reviewDuplicate = find(filteredReviews, (review) => { return review.review === point.review.review; });
+        if (!reviewDuplicate) {
+          updateFilteredReviews(point.review);
+        }
       }
     }
   }

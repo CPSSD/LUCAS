@@ -32,7 +32,7 @@ module.exports = {
     return User.findOne({ user_id });
   },
   findReviewsByBusinessId: (business_id) => {
-    return Review.find({ business_id }, { user_id: 1, date: 1, stars: 1, text: 1 }).limit(5);
+    return Review.find({ business_id }, { user_id: 1, date: 1, stars: 1, text: 1 });
   },
   findReviewsByUserId: (user_id) => {
     return Review.find({ user_id }, { business_id: 1, date: 1, stars: 1, text: 1 }).limit(5);

@@ -9,7 +9,6 @@ import Main from './components/main';
 import WhatIsModal from './components/modal';
 import store from './store/index';
 
-
 const App = () => (
   <Provider store={store}>
     <section className="hero is-medium">
@@ -18,6 +17,8 @@ const App = () => (
         <title>Lucify</title>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet"></link>
+        <script async defer type="text/javascript" src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_API_KEY}&libraries=places&callback=googleApi`}></script>
+        
         <link rel="stylesheet" type="text/css" charset="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
         <link rel="stylesheet" href="style.scss" />
