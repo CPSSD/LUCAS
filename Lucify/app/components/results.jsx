@@ -9,6 +9,7 @@ import DotChart from './dotChart';
 import TrendChart from './trendChart';
 import Review from './reviews';
 
+
 function PrevArrow(props) {
   const { onClick } = props;
   return (
