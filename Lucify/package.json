@@ -52,6 +52,7 @@
     "react-moment": "^0.8.4",
     "react-places-autocomplete": "^7.2.0",
     "react-pose": "^3.3.7",
+    "react-rating": "^1.6.2",
     "react-redux": "5.0.7",
     "react-show-more-text": "^1.0.4",
     "react-slick": "^0.23.2",

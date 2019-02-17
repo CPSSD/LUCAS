@@ -20,6 +20,24 @@ const PALETTE = [
   '#006400'
 ];
 
+function PrevArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div onClick={onClick} className={"arrow-prev"}>
+      <i className="fas fa-chevron-left"></i>
+    </div>
+  );
+}
+
+function NextArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div onClick={onClick} className={"arrow-next"}>
+      <i className="fas fa-chevron-right"></i>
+    </div>
+  );
+}
+
 class Review extends Component {
   getWordColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
@@ -163,6 +181,8 @@ class Review extends Component {
       infinite: true,
       slidesToShow: 1,
       slidesToScroll: 1,
+      nextArrow: <NextArrow />,
+      prevArrow: <PrevArrow />,
     };
     reviews.sort((first, second) => this.compareConfidence(first, second));
     const chunkedReviews = chunk(reviews, 4);
@@ -183,61 +203,13 @@ class Review extends Component {
     });
 
     return (
-      <div className="tile is-child is-12">
+      <div className="tile is-child is-12 box pb40">
         <Slider {...settings}>
           {reviewHTML}
         </Slider>
       </div>
     );
   }
-
-  // renderReviews(reviews) {
-  //   reviews.sort((first, second) => this.compareConfidence(first, second));
-  //   return (
-  //     <div className="tile is-child">
-  //       <ShowMore items={reviews}>
-  //         {({ current, onMore }) => (
-  //           <div>
-  //             {current.map((weight, index) => {
-  //               const {
-  //                 confidence, result, feature_weights, review
-  //               } = weight;
-  //               return (
-  //                 <div className="is-fluid pt20" key={`result-${index}`}>
-  //                   <div className="tile is-ancestor">
-  //                     <div className="tile is-parent">
-  //                       <div className="tile is-child">
-  //                         <div className="card">
-  //                           <div className="card-header">
-  //                             {this.renderVerdict(result, index)}
-  //                             <div className="card-header-title is-3">
-  //                               Confidence:
-  //                               {this.renderAccuracy(this.calculateAccuracy(confidence))}
-  //                             </div>
-  //                           </div>
-  //                           <div className="card-content review">
-  //                             {this.renderReview(feature_weights, review)}
-  //                           </div>
-  //                         </div>
-  //                       </div>
-  //                     </div>
-  //                   </div>
-  //                 </div>
-  //               );
-  //             })}
-  //             <button
-  //               className="button is-outlined is-primary mt20"
-  //               disabled={!onMore}
-  //               onClick={() => onMore()}
-  //             >
-  //               Show More
-  //             </button>
-  //           </div>
-  //         )}
-  //       </ShowMore>
-  //     </div>
-  //   );
-  // }
 
   renderResults() {
     const { filteredReviews, datasetWeightsLoaded } = this.props;
@@ -266,9 +238,9 @@ class Review extends Component {
   render() {
     return (
       <div>
-        <div className="level">
+        <div className="level baseline">
           <div className="level-left">
-            <div className="level-item has-text-centered">
+            <div className="level-item has-text-centered pt20">
               <p className="title">Reviews</p>
             </div>
           </div>
