@@ -14,6 +14,6 @@ wordvec
 *.kv
 .env
 *.h5
-wordvec
 models
+notebooks/data.json
 

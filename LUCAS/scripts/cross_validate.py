@@ -4,8 +4,8 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
 def run_cross_validate(get_model, X, y, cv=5, categorical=False,
-                       add_target_dim=False, verbose=1):
-  skfSplitter = StratifiedKFold(n_splits=cv, shuffle=True)
+                       add_target_dim=False, verbose=1, epochs=12, batch_size = 16, validation_split=0.3, shuffle=True):
+  skfSplitter = StratifiedKFold(n_splits=cv, shuffle=shuffle)
   metrics = {
     "accuracies": [],
   }
@@ -26,8 +26,8 @@ def run_cross_validate(get_model, X, y, cv=5, categorical=False,
     model = get_model()
     print("Fitting with: ", np.array(training_X).shape, "labels",
           np.array(training_y).shape)
-    model.fit(np.array(training_X), training_y, epochs=12, batch_size=16,
-              validation_split=0.3, verbose=verbose,
-              callbacks=[EarlyStopping(monitor='val_loss', patience=4)])
+    model.fit(np.array(training_X), training_y, epochs=epochs, batch_size=batch_size,
+              validation_split=validation_split, verbose=verbose,
+              callbacks=[EarlyStopping(monitor='val_loss', patience=4)], shuffle=shuffle)
     metrics["accuracies"].append(model.evaluate(np.array(test_X), test_y)[1])
   return metrics
