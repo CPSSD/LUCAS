@@ -164,7 +164,7 @@ class Results extends Component {
 
   render() {
     return (
-      <div className="container is-fluid">
+      <div className="container is-fluid box mt20 has-background-link">
         {this.props.business &&
           this.renderBusiness(this.props.business)
         }
