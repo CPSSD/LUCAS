@@ -1,12 +1,32 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import Slider from 'react-slick';
+import Rating from 'react-rating';
 import { map, pickBy, union } from 'lodash';
 import { connect } from 'react-redux';
 import WordCloud from 'react-d3-cloud';
 import DotChart from './dotChart';
 import TrendChart from './trendChart';
 import Review from './reviews';
+
+
+function PrevArrow(props) {
+  const { onClick } = props;
+  return (
+    <div onClick={onClick} className={"arrow-prev"}>
+      <i className="fas fa-chevron-left"></i>
+    </div>
+  );
+}
+
+function NextArrow(props) {
+  const { onClick } = props;
+  return (
+    <div onClick={onClick} className={"arrow-next"}>
+      <i className="fas fa-chevron-right"></i>
+    </div>
+  );
+}
 
 class Results extends Component {
 
@@ -23,7 +43,7 @@ class Results extends Component {
     const photos = business.photos ? business.photos : [business.image_url];
     const businessPhotos = photos.map((photo, index) => {
       return (
-        <img className="is-background" src={photo} alt="" width="100" height="100" key={index} />
+        <img className="is-background" src={photo} alt="" width="100" height="200" key={index} />
       );
     });
 
@@ -45,18 +65,26 @@ class Results extends Component {
 
   renderBusiness(business) {
     return (
-      <section className="section">
-        <h1 className="title is-1"><a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a></h1>
+      <section className="section box mt20">
         <div className="container tile is-ancestor is-fluid">
           <div className="tile is-parent is-2">
             {this.renderCarousel(business)}
           </div>
           <div className="tile is-parent is-vertical is-10">
+            <div className="tile is-child">
+              <a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a>
+            </div>
             <div className="level tile is-child columns">
               <div className="level-item has-text-centered column">
                 <div>
                   <p className="heading">Rating</p>
-                  <p className="title">{business.rating}/5</p>
+                  <Rating
+                    initialRating={business.rating}
+                    emptySymbol="far fa-star"
+                    fullSymbol="fas fa-star"
+                    fractions={2}
+                    readonly
+                  />
                 </div>
               </div>
               <div className="level-item has-text-centered column">
@@ -87,11 +115,10 @@ class Results extends Component {
     );
   }
  
-  renderWordCloud(weights, datasetWeights) {
-    const featureWeights1 = map(weights, 'feature_weights');
-    const featureWeights2 = map(datasetWeights, 'feature_weights');
-    const mergedFeatureWeights = Object.assign(...union(featureWeights1,featureWeights2));
-    const filteredFeatureWeights = pickBy(mergedFeatureWeights, (val) =>{
+  renderWordCloud(datasetWeights) {
+    const featureWeights = map(datasetWeights, 'feature_weights');
+    const mergedFeatureWeights = Object.assign(...union(featureWeights));
+    const filteredFeatureWeights = pickBy(mergedFeatureWeights, (val) => {
       return val !== 0;
     });
     const data = [];
@@ -99,11 +126,15 @@ class Results extends Component {
       const currentVal = this.calculateAccuracy(filteredFeatureWeights[key]);
       data.push({ text: key, value: currentVal});
     }
-    return (<WordCloud
-      data={data}
-      width={900}
-      height={300}
-    />);
+
+    const fontSizeMapper = (word) => Math.log2(word.value) * 10;
+
+    return (
+      <WordCloud
+        data={data}
+        fontSizeMapper={fontSizeMapper}
+      />
+    );
   }
 
 
@@ -113,10 +144,12 @@ class Results extends Component {
       infinite: true,
       slidesToShow: 1,
       slidesToScroll: 1,
+      nextArrow: <NextArrow />,
+      prevArrow: <PrevArrow />,
     };
 
     return (
-      <div className="tile is-child is-12">
+      <div className="tile is-child is-12 box pb40">
         <Slider {...settings}>
           <div className="level">
             <DotChart />
@@ -131,22 +164,30 @@ class Results extends Component {
 
 
   render() {
-    const { filteredReviews } = this.props;
     return (
-      <div className="container is-fluid">
+      <div className="container is-fluid box mt20 has-background-link">
         {this.props.business &&
           this.renderBusiness(this.props.business)
         }
-        {this.renderChartCarousel()}
-        <Review />
         <div className="level">
-          <div className="level-item has-text-centered">
-            <p className="title">Word Cloud</p>
+          <div className="level-left">
+            <div className="level-item has-text-centered pt20">
+              <p className="title">Graphs</p>
+            </div>
           </div>
         </div>
-        {/* <div>
-          {this.renderWordCloud(weights, datasetWeights)}
-        </div> */}
+        {this.renderChartCarousel()}
+        <Review />
+        <div className="level pt40">
+          <div className="level-left">
+            <div className="level-item has-text-centered pt20">
+              <p className="title">Word Cloud</p>
+            </div>
+          </div>
+        </div>
+        <div className="box">
+          {this.renderWordCloud(this.props.datasetWeights)}
+        </div>
       </div>
     );
   }
@@ -155,7 +196,7 @@ class Results extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    weights: state.weights,
+    datasetWeights: state.datasetWeights,
     business: state.business,
     datasetWeightsLoaded: state.datasetWeightsLoaded,
     filteredReviews: state.filteredReviews

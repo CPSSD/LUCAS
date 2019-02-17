@@ -15,6 +15,10 @@ body, .hero{
   padding: 0 15% 0 15%;
 }
 
+.hero-head {
+  border-bottom: 1px solid;
+}
+
 .main-fakereview-textarea {
   padding-bottom: 10px;
   transition: height 0.2s ease;
@@ -46,18 +50,22 @@ body, .hero{
 }
 
 .main-title {
+  display: flex;
+  justify-content: center;
   font-weight: bold;
-  background-color: lightgrey;
   font-size: 7rem;
-  font-family: 'Playfair Display', serif;
-  border-radius: 90px;
+  font-family: 'Roboto', serif;
 }
 
+
+.fa-star {
+  color: gold;
+}
 .header-title {
+  display: flex;
+  justify-content: center;
   font-weight: bold;
-  background-color: lightgrey;
-  font-family: 'Playfair Display', serif;
-  border-radius: 90px;
+  font-family: 'Roboto', serif;
   padding: 0 30px 0 30px;
   margin: 5px 0 5px 0;
 }
@@ -82,7 +90,7 @@ body, .hero{
 }
 
 .review {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Roboto', serif;
 }
 
 .dotchart-tooltip {
@@ -101,4 +109,21 @@ body, .hero{
 
 .activate-dropdown {
   display: block;
+}
+
+.business-name {
+  display: flex;
+  align-items: baseline;
+}
+
+.arrow-prev {
+  position: absolute;
+  top: 50%;
+  left: -10px
+}
+
+.arrow-next {
+  position: absolute;
+  top: 50%;
+  right: -15px;
 }

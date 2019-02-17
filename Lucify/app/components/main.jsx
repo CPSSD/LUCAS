@@ -7,6 +7,8 @@ import Results from './results';
 import Search from './search';
 import SingleReview from './singleReview';
 
+const lucifyLogo = require('../../public/lucify.png');
+
 const VisibilityContainer = posed.div({
   visible: {
     opacity: 1,
@@ -42,7 +44,10 @@ class Main extends React.Component {
       <div className="hero-body has-text-centered">
         <VisibilityContainer className="has-text-centered" pose={!showResults ? 'visible' : 'hidden'}>
           <div className="has-text-centered container main-title-container pt20 pb20 is-fluid">
-            <h1 className="title main-title is-rounded pb10">
+            <h1 className="title main-title pb10">
+              <figure className="image is-128x128">
+                <img src={`${lucifyLogo}`} />
+              </figure>
               Lucify
             </h1>
             <h2 className="subtitle pt20">
@@ -55,7 +60,7 @@ class Main extends React.Component {
             <p className="title is-1 pt20">Your Review</p>
           }
         </ResultsContainer>
-        <VisibilityContainer className="has-text-centered" pose={!showSearchResults && !showSingleReview ? 'visible' : 'hidden'}>
+        <VisibilityContainer className="has-text-centered" pose={!showSearchResults ? 'visible' : 'hidden'}>
           <Search />
         </VisibilityContainer>
         <ResultsContainer pose={showResults ? 'visible' : 'hidden'}>

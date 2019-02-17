@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { forEach } from 'lodash';
+import { forEach, chunk } from 'lodash';
 import cx from 'classnames';
 import PlacesAutocomplete from 'react-places-autocomplete';
+import Rating from 'react-rating';
 
 import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews } from '../actions/index';
 
@@ -153,30 +154,42 @@ class Search extends React.Component {
 
   displaySearchResults() {
     const businesses = [];
-    forEach(this.state.yelpSearchResults, (business, index) => {
+    const chunkedResults = chunk(this.state.yelpSearchResults, 3);
+    forEach(chunkedResults, (chunk, index) => {
       businesses.push(
-        <div key={`business-${index}`} className="card mb10" onClick={() => this.getReviewsFromDB(business)}>
-          <div className="card-content">
-            <div className="media">
-              <div className="media-left">
-                <figure className="image is-64x64">
-                  <img src={business.image_url} />
-                </figure>
-              </div>
-              <div className="media-content columns">
-                <div className="column is-4">
-                  <a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a>
-                  <div className="has-text-success is-size-4">{business.price}</div>
+        <div key={`chunk-${index}`} className="columns">
+          {chunk.map((business) => {
+            return (
+              <div key={`business-${business.name}`} className="card mb10 column mr10 ml10" onClick={() => this.getReviewsFromDB(business)}>
+                <div className="card-image">
+                  <figure className="image is-4by3">
+                    <img src={business.image_url} />
+                  </figure>
                 </div>
-                <div className="column is-2">Rating: {business.rating}/5</div>
-                <div className="column is-3">
-                  <div>Address:</div>
-                  <div>{business.location.address1}</div>
-                  <div>{business.location.display_address[1]}</div>
+                <div className="card-content">
+                  <div className="media">
+                    <div className="media-content">
+                      <div className="business-name">
+                        <a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4 mr10">{business.name}</a>
+                        <div className="has-text-success is-size-4">{business.price}</div>
+                      </div>
+                      <Rating
+                        initialRating={business.rating}
+                        emptySymbol="far fa-star"
+                        fullSymbol="fas fa-star"
+                        fractions={2}
+                        readonly
+                      />
+                      <div>
+                        <div>{business.location.address1}</div>
+                        <div>{business.location.display_address[1]}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       );
     });
@@ -220,6 +233,7 @@ class Search extends React.Component {
               <input
                 ref={(node) => { this.node = node; }}
                 aria-controls="dropdown-menu"
+                onKeyPress={(event) => this.handleKeyPress(event)}
                 {...getInputProps({
                   placeholder: 'Location',
                   className: 'input',
@@ -254,7 +268,7 @@ class Search extends React.Component {
 
   render() {
     return (
-      <div className="container is-fluid">
+      <div className="container is-fluid box">
         <div className="field has-addons pb20">
           <div className="control width-100">
             <input className="input" type="text" placeholder="Search Yelp or paste a Yelp link" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
@@ -263,12 +277,10 @@ class Search extends React.Component {
           {this.place()}
           <div className="control">
             <button className="button is-primary" onClick={() => this.searchYelp()}>
+              <i className="fas fa-search mr5"></i>
               Search
             </button>
           </div>
-        </div>
-        <div>
-          <a role="button" onClick={() => this.props.toggleSingleReview(!this.props.showSingleReview)} className="pb10 single-review-button">or submit your own review</a>
         </div>
         <div className="mt30">
           { this.state.showSearchResults && this.displaySearchResults() }

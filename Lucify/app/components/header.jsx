@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { toggleReview, toggleSearchReview, setBusiness, toggleModal } from '../actions/index';
 
+const lucifyLogo = require('../../public/lucify.png');
+
 class Header extends React.Component {
 
   toggleModal() {
@@ -14,14 +16,15 @@ class Header extends React.Component {
     const showResults = showReviewResults || showSearchResults;
     return (
       <div className="hero-head">
-        <nav className="navbar has-shadow">
+        <nav className="navbar">
           <div className="container is-fluid">
             <div className="navbar-brand">
-              {showResults &&
-                <a href="/" role="button" className="navbar-item title header-title is-rounded is-3">
-                  Lucify
-                </a>
-              }
+              <a href="/" role="button" className="navbar-item title header-title is-rounded is-3">
+                <figure className="image is-32x32 mr5">
+                  <img src={`${lucifyLogo}`} />
+                </figure>
+                Lucify
+              </a>
             </div>
             <div id="navbarMenuHeroA" className="navbar-menu">
               <div className="navbar-end">
