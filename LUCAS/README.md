@@ -29,20 +29,12 @@ It will do this by using a combination of machine learning and deep learning met
 
 * Once the dependencies have been downloaded and installed, execute `conda activate classify`. This will start the environment.
 
-### 2. Steps to format the data, train a classifier and produce a hostable model
+* Then, download the latest model files from the LUCAS/Models folder in Google Drive. Save them in a folder called 'models'.
 
-* To format the data into usable protobuffers, run `python scripts/data_to_protos.py` This will create protobuffers in the normalizedData directory in /data.
+### 2. Steps to run a hosted model API locally
 
-* To run the a classifier, execute `python training/classifier_name.py`. This will produce an accuracy, and pickle the model.
-
-### 3. Steps to run the API locally
+**Make sure you are doing this on the master branch. Otherwise the API will not be configured to the latest model.**
 
 * Execute `python app/lucas.py` to start the Flask server. Visit 0.0.0.0 to check the status. It should return the API version.
 
 * Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:3050/classify` to query the local endpoint with a review. The endpoint will run the review over the model and return a classification.
-
-#### (Optional) Steps to run the docker container
-
-* Execute `docker build -t classifyreviews .` This will build the docker image.
-
-* Execute `docker run -p 3050:3050 -it classifyreviews`. This will start the docker image with port 80 exposed, allowing you to query it from the host machine.

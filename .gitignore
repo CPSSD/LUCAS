@@ -15,5 +15,5 @@ wordvec
 .env
 *.h5
 models
-notebooks/data.json
+LUCAS/notebooks/data.json
 
