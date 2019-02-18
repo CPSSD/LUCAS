@@ -167,7 +167,7 @@ class DotChart extends Component {
 
   formatTooltip() {
     return `<div class='dotchart-tooltip'>
-              <h1 class="title is-6">${this.point.review.result}</h1>
+              <h1 class="title is-6 has-text-black">${this.point.review.result}</h1>
               <h3>Confidence: ${this.point.confidence}%</h3>
               <br>
               <div> ${this.point.review.review.substring(0, 140)}...</div>

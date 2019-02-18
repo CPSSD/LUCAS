@@ -94,6 +94,7 @@ class Search extends React.Component {
       .then((res) => res.json())
       .then((response) => {
         if (!response) {
+          this.props.setBusiness(business);
           this.getRandomBusiness(query.join());
         } else {
           this.props.setBusiness(business);
