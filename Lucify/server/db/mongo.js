@@ -10,7 +10,7 @@ const Business = mongoose.model('Business', businessSchema);
 
 module.exports = {
   connectDB: () => {
-    mongoose.connect('mongodb://localhost/yelp_dataset', (err) => {
+    mongoose.connect('mongodb://localhost:4321/yelp_dataset', (err) => {
       if (err) {
         console.log(err);
       }
