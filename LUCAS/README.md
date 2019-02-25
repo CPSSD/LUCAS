@@ -38,3 +38,15 @@ It will do this by using a combination of machine learning and deep learning met
 * Execute `python app/lucas.py` to start the Flask server. Visit 0.0.0.0 to check the status. It should return the API version.
 
 * Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:3050/classify` to query the local endpoint with a review. The endpoint will run the review over the model and return a classification.
+
+### Helpful Conda activation
+
+Since we need to set the python path variable, it's helpful to do this in the conda environment. You can do this automatically from the following file:
+
+`<conda environment>/envs/lucas/etc/conda/activate.d/env_vars.sh`
+
+where `<conda environment>` is likely to be under the home `~` directory (named anaconda3, miniconda3, etc)
+
+`export PYTHONPATH=/home/stefan/Amazoff/LUCAS/`
+
+Similarly, you can unset the changes in `<conda environment>/envs/lucas/etc/conda/dectivate.d/env_vars.sh`
