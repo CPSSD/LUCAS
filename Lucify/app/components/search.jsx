@@ -5,7 +5,7 @@ import cx from 'classnames';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import Rating from 'react-rating';
 
-import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews } from '../actions/index';
+import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews, resultsLoading } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
@@ -77,6 +77,7 @@ class Search extends React.Component {
   }
 
   getReviewsFromDB(business) {
+    this.props.resultsLoading();
     const { id, categories } = business;
     const query = [];
     forEach(categories, (category) => {
@@ -145,7 +146,6 @@ class Search extends React.Component {
         });
     }
   }
-  
 
   updateInputValue(evt) {
     this.setState({
@@ -195,7 +195,7 @@ class Search extends React.Component {
       );
     });
 
-    return businesses;
+    return <div className="box"><div className="pt20">{businesses}</div></div>;
   }
 
   handleKeyPress = (event) => {
@@ -268,26 +268,26 @@ class Search extends React.Component {
   }
 
   render() {
-    return (
-      <div className="container is-fluid box">
-        <div className="field has-addons pb20">
+    return ([
+      <div className="box search-box" key="search">
+        <div className="field has-addons pr20 pl20">
           <div className="control width-100">
             <input className="input" type="text" placeholder="Search Yelp or paste a Yelp link" value={this.state.yelpSearchTerm} onChange={(evt) => this.updateInputValue(evt)} onKeyPress={(event) => this.handleKeyPress(event)} />
           </div>
           <div className="pr5 pl5 is-vertical-center">Near</div>
           {this.place()}
-          <div className="control">
-            <button className="button is-primary" onClick={() => this.searchYelp()}>
-              <i className="fas fa-search mr5"></i>
-              Search
-            </button>
-          </div>
         </div>
-        <div className="mt30">
-          { this.state.showSearchResults && this.displaySearchResults() }
+        <div className="control">
+          <button className="button is-primary is-fullwidth" onClick={() => this.searchYelp()}>
+            Search/Analyze
+            <i className="fas fa-search ml10"></i>
+          </button>
         </div>
+      </div>,
+      <div className="mt30" key="results">
+        {this.state.showSearchResults && this.displaySearchResults()}
       </div>
-    );
+    ]);
   }
 }
 
@@ -300,6 +300,7 @@ const mapDispatchToProps = (dispatch) => {
     setDatasetReviewWeights: (weights) => dispatch(setDatasetReviewWeights(weights)),
     setBusiness: (business) => dispatch(setBusiness(business)),
     setFilteredReviews: (reviews, filtered) => dispatch(setFilteredReviews(reviews, filtered)),
+    resultsLoading: () => dispatch(resultsLoading()),
   };
 };
 
