@@ -2,14 +2,12 @@
 import React, { Component } from 'react';
 import Slider from 'react-slick';
 import Rating from 'react-rating';
-import { map, pickBy, union } from 'lodash';
 import { connect } from 'react-redux';
-import WordCloud from 'react-d3-cloud';
 import DotChart from './dotChart';
 import TrendChart from './trendChart';
+import WordCloud from './wordCloud';
 import Review from './reviews';
 import { resultsLoading } from '../actions/index';
-
 
 
 function PrevArrow(props) {
@@ -31,18 +29,8 @@ function NextArrow(props) {
 }
 
 class Results extends Component {
-
   componentDidMount() {
     this.props.resultsLoading();
-  }
-
-  calculateAccuracy(confidence) {
-    const number = parseFloat(confidence);
-    let positiveConfidence = Math.abs(number.toFixed(2));
-    if (positiveConfidence > 1) {
-      positiveConfidence = 1;
-    }
-    return positiveConfidence * 100;
   }
 
   renderCarousel(business) {
@@ -121,29 +109,6 @@ class Results extends Component {
     );
   }
  
-  renderWordCloud(datasetWeights) {
-    const featureWeights = map(datasetWeights, 'feature_weights');
-    const mergedFeatureWeights = Object.assign(...union(featureWeights));
-    const filteredFeatureWeights = pickBy(mergedFeatureWeights, (val) => {
-      return val !== 0;
-    });
-    const data = [];
-    for (let key in filteredFeatureWeights) {
-      const currentVal = this.calculateAccuracy(filteredFeatureWeights[key]);
-      data.push({ text: key, value: currentVal});
-    }
-
-    const fontSizeMapper = (word) => Math.log2(word.value) * 10;
-
-    return (
-      <WordCloud
-        data={data}
-        fontSizeMapper={fontSizeMapper}
-      />
-    );
-  }
-
-
   renderChartCarousel() {
     const settings = {
       dots: true,
@@ -193,7 +158,11 @@ class Results extends Component {
           </div>
         </div>
         <div className="box">
+<<<<<<< HEAD
           {/* {this.renderWordCloud(this.props.datasetWeights)} */}
+=======
+          <WordCloud />
+>>>>>>> 53a64a0... Updated Word Cloud to use highcharts
         </div>
       </div>
     );
