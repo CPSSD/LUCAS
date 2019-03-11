@@ -9,7 +9,7 @@ import { union, pickBy, map } from 'lodash';
 
 HCWordCloud(Highcharts);
 
-const colours = ['#8b0000', '#ac0002', '#cf0002', '#f30001', '#ff4300', '#ff6e00', '#ff9000', '#ffae2c', '#ffc96e', '#ffe4a7', '#d3d3d3', '#00e500', '#00d600', '#00c700', '#00b800', '#00aa00', '#009b00', '#008d00', '#007f00', '#007200', '#006400'];
+const colours = ['#8b0000', '#ac0002', '#cf0002', '#f30001', '#ff4300', '#ff6e00', '#ff9000', '#ffae2c', '#ffc96e', '#ffe4a7', '#000000', '#00e500', '#00d600', '#00c700', '#00b800', '#00aa00', '#009b00', '#008d00', '#007f00', '#007200', '#006400'];
 
 
 class WordCloud extends Component {
@@ -130,7 +130,7 @@ class WordCloud extends Component {
     return `<div class='dotchart-tooltip'>
               <h1 class="title is-6 has-text-black">${this.point.name}</h1>
               <br>
-              <h1 class="title is-6">${this.point.weighting}</h1>
+              <h1 class="title is-6 has-text-black">${this.point.weighting}</h1>
               <span style="color:${this.point.color}">●</span> Weight: <b>${this.point.weight}%</b><br/>
             </div>`;
   }
