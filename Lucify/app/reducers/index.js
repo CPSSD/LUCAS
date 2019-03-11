@@ -10,6 +10,7 @@ import {
   SET_FILTERED_REIEWS,
   RESET_FILTERED_REVIEWS,
   UPDATE_FILTERED_REVIEWS,
+  LOADING,
 } from '../constants/action-types';
 
 const initialState = {
@@ -18,6 +19,7 @@ const initialState = {
   toggleSearchReview: false,
   datasetWeightsLoaded: false,
   toggleModal: false,
+  resultsLoading: false,
   reviewsFiltered: false,
 };
 const rootReducer = (state = initialState, action) => {
@@ -32,6 +34,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, datasetWeightsLoaded: action.payload };
     case TOGGLE_MODAL:
       return { ...state, toggleModal: !state.toggleModal };
+    case LOADING:
+      return { ...state, resultsLoading: !state.resultsLoading };
     default:
       return state;
     case SET_REVIEWS:
