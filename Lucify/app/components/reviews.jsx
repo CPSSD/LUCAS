@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
-import CountUp from 'react-countup';
 import ShowMoreText from 'react-show-more-text';
 import Slider from 'react-slick';
 import cx from 'classnames';
@@ -8,15 +7,27 @@ import { forEach, chunk } from 'lodash';
 import { connect } from 'react-redux';
 import { resetFilteredReviews } from '../actions/index';
 
-const PALETTE = [
+const colours = [
   '#8b0000',
-  '#cd3205',
-  '#f67527',
-  '#ffbe73',
+  '#ac0002',
+  '#cf0002',
+  '#f30001',
+  '#ff4300',
+  '#ff6e00',
+  '#ff9000',
+  '#ffae2c',
+  '#ffc96e',
+  '#ffe4a7',
   '#000000',
-  '#81e973',
-  '#3abf2f',
-  '#0f910a',
+  '#00e500',
+  '#00d600',
+  '#00c700',
+  '#00b800',
+  '#00aa00',
+  '#009b00',
+  '#008d00',
+  '#007f00',
+  '#007200',
   '#006400'
 ];
 
@@ -39,29 +50,53 @@ function NextArrow(props) {
 }
 
 class Review extends Component {
-  getWordColour(confidence) {
+  getColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
     switch (true) {
-      case (fixedConfidence > 0.75):
-        return PALETTE[0];
-      case (fixedConfidence > 0.5 && fixedConfidence < 0.75):
-        return PALETTE[1];
-      case (fixedConfidence > 0.25 && fixedConfidence < 0.5):
-        return PALETTE[2];
-      case (fixedConfidence > 0 && fixedConfidence < 0.25):
-        return PALETTE[3];
-      case (fixedConfidence === 0):
-        return PALETTE[4];
-      case (fixedConfidence < 0 && fixedConfidence > -0.25):
-        return PALETTE[5];
-      case (fixedConfidence < -0.25 && fixedConfidence > -0.5):
-        return PALETTE[6];
-      case (fixedConfidence < -0.5 && fixedConfidence > -0.75):
-        return PALETTE[7];
-      case (fixedConfidence < -0.75):
-        return PALETTE[8];
+      case (fixedConfidence <= -1):
+        return colours[0];
+      case (fixedConfidence > -1 && fixedConfidence <= -0.9):
+        return colours[1];
+      case (fixedConfidence > -0.9 && fixedConfidence <= -0.8):
+        return colours[2];
+      case (fixedConfidence > -0.8 && fixedConfidence <= -0.7):
+        return colours[3];
+      case (fixedConfidence > -0.7 && fixedConfidence <= -0.6):
+        return colours[4];
+      case (fixedConfidence > -0.6 && fixedConfidence <= -0.5):
+        return colours[5];
+      case (fixedConfidence > -0.5 && fixedConfidence <= -0.4):
+        return colours[6];
+      case (fixedConfidence > -0.4 && fixedConfidence <= -0.3):
+        return colours[7];
+      case (fixedConfidence > -0.3 && fixedConfidence <= -0.2):
+        return colours[8];
+      case (fixedConfidence > -0.2 && fixedConfidence <= -0.1):
+        return colours[9];
+      case (fixedConfidence > -1 && fixedConfidence < 0.1):
+        return colours[10];
+      case (fixedConfidence > 0.1 && fixedConfidence <= 0.2):
+        return colours[11];
+      case (fixedConfidence > 0.2 && fixedConfidence <= 0.3):
+        return colours[12];
+      case (fixedConfidence > 0.3 && fixedConfidence <= 0.4):
+        return colours[13];
+      case (fixedConfidence > 0.4 && fixedConfidence <= 0.5):
+        return colours[14];
+      case (fixedConfidence > 0.5 && fixedConfidence <= 0.6):
+        return colours[15];
+      case (fixedConfidence > 0.6 && fixedConfidence <= 0.7):
+        return colours[16];
+      case (fixedConfidence > 0.7 && fixedConfidence <= 0.8):
+        return colours[17];
+      case (fixedConfidence > 0.8 && fixedConfidence <= 0.9):
+        return colours[18];
+      case (fixedConfidence > 0.9 && fixedConfidence <= 1):
+        return colours[19];
+      case (fixedConfidence >= 1):
+        return colours[20];
       default:
-        return PALETTE[4];
+        return colours[10];
     }
   }
 
@@ -97,40 +132,33 @@ class Review extends Component {
     this.props.resetFilteredReviews();
   }
 
-  renderAccuracy(accuracy) {
+  renderAccuracy(accuracy, colour) {
     const accuracyClasses = cx({
       pr10: true,
       pl10: true,
       'is-2': true,
-      'has-text-warning': accuracy >= 50 && accuracy < 70,
-      'has-text-danger': accuracy < 50,
-      'has-text-success': accuracy > 70
     });
     return (
-      <p className={accuracyClasses}>{accuracy}%</p>
+      <p className={accuracyClasses} style={{ color: colour }}>{accuracy}%</p>
     );
   }
 
-  renderVerdict(verdict) {
+  renderVerdict(verdict, colour) {
     const verdictClasses = cx({
       pl10: true,
-      'has-text-danger': verdict === 'Deceptive',
-      'has-text-success': verdict === 'Genuine',
     });
 
     const iconClasses = cx({
       fas: true,
       mr20: true,
-      'has-text-danger': verdict === 'Deceptive',
-      'has-text-success': verdict === 'Genuine',
       'fa-times-circle': verdict === 'Deceptive',
       'fa-check-circle': verdict === 'Genuine',
     });
 
     return (
       <p className="card-header-title is-2">
-        <span className={verdictClasses}> {verdict}</span>
-        <span className="pl10"><i className={iconClasses}></i></span>
+        <span className={verdictClasses} style={{ color: colour }}> {verdict}</span>
+        <span className="pl10"><i className={iconClasses} style={{color: colour }}></i></span>
       </p>
     );
   }
@@ -140,7 +168,7 @@ class Review extends Component {
     const reviewText = [];
     forEach(splitReview, (value, index) => {
       const wordValue = featureWeights[value];
-      const color = this.getWordColour(wordValue);
+      const color = this.getColour(wordValue);
       reviewText.push(
         <span key={`${value}-${index}`} style={{ color, fontWeight: this.setFontWeight(wordValue) }}>{value}</span>
       );
@@ -155,13 +183,15 @@ class Review extends Component {
     if (!reviews) { return null; }
     return reviews.map((reviewInfo, index) => {
       const { confidence, result, feature_weights, review } = reviewInfo;
+      const updaedConfidence = result === 'Deceptive' ? -parseFloat(confidence) : parseFloat(confidence);
+      const colour = this.getColour(parseFloat(updaedConfidence));
       return (
         <div className="tile is-child pr5 pl5 pb5" key={`card-${index}`}>
-          <div className="card">
+          <div className="card" style={{ borderTop: `10px solid ${colour}` }}>
             <div className="card-header">
-              {this.renderVerdict(result, index)}
+              {this.renderVerdict(result, colour)}
               <div className="card-header-title is-3">
-                Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence))}
+                Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence), colour)}
               </div>
             </div>
             <div className="card-content review">
@@ -237,13 +267,8 @@ class Review extends Component {
 
   render() {
     return (
-      <div>
-        <div className="level baseline">
-          <div className="level-left">
-            <div className="level-item has-text-centered pt20">
-              <p className="title">Reviews</p>
-            </div>
-          </div>
+      <div className="has-background-link mb20 pl20 pr20 pb40">
+        <div className="level pt20">
           <div className="level-right">
             <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
           </div>

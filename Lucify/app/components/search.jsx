@@ -195,7 +195,20 @@ class Search extends React.Component {
       );
     });
 
-    return <div className="box"><div className="pt20">{businesses}</div></div>;
+    return (
+      <div className="has-background-link pt20 pl20 pr20">
+        <div className="level">
+          <div className="level-left">
+            <div className="level-item has-text-centered pt20">
+              <p className="title">Search Results</p>
+            </div>
+          </div>
+        </div>
+        <div className="has-text-black">
+          <div className="pt20">{businesses}</div>
+        </div>
+      </div>
+    );
   }
 
   handleKeyPress = (event) => {
@@ -284,7 +297,7 @@ class Search extends React.Component {
           </button>
         </div>
       </div>,
-      <div className="mt30" key="results">
+      <div key="results">
         {this.state.showSearchResults && this.displaySearchResults()}
       </div>
     ]);
