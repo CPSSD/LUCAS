@@ -21,7 +21,7 @@ const PALETTE = [
 ];
 
 function PrevArrow(props) {
-  const { className, style, onClick } = props;
+  const { onClick } = props;
   return (
     <div onClick={onClick} className={"arrow-prev"}>
       <i className="fas fa-chevron-left"></i>
@@ -30,7 +30,7 @@ function PrevArrow(props) {
 }
 
 function NextArrow(props) {
-  const { className, style, onClick } = props;
+  const { onClick } = props;
   return (
     <div onClick={onClick} className={"arrow-next"}>
       <i className="fas fa-chevron-right"></i>
@@ -93,6 +93,10 @@ class Review extends Component {
     return 0;
   }
 
+  resetData() {
+    this.props.resetFilteredReviews();
+  }
+
   renderAccuracy(accuracy) {
     const accuracyClasses = cx({
       pr10: true,
@@ -103,7 +107,7 @@ class Review extends Component {
       'has-text-success': accuracy > 70
     });
     return (
-      <p className={accuracyClasses}><CountUp delay={0.4} duration={3} end={accuracy} />%</p>
+      <p className={accuracyClasses}>{accuracy}%</p>
     );
   }
 
@@ -229,10 +233,6 @@ class Review extends Component {
         </div>
       </div>
     );
-  }
-
-  resetData() {
-    this.props.resetFilteredReviews();
   }
 
   render() {
