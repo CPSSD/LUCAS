@@ -59,15 +59,19 @@ class Results extends Component {
 
   renderBusiness(business) {
     return (
-      <section className="section box mt20">
-        <div className="container tile is-ancestor is-fluid">
+      <section className="has-background-link mb40 pl20 pr20">
+        <div className="level">
+          <div className="level-left">
+            <div className="level-item has-text-centered pt20">
+              <a href={business.url} target="_blank" rel="noopener noreferrer" className="title has-text-white">{business.name}</a>
+            </div>
+          </div>
+        </div>
+        <div className="container has-text-white tile is-ancestor is-fluid pb20">
           <div className="tile is-parent is-2">
             {this.renderCarousel(business)}
           </div>
           <div className="tile is-parent is-vertical is-10">
-            <div className="tile is-child">
-              <a href={business.url} target="_blank" rel="noopener noreferrer" className="title is-4">{business.name}</a>
-            </div>
             <div className="level tile is-child columns">
               <div className="level-item has-text-centered column">
                 <div>
@@ -121,7 +125,7 @@ class Results extends Component {
     };
 
     return (
-      <div className="tile is-child is-12 box pb40">
+      <div className="is-12 box pb40 has-background-link">
         <Slider {...settings}>
           <div className="level">
             <DotChart />
@@ -137,28 +141,16 @@ class Results extends Component {
 
   render() {
     return (
-      <div className="container is-fluid box mt20 has-background-link">
+      <div className="container is-fluid mt20">
         {this.props.business &&
           this.renderBusiness(this.props.business)
         }
-        <div className="level">
-          <div className="level-left">
-            <div className="level-item has-text-centered pt20">
-              <p className="title">Graphs</p>
-            </div>
-          </div>
-        </div>
         {this.renderChartCarousel()}
         <Review />
-        <div className="level pt40">
-          <div className="level-left">
-            <div className="level-item has-text-centered pt20">
-              <p className="title">Word Cloud</p>
-            </div>
+        <div className="has-background-link pt20 pb20">
+          <div className="box ml20 mr20">
+            <WordCloud />
           </div>
-        </div>
-        <div className="box">
-          <WordCloud />
         </div>
       </div>
     );
