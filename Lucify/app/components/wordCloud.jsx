@@ -105,12 +105,12 @@ class WordCloud extends Component {
       },
       series: [{
         data,
+        rotation: {
+          from: 0,
+          orientations: 1,
+          to: 0,
+        },
       }],
-      rotation: {
-        from: 0,
-        orientations: 0,
-        to: 0,
-      },
       title: {
         text: undefined,
       },
@@ -128,9 +128,9 @@ class WordCloud extends Component {
 
   formatTooltip() {
     return `<div class='dotchart-tooltip'>
-              <h1 class="title is-6 has-text-black">${this.point.weighting}</h1>
               <h1 class="title is-6 has-text-black">${this.point.name}</h1>
               <br>
+              <h1 class="title is-6">${this.point.weighting}</h1>
               <span style="color:${this.point.color}">●</span> Weight: <b>${this.point.weight}%</b><br/>
             </div>`;
   }
