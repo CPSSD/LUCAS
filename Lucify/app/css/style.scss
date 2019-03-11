@@ -127,3 +127,18 @@ body, .hero{
   top: 50%;
   right: -15px;
 }
+
+
+.loading-body {
+  display: flex;
+  background-color: unset;
+  overflow: unset;
+  justify-content: center;
+  .loading {
+  }
+}
+
+.search-box {
+  margin: 0 20% 0 20%;
+  padding: 20px 0 0 0 !important;
+}
