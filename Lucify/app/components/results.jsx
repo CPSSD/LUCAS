@@ -158,11 +158,7 @@ class Results extends Component {
           </div>
         </div>
         <div className="box">
-<<<<<<< HEAD
-          {/* {this.renderWordCloud(this.props.datasetWeights)} */}
-=======
           <WordCloud />
->>>>>>> 53a64a0... Updated Word Cloud to use highcharts
         </div>
       </div>
     );
