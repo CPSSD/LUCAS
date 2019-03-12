@@ -151,6 +151,7 @@ class Results extends Component {
   renderChartCarousel() {
     const settings = {
       dots: true,
+      draggable: false,
       infinite: true,
       slidesToShow: 1,
       slidesToScroll: 1,
