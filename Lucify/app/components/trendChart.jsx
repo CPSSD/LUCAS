@@ -26,7 +26,6 @@ class TrendChart extends Component {
     const sortedReviews = sortBy(reviews, (review) => { return new Date(review.date); });
     const columnData = [];
     const lineData = [];
-    // const categories = this.getCategoies(sortedReviews);
     forEach(sortedReviews, (review) => {
       const index = parseInt(moment(review.date).format('x'));
       const weightedReviews = find(datasetWeights, (weightedReview) => { return weightedReview.review === review.text; });
