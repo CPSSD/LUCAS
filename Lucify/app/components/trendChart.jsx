@@ -1,16 +1,12 @@
 /* eslint-disable class-methods-use-this */
 
 import React, { Component } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsMore from 'highcharts/highcharts-more';
+import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { sortBy, forEach, last, findIndex, find } from 'lodash';
+import { sortBy, forEach, find } from 'lodash';
 import { setFilteredReviews, updateFilteredReviews } from '../actions/index';
-
-
-HighchartsMore(Highcharts);
 
 class TrendChart extends Component {
   constructor(props) {
@@ -25,68 +21,50 @@ class TrendChart extends Component {
     this.chartComponent.current.chart.reflow();
   }
 
-  getCategoies(reviews) {
-    const startDate = moment(reviews[0].date);
-    const endDate = moment(last(reviews).date);
-    const dates = [];
-
-    const month = moment(startDate);
-    dates.push(month.format('YYYY-MM'));
-    while (month < endDate) {
-      month.add(1, 'month');
-      dates.push(month.format('YYYY-MM'));
-    }
-
-    return dates;
-  }
-
   getOptions() {
     const { reviews, datasetWeights } = this.props;
     const sortedReviews = sortBy(reviews, (review) => { return new Date(review.date); });
     const columnData = [];
     const lineData = [];
-    const categories = this.getCategoies(sortedReviews);
     forEach(sortedReviews, (review) => {
-      const monthOfReview = moment(review.date).format('YYYY-MM');
-      const index = findIndex(categories, (value) => { return value === monthOfReview; });
-      const dataAtIndex = find(columnData, (val) => { return val.x === index; });
-      const dataAtLineIndex = find(lineData, (val) => { return val.x === index; });
+      const index = parseInt(moment(review.date).format('x'));
       const weightedReviews = find(datasetWeights, (weightedReview) => { return weightedReview.review === review.text; });
-      if (dataAtIndex) {
-        dataAtIndex.y += 1;
-        dataAtIndex.review.push(weightedReviews);
-        const currentStars = dataAtLineIndex.y;
-        const averageRating = (currentStars + review.stars) / dataAtIndex.y;
-        dataAtLineIndex.y = Math.abs(averageRating.toFixed(2));
-        dataAtLineIndex.review.push(weightedReviews);
-      } else {
-        columnData.push({ x: index, y: 1, review: [weightedReviews] });
-        lineData.push({ x: index, y: review.stars, review: [weightedReviews] });
-      }
+      columnData.push({ x: index, y: 1, review: weightedReviews, stars: review.stars });
+      lineData.push({ x: index, y: review.stars, review: weightedReviews });
     });
 
     const options = {
       chart: {
         type: 'column',
+        zoomType: 'xy'
       },
       series: [{
         type: 'column',
         name: 'Reviews',
-        yAxis: 1,
         data: columnData,
         events: {
-          click: (event) => { this.filterReview(event.point); }
+          click: (event) => { this.filterReview(event.point, columnData); }
         },
+        dataGrouping: {
+          groupPixelWidth: 50,
+          forced: true,
+          units: [
+            ['month', [1, 3, 6],
+              'year', [1]]
+          ]
+        }
       }, {
-        type: 'spline',
+        type: 'line',
         name: 'Average Rating',
         data: lineData,
-        tooltip: {
-          valueSuffix: ' Stars'
-        },
-        events: {
-          click: (event) => { this.filterReview(event.point); }
-        },
+        dataGrouping: {
+          groupPixelWidth: 50,
+          forced: true,
+          units: [
+            ['month', [1, 3, 6],
+              'year', [1]]
+          ]
+        }
       }],
       title: {
         text: undefined,
@@ -95,7 +73,6 @@ class TrendChart extends Component {
         enabled: false
       },
       xAxis: {
-        categories,
         crosshair: true,
         title: {
           enabled: true,
@@ -103,26 +80,14 @@ class TrendChart extends Component {
         },
       },
       yAxis: [{
-        title: {
-          text: 'Rating',
-        },
-        min: 0,
-        max: 5,
-        ceiling: 5,
+        visible: false,
       }, {
-        title: {
-          text: 'Review Count',
-        },
-        opposite: true
+        visible: false,
       }],
-      plotOptions: {
-        bubble: {
-          minSize: 25,
-          maxSize: 25,
-        }
-      },
       tooltip: {
         shared: true,
+        useHTML: true,
+        formatter: this.formatTooltip,
       },
 
 
@@ -131,19 +96,28 @@ class TrendChart extends Component {
     return options;
   }
 
-  filterReview(point) {
+  filterReview(point, data) {
+    const { dataGroup } = point;
     const { setFilteredReviews } = this.props;
-    if (point.review) {
-      setFilteredReviews(point.review, true);
+    const reviews = [];
+    let count = 0;
+    if (dataGroup) {
+      const { start, length } = dataGroup;
+      while (count < length) {
+        reviews.push(data[start + count].review);
+        count += 1;
+      }
+      if (reviews) {
+        setFilteredReviews(reviews, true);
+      }
     }
   }
 
   formatTooltip() {
     return `<div class='dotchart-tooltip'>
-              <h1 class="title is-6">${"test"}</h1>
-              <h3>Confidence: ${"test"}%</h3>
+              <h1 class="title is-6 has-text-black">Reviews: ${this.points[0].y}</h1>
               <br>
-              <div>...</div>
+              <h1 class="title is-6 has-text-black">Average Rating: ${this.points[1].y} Stars</h1>
             </div>`;
   }
 
@@ -155,6 +129,7 @@ class TrendChart extends Component {
             highcharts={Highcharts}
             ref={this.chartComponent}
             options={this.getOptions()}
+            constructorType={'stockChart'}
           />
           :
           null

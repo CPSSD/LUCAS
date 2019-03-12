@@ -8,6 +8,8 @@ import WordCloud from 'react-d3-cloud';
 import DotChart from './dotChart';
 import TrendChart from './trendChart';
 import Review from './reviews';
+import { resultsLoading } from '../actions/index';
+
 
 
 function PrevArrow(props) {
@@ -29,6 +31,10 @@ function NextArrow(props) {
 }
 
 class Results extends Component {
+
+  componentDidMount() {
+    this.props.resultsLoading();
+  }
 
   calculateAccuracy(confidence) {
     const number = parseFloat(confidence);
@@ -141,6 +147,7 @@ class Results extends Component {
   renderChartCarousel() {
     const settings = {
       dots: true,
+      draggable: false,
       infinite: true,
       slidesToShow: 1,
       slidesToScroll: 1,
@@ -186,12 +193,18 @@ class Results extends Component {
           </div>
         </div>
         <div className="box">
-          {this.renderWordCloud(this.props.datasetWeights)}
+          {/* {this.renderWordCloud(this.props.datasetWeights)} */}
         </div>
       </div>
     );
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    resultsLoading: () => dispatch(resultsLoading()),
+  };
+};
 
 
 const mapStateToProps = (state) => {
@@ -203,5 +216,5 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(Results);
+export default connect(mapStateToProps, mapDispatchToProps)(Results);
 
