@@ -28,12 +28,7 @@ Lucify is a front end for the LUCAS service aiming to provide a tool to verify a
 
 ### 2. Run npm install
 
-### 3. Connect to MongoDB
+### 3. Run npm install
 
-* To connect to mongo db run ```ssh -L 4322:localhost:<mongo db port> <user>@<server> -f -N &```
-* Enter your password
-
-### 4. Run npm install
-
-### 5. Run npm start
+### 4. Run npm start
 
