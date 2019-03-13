@@ -52,51 +52,48 @@ function NextArrow(props) {
 class Review extends Component {
   getColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
-    switch (true) {
-      case (fixedConfidence <= -1):
-        return colours[0];
-      case (fixedConfidence > -1 && fixedConfidence <= -0.9):
-        return colours[1];
-      case (fixedConfidence > -0.9 && fixedConfidence <= -0.8):
-        return colours[2];
-      case (fixedConfidence > -0.8 && fixedConfidence <= -0.7):
-        return colours[3];
-      case (fixedConfidence > -0.7 && fixedConfidence <= -0.6):
-        return colours[4];
-      case (fixedConfidence > -0.6 && fixedConfidence <= -0.5):
-        return colours[5];
-      case (fixedConfidence > -0.5 && fixedConfidence <= -0.4):
-        return colours[6];
-      case (fixedConfidence > -0.4 && fixedConfidence <= -0.3):
-        return colours[7];
-      case (fixedConfidence > -0.3 && fixedConfidence <= -0.2):
-        return colours[8];
-      case (fixedConfidence > -0.2 && fixedConfidence <= -0.1):
-        return colours[9];
-      case (fixedConfidence > -1 && fixedConfidence < 0.1):
-        return colours[10];
-      case (fixedConfidence > 0.1 && fixedConfidence <= 0.2):
-        return colours[11];
-      case (fixedConfidence > 0.2 && fixedConfidence <= 0.3):
-        return colours[12];
-      case (fixedConfidence > 0.3 && fixedConfidence <= 0.4):
-        return colours[13];
-      case (fixedConfidence > 0.4 && fixedConfidence <= 0.5):
-        return colours[14];
-      case (fixedConfidence > 0.5 && fixedConfidence <= 0.6):
-        return colours[15];
-      case (fixedConfidence > 0.6 && fixedConfidence <= 0.7):
-        return colours[16];
-      case (fixedConfidence > 0.7 && fixedConfidence <= 0.8):
-        return colours[17];
-      case (fixedConfidence > 0.8 && fixedConfidence <= 0.9):
-        return colours[18];
-      case (fixedConfidence > 0.9 && fixedConfidence <= 1):
-        return colours[19];
-      case (fixedConfidence >= 1):
-        return colours[20];
-      default:
-        return colours[10];
+    if (fixedConfidence <= -1) {
+      return colours[0];
+    } else if (fixedConfidence <= -0.9) {
+      return colours[1];
+    } else if (fixedConfidence <= -0.8) {
+      return colours[2];
+    } else if (fixedConfidence <= -0.7) {
+      return colours[3];
+    } else if (fixedConfidence <= -0.6) {
+      return colours[4];
+    } else if (fixedConfidence <= -0.5) {
+      return colours[5];
+    } else if (fixedConfidence <= -0.4) {
+      return colours[6];
+    } else if (fixedConfidence <= -0.3) {
+      return colours[7];
+    } else if (fixedConfidence <= -0.2) {
+      return colours[8];
+    } else if (fixedConfidence <= -0.1) {
+      return colours[9];
+    } else if (fixedConfidence < 0.1) {
+      return colours[10];
+    } else if (fixedConfidence < 0.2) {
+      return colours[11];
+    } else if (fixedConfidence < 0.3) {
+      return colours[12];
+    } else if (fixedConfidence < 0.4) {
+      return colours[13];
+    } else if (fixedConfidence < 0.5) {
+      return colours[14];
+    } else if (fixedConfidence < 0.6) {
+      return colours[15];
+    } else if (fixedConfidence < 0.7) {
+      return colours[16];
+    } else if (fixedConfidence < 0.8) {
+      return colours[17];
+    } else if (fixedConfidence < 0.9) {
+      return colours[18];
+    } else if (fixedConfidence < 1) {
+      return colours[19];
+    } else if (fixedConfidence >= 1) {
+      return colours[20];
     }
   }
 
@@ -154,7 +151,6 @@ class Review extends Component {
       'fa-times-circle': verdict === 'Deceptive',
       'fa-check-circle': verdict === 'Genuine',
     });
-
     return (
       <p className="card-header-title is-2">
         <span className={verdictClasses} style={{ color: colour }}> {verdict}</span>
@@ -185,6 +181,7 @@ class Review extends Component {
       const { confidence, result, feature_weights, review } = reviewInfo;
       const updaedConfidence = result === 'Deceptive' ? -parseFloat(confidence) : parseFloat(confidence);
       const colour = this.getColour(parseFloat(updaedConfidence));
+
       return (
         <div className="tile is-child pr5 pl5 pb5" key={`card-${index}`}>
           <div className="card" style={{ borderTop: `10px solid ${colour}` }}>
