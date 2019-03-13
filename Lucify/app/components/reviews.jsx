@@ -111,7 +111,7 @@ class Review extends Component {
     if (positiveConfidence > 1) {
       positiveConfidence = 1;
     }
-    return positiveConfidence * 100;
+    return Math.round(positiveConfidence * 100);
   }
 
   compareConfidence(first, second) {
