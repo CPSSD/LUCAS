@@ -7,6 +7,7 @@ import './css/style.scss';
 import Header from './components/header';
 import Main from './components/main';
 import WhatIsModal from './components/modal';
+import Loading from './components/loadingModal';
 import store from './store/index';
 
 const App = () => (
@@ -28,6 +29,7 @@ const App = () => (
       <Header />
       <Main />
       <WhatIsModal />
+      <Loading />
     </section>
   </Provider>
 );
