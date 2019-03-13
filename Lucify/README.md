@@ -30,8 +30,8 @@ Lucify is a front end for the LUCAS service aiming to provide a tool to verify a
 
 ### 3. Connect to MongoDB
 
-* To connect to mongo db run ```ssh -L 4322:localhost:27017 root@134.209.31.100 -f -N &```
-* The password is cpssd2019amazoff1
+* To connect to mongo db run ```ssh -L 4322:localhost:<mongo db port> <user>@<server> -f -N &```
+* Enter your password
 
 ### 4. Run npm install
 
