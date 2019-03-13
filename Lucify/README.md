@@ -28,7 +28,5 @@ Lucify is a front end for the LUCAS service aiming to provide a tool to verify a
 
 ### 2. Run npm install
 
-### 3. Run npm install
-
-### 4. Run npm start
+### 3. Run npm start
 
