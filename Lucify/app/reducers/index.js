@@ -11,6 +11,7 @@ import {
   RESET_FILTERED_REVIEWS,
   UPDATE_FILTERED_REVIEWS,
   LOADING,
+  SET_USER_DATA
 } from '../constants/action-types';
 
 const initialState = {
@@ -40,6 +41,8 @@ const rootReducer = (state = initialState, action) => {
       return state;
     case SET_REVIEWS:
       return { ...state, reviews: action.payload };
+    case SET_USER_DATA:
+      return { ...state, userData: action.payload };
     case SET_REVIEW_WEIGHTS:
       return { ...state, datasetWeights: action.payload };
     case SET_FILTERED_REIEWS:

@@ -1,9 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import ShowMoreText from 'react-show-more-text';
+import Rating from 'react-rating';
 import Slider from 'react-slick';
 import cx from 'classnames';
-import { forEach, chunk } from 'lodash';
+import { forEach, chunk, find, tail } from 'lodash';
 import { connect } from 'react-redux';
 import { resetFilteredReviews } from '../actions/index';
 
@@ -152,7 +153,7 @@ class Review extends Component {
       'fa-check-circle': verdict === 'Genuine',
     });
     return (
-      <p className="card-header-title is-2">
+      <p className="card-footer-item is-2">
         <span className={verdictClasses} style={{ color: colour }}> {verdict}</span>
         <span className="pl10"><i className={iconClasses} style={{color: colour }}></i></span>
       </p>
@@ -175,22 +176,108 @@ class Review extends Component {
     );
   }
 
+  renderStar(userInfo) {
+    const { average_stars, review_count } = userInfo
+    if (review_count === 1) return null;
+    const badgeClasses = cx({
+      far: true,
+      'fa-star': true,
+      'badge-good': average_stars >= 2,
+      'badge-bad': average_stars <= 2,
+    });
+    return (
+      <i className={badgeClasses}></i>
+    );
+  }
+
+  renderReviewBadge(reviewCount) {
+    const badgeClasses = cx({
+      fas: true,
+      ml5: true,
+      'fa-chess-pawn': reviewCount < 5,
+      'fa-chess-rook': reviewCount > 5 && reviewCount < 20,
+      'fa-chess-queen': reviewCount > 20,
+    });
+    return (
+      <i className={badgeClasses}></i>
+    );
+  }
+
+  renderDateBadge(commonDates) {
+    const highestReviewDate = commonDates[0];
+    let topFiveReviewDays = 0;
+    forEach(tail(commonDates), (date) => {
+      topFiveReviewDays += date[1];
+    });
+
+    if (highestReviewDate[1] >= topFiveReviewDays) return null;
+    const badgeClasses = cx({
+      far: true,
+      ml5: true,
+      'fa-calendar-times': highestReviewDate[1] >= topFiveReviewDays,
+      'fa-calendar-check': highestReviewDate[1] < topFiveReviewDays,
+      'badge-good': highestReviewDate[1] < topFiveReviewDays,
+      'badge-bad': highestReviewDate[1] >= topFiveReviewDays,
+    });
+    return (
+      <i className={badgeClasses}></i>
+    );
+  }
+
+  renderAverageReviewBadge(reviewLength) {
+    const badgeClasses = cx({
+      fas: true,
+      ml5: true,
+      'fa-edit': true,
+      'badge-good': reviewLength > 140,
+      'badge-bad': reviewLength < 140,
+    });
+    return (
+      <i className={badgeClasses}></i>
+    );
+  }
+
+  renderUserInfo(userInfo, stars) {
+    if (userInfo) {
+      return (
+        <div className="card-header">
+          <div className="card-header-title">
+            <div className="pr5">
+              {userInfo.name}
+            </div>
+            <Rating
+              initialRating={stars}
+              emptySymbol="far fa-star"
+              fullSymbol="fas fa-star"
+              fractions={2}
+              readonly
+            />
+          </div>
+          <div className="card-header-title badges">
+            {this.renderStar(userInfo)}
+            {this.renderReviewBadge(userInfo.review_count)}
+            {this.renderDateBadge(userInfo.common_dates)}
+            {this.renderAverageReviewBadge(userInfo.average_length)}
+          </div>
+        </div>
+        
+      );
+    }
+    return null;
+  }
+
   renderCards(reviews) {
+    const { userData } = this.props;
     if (!reviews) { return null; }
     return reviews.map((reviewInfo, index) => {
-      const { confidence, result, feature_weights, review } = reviewInfo;
-      const updaedConfidence = result === 'Deceptive' ? -parseFloat(confidence) : parseFloat(confidence);
-      const colour = this.getColour(parseFloat(updaedConfidence));
-
+      const { confidence, result, feature_weights, review, user_id, stars } = reviewInfo;
+      const updatedConfidence = result === 'Deceptive' ? -parseFloat(confidence) : parseFloat(confidence);
+      const colour = this.getColour(parseFloat(updatedConfidence));
+      const userInfo = find(userData, (data) => { return data.user_id === user_id; })
       return (
         <div className="tile is-child pr5 pl5 pb5" key={`card-${index}`}>
           <div className="card" style={{ borderTop: `10px solid ${colour}` }}>
-            <div className="card-header">
-              {this.renderVerdict(result, colour)}
-              <div className="card-header-title is-3">
-                Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence), colour)}
-              </div>
-            </div>
+            {this.renderUserInfo(userInfo, stars)}
             <div className="card-content review">
               <ShowMoreText
                 lines={3}
@@ -199,6 +286,12 @@ class Review extends Component {
               >
                 {this.renderReview(feature_weights, review)}
               </ShowMoreText>
+            </div>
+            <div className="card-footer">
+              {this.renderVerdict(result, colour)}
+              <div className="card-footer-item is-3">
+                Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence), colour)}
+              </div>
             </div>
           </div>
         </div>
@@ -244,6 +337,7 @@ class Review extends Component {
 
   renderResults() {
     const { filteredReviews, datasetWeightsLoaded } = this.props;
+    console.log(filteredReviews);
     if (!datasetWeightsLoaded) {
       return (
         <div className="tile is-child">
@@ -284,6 +378,7 @@ const mapStateToProps = (state) => {
     datasetWeightsLoaded: state.datasetWeightsLoaded,
     datasetWeights: state.datasetWeights,
     filteredReviews: state.filteredReviews,
+    userData: state.userData
   };
 };
 
