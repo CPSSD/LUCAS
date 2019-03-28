@@ -29,7 +29,6 @@ def classify_review(review):
   class_confidence = abs(classification - 0.5)*2
   predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
   feature_weights = get_feature_weights(stat_model, text)
-  print(review)
   return{"result": predicted_class, "confidence": str(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
 
 @app.route('/classify', methods=['POST'])
