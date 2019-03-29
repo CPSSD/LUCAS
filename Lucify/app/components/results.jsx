@@ -126,6 +126,14 @@ class Results extends Component {
 
     return (
       <div className="is-12 box pb40 has-background-link">
+        <div className="level">
+          <div className="level-left">
+            <p className="title has-text-white">Charts</p>
+          </div>
+          <div className="level-right">
+            <i className="far fa-question-circle is-pulled-right fa-2x has-text-white"></i>
+          </div>
+        </div>
         <Slider {...settings}>
           <div className="level">
             <DotChart />
@@ -147,11 +155,7 @@ class Results extends Component {
         }
         {this.renderChartCarousel()}
         <Review />
-        <div className="has-background-link pt20 pb20">
-          <div className="box ml20 mr20">
-            <WordCloud />
-          </div>
-        </div>
+        <WordCloud />
       </div>
     );
   }
