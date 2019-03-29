@@ -134,16 +134,26 @@ class WordCloud extends Component {
 
   render() {
     return (
-      <div className="level-item">
-        {this.props.filteredReviews ?
-          <HighchartsReact
-            highcharts={Highcharts}
-            ref={this.chartComponent}
-            options={this.getOptions()}
-          />
-          :
-          null
-        }
+      <div className="has-background-link mb20 pb40">
+        <div className="level pt20 pl20 pr20">
+          <div className="level-left">
+            <p className="title has-text-white">WordCloud</p>
+          </div>
+          <div className="level-right">
+            <i className="far fa-question-circle is-pulled-right fa-2x has-text-white"></i>
+          </div>
+        </div>
+        <div className="pl20 pr20">
+          {this.props.filteredReviews ?
+            <HighchartsReact
+              highcharts={Highcharts}
+              ref={this.chartComponent}
+              options={this.getOptions()}
+            />
+            :
+            null
+          }
+        </div>
       </div>
     );
   }

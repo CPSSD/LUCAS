@@ -79,11 +79,6 @@ class TrendChart extends Component {
           text: 'Date'
         },
       },
-      yAxis: [{
-        visible: false,
-      }, {
-        visible: false,
-      }],
       tooltip: {
         shared: true,
         useHTML: true,
