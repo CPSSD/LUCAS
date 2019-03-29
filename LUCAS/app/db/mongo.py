@@ -2,13 +2,13 @@ from pymongo import MongoClient
 from flask import Blueprint
 from flask import request
 from bson.json_util import dumps
+from db.credentials import username, password
 import statistics 
 import re
 from collections import Counter
-
 client = MongoClient('134.209.31.100',
-                    username='myUserAdmin',
-                    password='lucify2019cpssd',
+                    username=username,
+                    password=password,
                     authSource='admin')
 dataset=client.yelp_dataset
 

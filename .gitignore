@@ -16,4 +16,5 @@ wordvec
 *.h5
 models
 LUCAS/notebooks/data.json
+LUCAS/app/db/credentials.py
 
