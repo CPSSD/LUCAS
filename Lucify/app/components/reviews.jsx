@@ -179,14 +179,15 @@ class Review extends Component {
   }
 
   renderStar(userInfo) {
-    const { average_stars, review_count } = userInfo
+    const { rating_deviation, review_count } = userInfo
     if (review_count === 1) return null;
     const badgeClasses = cx({
       far: true,
       'fa-star': true,
       mr5: true,
-      'badge-good': average_stars >= 2,
-      'badge-bad': average_stars <= 2,
+      'badge-good': rating_deviation <= 1,
+      'badge-medium': rating_deviation > 1 && rating_deviation <= 2,
+      'badge-bad': rating_deviation > 2,
     });
     return (
       [
@@ -194,7 +195,7 @@ class Review extends Component {
         ReactDom.createPortal(
           <ReactTooltip key={1} id={`star-${userInfo.user_id}`} className="badgeTooltip">
             <p>
-              {`Average User Rating is ${userInfo.average_stars} Stars`}
+              {`Average User Rating standard deviation is ${userInfo.rating_deviation.toFixed(2)} Stars`}
             </p>
           </ReactTooltip>, document.body
         )
@@ -203,13 +204,13 @@ class Review extends Component {
   }
 
   renderReviewBadge(reviewCount, userId) {
+    if (reviewCount !== 1) return null;
     const badgeClasses = cx({
       fas: true,
       ml5: true,
       mr5: true,
-      'fa-chess-pawn': reviewCount <= 5,
-      'fa-chess-rook': reviewCount > 5 && reviewCount < 20,
-      'fa-chess-queen': reviewCount >= 20,
+      'badge-bad': true,
+      'fa-user-edit': true,
     });
     return (
       [
@@ -217,7 +218,7 @@ class Review extends Component {
         ReactDom.createPortal(
           <ReactTooltip key={1} id={`reviews-${userId}`} className="badgeTooltip">
             <p>
-              {`This user has ${reviewCount} Reviews`}
+              {'This user has only has one Review'}
             </p>
           </ReactTooltip>, document.body
         )
@@ -226,24 +227,21 @@ class Review extends Component {
   }
 
   renderDateBadge(commonDates, userId) {
+    if (commonDates.length === 1) return null;
     const highestReviewDate = commonDates[0];
-    if (highestReviewDate[1] <= 10) return null;
-    let topFiveReviewDays = 0;
-    forEach(tail(commonDates), (date) => {
-      topFiveReviewDays += date[1];
-    });
     const badgeClasses = cx({
       far: true,
       ml5: true,
       mr5: true,
-      'fa-calendar-times': highestReviewDate[1] > topFiveReviewDays,
-      'fa-calendar-check': highestReviewDate[1] <= topFiveReviewDays,
-      'badge-good': highestReviewDate[1] <= topFiveReviewDays,
-      'badge-bad': highestReviewDate[1] > topFiveReviewDays,
+      'fa-calendar-times': highestReviewDate[1] >= 5,
+      'fa-calendar-check': highestReviewDate[1] < 5,
+      'badge-good': highestReviewDate[1] < 3,
+      'badge-bad': highestReviewDate[1] >= 5,
+      'badge-medium': highestReviewDate[1] > 2 && highestReviewDate[1] < 5
     });
 
     let tooltip;
-    if (highestReviewDate[1] > topFiveReviewDays) {
+    if (highestReviewDate[1] >= 5) {
       tooltip = (
         [
           <p key={0}>
@@ -258,7 +256,7 @@ class Review extends Component {
       tooltip = (
         [
           <p key={0}>
-            {'Normal distribution of reviews accross time.'}
+            {'Average number of reviews in one day.'}
           </p>,
           <p key={1}>
             {`Highest: ${highestReviewDate[1]} reviews on ${highestReviewDate[0]}`}
@@ -283,12 +281,13 @@ class Review extends Component {
       fas: true,
       ml5: true,
       'fa-edit': true,
-      'badge-good': reviewLength > 140,
-      'badge-bad': reviewLength < 140,
+      'badge-good': reviewLength >= 1500,
+      'badge-bad': reviewLength <= 200,
+      'badge-medium': reviewLength > 200 && reviewLength < 1500
     });
 
     let tooltip;
-    if (reviewLength < 140) {
+    if (reviewLength <= 200) {
       tooltip = (
         [
           <p key={0}>
@@ -423,7 +422,6 @@ class Review extends Component {
 
   renderResults() {
     const { filteredReviews, datasetWeightsLoaded } = this.props;
-    console.log(filteredReviews);
     if (!datasetWeightsLoaded) {
       return (
         <div className="tile is-child">
