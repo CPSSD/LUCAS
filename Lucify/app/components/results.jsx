@@ -1,6 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import Slider from 'react-slick';
+import cx from 'classnames';
 import Rating from 'react-rating';
 import { connect } from 'react-redux';
 import DotChart from './dotChart';
@@ -29,6 +31,13 @@ function NextArrow(props) {
 }
 
 class Results extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false,
+    };
+  }
+
   componentDidMount() {
     this.props.resultsLoading();
   }
@@ -112,6 +121,37 @@ class Results extends Component {
       </section>
     );
   }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Charts</h2>
+                <p>
+                  The Lucify frontend has 2 main charts the first is the Dot Chart that shows you a breakdown of the overall product reviews and how we rate them.
+                  The second is the trend chart that helps you visiualize the review and rating trends of the business over time.
+                  Both charts are an interactive expirience and you can click on any of the data points that are highlighted in either chart to filter for those specific reviews.
+                  You can reset your filters by pressing the Reset button
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
  
   renderChartCarousel() {
     const settings = {
@@ -131,7 +171,7 @@ class Results extends Component {
             <p className="title has-text-white">Charts</p>
           </div>
           <div className="level-right">
-            <i className="far fa-question-circle is-pulled-right fa-2x has-text-white"></i>
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         <Slider {...settings}>
@@ -156,6 +196,7 @@ class Results extends Component {
         {this.renderChartCarousel()}
         <Review />
         <WordCloud />
+        {this.renderModal()}
       </div>
     );
   }

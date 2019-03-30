@@ -1,6 +1,8 @@
 /* eslint-disable class-methods-use-this */
 
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
+import cx from 'classnames';
 import Highcharts from 'highcharts';
 import HCWordCloud from 'highcharts/modules/wordcloud';
 import HighchartsReact from 'highcharts-react-official';
@@ -16,6 +18,9 @@ class WordCloud extends Component {
   constructor(props) {
     super(props);
     this.chartComponent = React.createRef();
+    this.state = {
+      showModal: false,
+    };
   }
 
   componentDidMount() {
@@ -132,6 +137,39 @@ class WordCloud extends Component {
             </div>`;
   }
 
+  toggleModal() {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Word Cloud</h2>
+                <p>
+                  The Word Cloud is a suplemental chart that visiualises how different words affect the review and our confidence in it.
+                  The Word Cloud will update based on the applied filters on the 2 main charts for you to be able to see all the interesting you want.
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
+
   render() {
     return (
       <div className="has-background-link mb20 pb40">
@@ -140,7 +178,7 @@ class WordCloud extends Component {
             <p className="title has-text-white">WordCloud</p>
           </div>
           <div className="level-right">
-            <i className="far fa-question-circle is-pulled-right fa-2x has-text-white"></i>
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         <div className="pl20 pr20">
@@ -154,6 +192,7 @@ class WordCloud extends Component {
             null
           }
         </div>
+        {this.renderModal()}
       </div>
     );
   }

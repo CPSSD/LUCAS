@@ -53,6 +53,13 @@ function NextArrow(props) {
 }
 
 class Review extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false,
+    };
+  }
+
   getColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
     if (fixedConfidence <= -1) {
@@ -440,6 +447,40 @@ class Review extends Component {
     );
   }
 
+  toggleModal() {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Reviews</h2>
+                <p>
+                  These are the main business review.
+                  Here you can see a few things at the top you can see the information about the user who has written a review and the user badges.
+                  The badges provide information on the useful and their overall information based on previous reviews and ratings.
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
+
   render() {
     return (
       <div className="has-background-link mb20 pb40">
@@ -449,10 +490,11 @@ class Review extends Component {
           </div>
           <div className="level-right">
             <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
-            <i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i>
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         {this.renderResults()}
+        {this.renderModal()}
       </div>
     );
   }
