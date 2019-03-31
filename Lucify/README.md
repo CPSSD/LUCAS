@@ -27,7 +27,7 @@ Lucify is a front end for the LUCAS service aiming to provide a tool to verify a
   DB_USERNAME= 'login'
   DB_PASSWORD= 'password'
   ```
-To get the current production credentials please contact kirils.sloka2@mail.dcu.ie
+To get the current production credentials please contact Kirill
 
 ### 2. Run npm install
 
