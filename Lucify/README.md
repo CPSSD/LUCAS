@@ -24,7 +24,10 @@ Lucify is a front end for the LUCAS service aiming to provide a tool to verify a
   ```
   GOOGLE_API_KEY= 'YOUR_GOOGLE_KEY' 
   YELP_API_KEY= 'YOUR_YELP_KEY'
+  DB_USERNAME= 'login'
+  DB_PASSWORD= 'password'
   ```
+To get the current production credentials please contact kirils.sloka2@mail.dcu.ie
 
 ### 2. Run npm install
 
