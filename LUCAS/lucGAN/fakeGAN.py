@@ -13,6 +13,7 @@ from generator import Generator
 from discriminator import Discriminator
 from scripts.training_helpers import get_data_frame as get_df
 from rollout_generator import ROLLOUT
+from datetime import datetime
 
 
 #########################################################################################
@@ -193,8 +194,12 @@ def main():
     print('#########################################################################')
     print('Start Adversarial Training...')
     for total_batch in range(TOTAL_BATCH):
+        print('Beginning adversarial step {} of {} \n'.format(total_batch, TOTAL_BATCH))
+        tz = datetime.now()
         # Train the generator for one step
         for it in range(G_STEPS):
+            print('Beginning generator step {} of {} \n'.format(it, G_STEPS))
+            t0 = datetime.now()
             samples = generator.generate(sess)
             rewards = rollout.get_reward(sess, samples, rollout_num, discriminator)
             feed = {generator.x: samples, generator.rewards: rewards}
@@ -205,7 +210,8 @@ def main():
             rewards = rollout.get_reward(sess, samples, rollout_num, fake_discriminator)
             feed = {generator.x: samples, generator.rewards: rewards}
             _ = sess.run(generator.g_updates, feed_dict=feed)
-
+            tt = datetime.now() - t0
+            print('Time taken: {}'.format(tt))
 
         # Update roll-out parameters
         rollout.update_params()
@@ -216,12 +222,11 @@ def main():
         # Train the fake-discriminator
         train_discriminator(sess, d_steps, fake_discriminator, dis_data_loader, deceptive_reviews_for_training, deceptive_reviews_for_testing, generator=generator)
 
-        print("batch: {}".format(total_batch + 1))
         eval_loss = discriminator.evaluation_loss(sess, genuine_reviews_for_testing, deceptive_reviews_for_testing)
         print("evaluation loss avg after training discriminator: {}".format(eval_loss))
         discriminator.predict(sess, genuine_reviews_for_testing, deceptive_reviews_for_testing)
         print("############")
-
+        print('Time taken: {}'.format(datetime.now()-tz))
         generated_sentences_file = '../data/generated_sentences_batch_{}.txt'.format(total_batch + 1)
         gen_samples = generate_samples(sess, generator, BATCH_SIZE, BATCH_SIZE)
         convert_to_string(vocab, gen_samples, generated_sentences_file)
@@ -249,7 +254,7 @@ def train_discriminator(sess, epoch_num, discriminator, dis_data_loader, positiv
                 }
                 _ = sess.run([discriminator.train_op], feed)
 
-        if epoch % 10 == 0:
+        if epoch % 2 == 0:
             if len(negative_data_for_testing) == 0:
                 negative_data_for_testing = gen_samples[:len(positive_data_for_testing)]
             eval_loss = discriminator.evaluation_loss(sess, positive_data_for_testing, negative_data_for_testing)
