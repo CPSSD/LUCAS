@@ -45,7 +45,7 @@ To finish setting up the frontend create a file in **LUCAS/app/db* called **cred
 `username=''`
 `password=''`
 
-For the current production server credentials please ping kirils.sloka2@mail.dcu.ie
+For the current production server credentials please contact Kirill
 
 ### Helpful Conda activation
 
