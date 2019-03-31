@@ -39,6 +39,14 @@ It will do this by using a combination of machine learning and deep learning met
 
 * Use `curl  -H "Content-Type: application/json" -d '{"review": "Great hotel would recommend" }' -X POST http://0.0.0.0:3050/classify` to query the local endpoint with a review. The endpoint will run the review over the model and return a classification.
 
+### 3. Create database credentials file
+
+To finish setting up the frontend create a file in **LUCAS/app/db* called **credentials.py** and create 2 fields:
+`username=''`
+`password=''`
+
+For the current production server credentials please ping kirils.sloka2@mail.dcu.ie
+
 ### Helpful Conda activation
 
 Since we need to set the python path variable, it's helpful to do this in the conda environment. You can do this automatically from the following file:
