@@ -18,4 +18,5 @@ dependencies:
   - pytest-mock
   - protobuf
   - gensim
+  - pymongo
   - pylint
