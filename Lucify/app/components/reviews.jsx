@@ -289,25 +289,15 @@ class Review extends Component {
     let tooltip;
     if (reviewLength <= 200) {
       tooltip = (
-        [
-          <p key={0}>
-            {`Average review length is ${Math.floor(reviewLength)} characters`}
-          </p>,
-          <p key={1}>
-            {'This is smaller than our threshold'}
-          </p>
-        ]
+        <p key={0}>
+          {`Average review length of this user ${Math.floor(reviewLength)} characters`}
+        </p>
       );
     } else {
       tooltip = (
-        [
-          <p key={0}>
-            {`Average review length is ${Math.floor(reviewLength)} characters`}
-          </p>,
-          <p key={1}>
-            {'This passes our threshold'}
-          </p>
-        ]
+        <p key={0}>
+          {`Average review length is ${Math.floor(reviewLength)} characters`}
+        </p>,
       );
     }
     return (
