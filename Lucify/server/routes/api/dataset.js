@@ -1,3 +1,4 @@
+const rp = require('request-promise');
 const router = require('express').Router();
 const mongodb = require('../../db/mongo');
 
@@ -83,6 +84,32 @@ router.post('/getReviews', (req, res) => {
         res.status(500).json(err);
       });
   }
+
+  return res;
+});
+
+router.post('/getUserData', (req, res) => {
+  const { userIds } = req.body;
+  if (!userIds) {
+    return res.status(422).json({ errors: { fields: "User id can't be blank" } });
+  }
+
+  const options = {
+    method: 'POST',
+    uri: 'http://localhost:3005/db/getStats',
+    body: {
+      userIds,
+    },
+    json: true
+  };
+
+  rp(options)
+    .then((parsedBody) => {
+      res.status(200).json(parsedBody);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 
   return res;
 });

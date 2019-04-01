@@ -7,9 +7,11 @@ from keras.preprocessing import text
 from sklearn.externals import joblib
 from os.path import dirname, join, abspath
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
+from db.mongo import db
 from scripts.training_helpers import get_feature_weights, get_classification, get_confidence
 
 app = Flask(__name__)
+app.register_blueprint(db)
 
 stat_model = joblib.load("../models/pipe_svc_1.0.pkl")  
 neural_model = keras.models.load_model('../models/mlp_opspam_86.h5')
@@ -21,12 +23,13 @@ def return_status():
   return 'LUCAS API v0.3.0'
 
 def classify_review(review):
-  tokenized_review = tokenizer.texts_to_matrix([review], mode='tfidf')
+  text = review["text"]
+  tokenized_review = tokenizer.texts_to_matrix([text], mode='tfidf')
   classification = get_classification(neural_model, tokenized_review)[0][0]
   class_confidence = abs(classification - 0.5)*2
   predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
-  feature_weights = get_feature_weights(stat_model, review)
-  return{"result": predicted_class, "confidence": str(class_confidence), "feature_weights": feature_weights, "review": review}
+  feature_weights = get_feature_weights(stat_model, text)
+  return{"result": predicted_class, "confidence": str(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
 
 @app.route('/classify', methods=['POST'])
 def classify():
@@ -37,7 +40,7 @@ def classify():
 def bulkClassify():
   weights = []
   for review in request.get_json()["reviews"]:
-    weights.append(classify_review(review["text"]))
+    weights.append(classify_review(review))
   return json.dumps(weights, sort_keys=False)
 
 def start():

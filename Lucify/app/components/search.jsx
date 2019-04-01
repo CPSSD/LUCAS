@@ -5,7 +5,7 @@ import cx from 'classnames';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import Rating from 'react-rating';
 
-import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews, resultsLoading } from '../actions/index';
+import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews, resultsLoading, setUserData } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
@@ -43,6 +43,23 @@ class Search extends React.Component {
       });
   }
 
+  getUserData(reviews) {
+    const userIds = reviews.map((review) => review.user_id);
+    fetch('/api/dataset/getUserData', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userIds,
+      })
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        this.props.setUserData(response);
+      });
+  }
+
   getReviewsFromDataset(id) {
     fetch('/api/dataset/getReviews', {
       method: 'POST',
@@ -55,6 +72,7 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
+        this.getUserData(response);
         this.props.setReviews(response);
         this.getDatasetReviewWeights(response);
       });
@@ -314,6 +332,7 @@ const mapDispatchToProps = (dispatch) => {
     setBusiness: (business) => dispatch(setBusiness(business)),
     setFilteredReviews: (reviews, filtered) => dispatch(setFilteredReviews(reviews, filtered)),
     resultsLoading: () => dispatch(resultsLoading()),
+    setUserData: (data) => dispatch(setUserData(data)),
   };
 };
 

@@ -142,3 +142,23 @@ body, .hero{
   margin: 0 20% 0 20%;
   padding: 20px 0 0 0 !important;
 }
+
+.badge-good {
+  color: green;
+}
+
+.badge-bad {
+  color: red;
+}
+
+.badge-medium {
+  color: orange;
+}
+
+.badges {
+  justify-content: flex-end
+}
+
+.badgeTooltip {
+  overflow: visible;
+}

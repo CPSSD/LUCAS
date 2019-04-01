@@ -11,6 +11,7 @@ import {
   RESET_FILTERED_REVIEWS,
   UPDATE_FILTERED_REVIEWS,
   LOADING,
+  SET_USER_DATA
 } from '../constants/action-types';
 
 export const toggleReview = (value) => ({ type: TOGGLE_REVIEW, payload: value });
@@ -22,6 +23,7 @@ export const setDatasetReviewWeights = (weights) => ({ type: SET_REVIEW_WEIGHTS,
 export const setFilteredReviews = (reviews, filtered) => ({ type: SET_FILTERED_REIEWS, payload: { reviews, filtered } });
 export const datasetWeightsLoaded = (value) => ({ type: DATASET_WEIGHTS_LOADED, payload: value });
 export const setBusiness = (business) => ({ type: SET_BUSINESS, payload: business });
+export const setUserData = (data) => ({ type: SET_USER_DATA, payload: data });
 export const resetFilteredReviews = () => ({ type: RESET_FILTERED_REVIEWS });
 export const updateFilteredReviews = (reviews) => ({ type: UPDATE_FILTERED_REVIEWS, payload: reviews });
 export const resultsLoading = () => ({ type: LOADING });
