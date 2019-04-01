@@ -137,10 +137,10 @@ class Results extends Component {
             </header>
             <section className="modal-card-body">
               <div className="content has-text-black">
-                <h2 className="is-bold">Charts</h2>
+                <h2 className="is-bold">Data Visualizations</h2>
                 <p>
-                  The Lucify frontend has 2 main charts. The first is the Dot Chart that shows you a breakdown of the overall product reviews and how we rate them.
-                  The second is the trend chart that helps visiualize the review and rating trends of the business over time.
+                  The Lucify frontend has 2 main data visualizations. The first is the Dot data visualization that shows you a breakdown of the overall product reviews and how we rate them.
+                  The second is the trend data visualization that helps visiualize the review and rating trends of the business over time.
                   Both charts are an interactive experience. Click on any of the data points in either chart to filter for those specific reviews futher down
                   To reset the filters press the Reset buttons below the charts.
                 </p>
@@ -168,7 +168,7 @@ class Results extends Component {
       <div className="is-12 box pb40 has-background-link">
         <div className="level">
           <div className="level-left">
-            <p className="title has-text-white">Charts</p>
+            <p className="title has-text-white">Data Visualizations</p>
           </div>
           <div className="level-right">
             <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
