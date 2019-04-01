@@ -180,8 +180,19 @@ class Review extends Component {
       );
       reviewText.push(<span key={`${value}-${index}-2`}> </span>);
     });
+    if (splitReview.length <= 45) {
+      return (
+        reviewText
+      );
+    }
     return (
-      reviewText
+      <ShowMoreText
+        lines={3}
+        more="Show more"
+        less="Show less"
+      >
+        {reviewText}
+      </ShowMoreText>
     );
   }
 
@@ -361,13 +372,7 @@ class Review extends Component {
           <div className="card" style={{ borderTop: `10px solid ${colour}` }}>
             {this.renderUserInfo(userInfo, stars)}
             <div className="card-content review">
-              <ShowMoreText
-                lines={3}
-                more="Show more"
-                less="Show less"
-              >
-                {this.renderReview(feature_weights, review)}
-              </ShowMoreText>
+              {this.renderReview(feature_weights, review)}
             </div>
             <div className="card-footer">
               {this.renderVerdict(result, colour)}
