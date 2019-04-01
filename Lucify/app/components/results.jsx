@@ -139,10 +139,10 @@ class Results extends Component {
               <div className="content has-text-black">
                 <h2 className="is-bold">Charts</h2>
                 <p>
-                  The Lucify frontend has 2 main charts the first is the Dot Chart that shows you a breakdown of the overall product reviews and how we rate them.
-                  The second is the trend chart that helps you visiualize the review and rating trends of the business over time.
-                  Both charts are an interactive expirience and you can click on any of the data points that are highlighted in either chart to filter for those specific reviews.
-                  You can reset your filters by pressing the Reset button
+                  The Lucify frontend has 2 main charts. The first is the Dot Chart that shows you a breakdown of the overall product reviews and how we rate them.
+                  The second is the trend chart that helps visiualize the review and rating trends of the business over time.
+                  Both charts are an interactive experience. Click on any of the data points in either chart to filter for those specific reviews futher down
+                  To reset the filters press the Reset buttons below the charts.
                 </p>
               </div>
             </section>
