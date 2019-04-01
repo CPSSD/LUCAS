@@ -458,9 +458,11 @@ class Review extends Component {
               <div className="content has-text-black">
                 <h2 className="is-bold">Reviews</h2>
                 <p>
-                  These are the main business review.
-                  Here you can see a few things at the top you can see the information about the user who has written a review and the user badges.
-                  The badges provide information on the useful and their overall information based on previous reviews and ratings.
+                  These are the customer reviews for the selected business. 
+                  The confidence score you see is calculated via the LUCAS API. 
+                  When a review is expanded, the words that contributed the most towards that score are highlighted (Green: Genuine, Red: Deception). 
+                  If there are indications of deception in a users history, they will be shown in the badges above the user's review. 
+                  Hover over these badges to find out more.
                 </p>
               </div>
             </section>

@@ -158,8 +158,8 @@ class WordCloud extends Component {
               <div className="content has-text-black">
                 <h2 className="is-bold">Word Cloud</h2>
                 <p>
-                  The Word Cloud is a suplemental chart that visiualises how different words affect the review and our confidence in it.
-                  The Word Cloud will update based on the applied filters on the 2 main charts for you to be able to see all the interesting you want.
+                  The Word Cloud is a supplemental chart that visiualises how different words affect the review and our confidence in it.
+                  The Word Cloud will update based on the applied filters on the 2 main charts and will show a breakdown of the most impactful words across the reviews.
                 </p>
               </div>
             </section>
