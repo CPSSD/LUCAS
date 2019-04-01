@@ -304,7 +304,7 @@ class Review extends Component {
       tooltip = (
         <p key={0}>
           {`Average review length is ${Math.floor(reviewLength)} characters`}
-        </p>,
+        </p>
       );
     }
     return (
