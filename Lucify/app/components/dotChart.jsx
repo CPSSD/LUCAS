@@ -50,6 +50,7 @@ class DotChart extends Component {
         events: {
           click: (event) => { this.filterReview(event.point); }
         },
+        turboThreshold: 2000,
       }],
       title: {
         text: undefined,
