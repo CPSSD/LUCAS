@@ -11,7 +11,7 @@ import random
 from dataloader import *
 from generator import Generator
 from discriminator import Discriminator
-from scripts.training_helpers import get_data_frame as get_df
+from notebooks.yelp.exp4_data_feature_extraction import get_balanced_dataset as get_data
 from rollout_generator import ROLLOUT
 from datetime import datetime
 
@@ -105,10 +105,8 @@ def convert_to_string(vocab, gen_samples, result_file):
 
 
 # you need to write this function.
-def load_data(df):
-    deceptive = df.loc[df['deceptive'] == 1]['review'].values.tolist()
-    genuine = df.loc[df['deceptive'] == 0]['review'].values.tolist()
-    return genuine[:600], genuine[600:], deceptive[:600], deceptive[600:]
+def load_data(fake, genuine):
+    return  [x.review_content for x in genuine[:int(len(genuine)*0.2)]], [x.review_content for x in genuine[int(len(genuine)*0.2):]], [x.review_content for x in fake[:int(len(fake)*0.2)]], [x.review_content for x in fake[int(len(fake)*0.2):]]
     
 
 def main():
@@ -122,15 +120,15 @@ def main():
     dis_embedding_dim = EMB_DIM
     embedding = np.asarray(embd)
 
-    df = get_df()
+    all_reviews, fake, genuine, unused  = get_data()
 
     # genuine_reviews_for_training is an array of genuine reviews for training. Each review is padded to the "SEQ_LENGTH" with "ENDING_WORD".
-    genuine_reviews_for_training, genuine_reviews_for_testing, deceptive_reviews_for_training, deceptive_reviews_for_testing = load_data(df)
+    genuine_reviews_for_training, genuine_reviews_for_testing, deceptive_reviews_for_training, deceptive_reviews_for_testing = load_data(fake, genuine)
+
+    print(len(genuine_reviews_for_testing), len(genuine_reviews_for_training), len(deceptive_reviews_for_testing), len(deceptive_reviews_for_training))
 
     all_reviews = genuine_reviews_for_training + genuine_reviews_for_testing + deceptive_reviews_for_training + deceptive_reviews_for_testing
 
-    for review in all_reviews:
-        print(review)
 
     vocab, embedding, new_vocab = find_main_vocab(genuine_reviews_for_training + genuine_reviews_for_testing + deceptive_reviews_for_training + deceptive_reviews_for_testing, vocab, embedding)
     vocab += new_vocab
