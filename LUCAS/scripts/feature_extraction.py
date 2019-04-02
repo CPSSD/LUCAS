@@ -44,4 +44,8 @@ def scaled_reviewer_features(reviewset, entire_reviewset):
   reviewer_predictors = [list(reviewer_features(x.user_id, reviewer_reviews)) for x in reviewset]
   return StandardScaler().fit_transform(reviewer_predictors)
 
-
+def get_entire_dataset(yelpDataPath="../../data/yelpZip"):
+  review_set = review_set_pb2.ReviewSet()
+  with open(yelpDataPath, 'rb') as f:
+    review_set.ParseFromString(f.read())
+  return [x for x in review_set.reviews]
