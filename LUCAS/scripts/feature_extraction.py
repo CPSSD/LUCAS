@@ -39,4 +39,9 @@ def reviewer_features(reviewer_id, reviews_by_reviewer):
   return (max_reviews_in_day, average_review_length, ratings_stdev,
           percent_pos_reviews, percent_neg_reviews)
 
+def scaled_reviewer_features(reviewset, entire_reviewset):
+  reviewer_reviews = reviews_by_reviewer(entire_reviewset)
+  reviewer_predictors = [list(reviewer_features(x.user_id, reviewer_reviews)) for x in reviewset]
+  return StandardScaler().fit_transform(reviewer_predictors)
+
 
