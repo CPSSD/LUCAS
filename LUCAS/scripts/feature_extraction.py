@@ -72,7 +72,7 @@ def get_balanced_dataset(yelpDataPath="../../data/yelpZip", max_seq_len=320):
 
   genuine_reviews = []
   counter_genuine = 0
-  for review in review_set.reviews:
+  for review in shuffle(review_set.reviews, random_state=1337):
     if review.label == True:
       continue
     if counter_genuine >= count_fake:
