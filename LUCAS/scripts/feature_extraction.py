@@ -75,7 +75,7 @@ def get_balanced_dataset(yelpDataPath="../../data/yelpZip", max_seq_len=320):
   for review in review_set.reviews:
     if review.label == True:
       continue
-    if counter_genuine > count_fake:
+    if counter_genuine >= count_fake:
       break
     if len(review_words(review)) <= max_seq_len:
       genuine_reviews.append(review)
