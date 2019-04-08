@@ -2,6 +2,7 @@ import functools
 import statistics
 import nltk
 from sklearn.preprocessing import StandardScaler
+from sklearn.utils import shuffle
 from protos import review_set_pb2
 
 def max_date_occurrences(reviews):
@@ -63,11 +64,10 @@ def get_balanced_dataset(yelpDataPath="../../data/yelpZip", max_seq_len=320):
   is_fake = lambda x: x.label
   fake_reviews = list(filter(is_fake, review_set.reviews))
   is_word = lambda w: w.isalpha()
-  review_words = lambda r: nltk.word_tokenize(r.review_content)
-  fake_tokenized = [list(filter(is_word, review_words(r))) for r in fake_reviews]
+  review_words = lambda r: list(filter(is_word, nltk.word_tokenize(r.review_content)))
+  short_review = lambda r: len(review_words(r)) <= max_seq_len
+  fake_short = list(filter(short_review, fake_reviews))
 
-  len_filter = lambda s: len(list(s)) <= max_seq_len
-  fake_short = list(filter(len_filter, fake_tokenized))
   count_fake = len(fake_short)
 
   genuine_reviews = []
@@ -80,3 +80,4 @@ def get_balanced_dataset(yelpDataPath="../../data/yelpZip", max_seq_len=320):
     if len(review_words(review)) <= max_seq_len:
       genuine_reviews.append(review)
       counter_genuine += 1
+  return shuffle(genuine_reviews + fake_short, random_state=1337)
