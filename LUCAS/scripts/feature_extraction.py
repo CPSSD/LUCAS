@@ -67,7 +67,7 @@ def get_balanced_dataset(yelpDataPath="../../data/yelpZip", max_seq_len=320):
   fake_tokenized = [list(filter(is_word, review_words(r))) for r in fake_reviews]
 
   len_filter = lambda s: len(list(s)) <= max_seq_len
-  fake_short = list(filter(len_filter, fake_tokenized)
+  fake_short = list(filter(len_filter, fake_tokenized))
   count_fake = len(fake_short)
 
   genuine_reviews = []
