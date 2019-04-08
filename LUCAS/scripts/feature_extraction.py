@@ -1,6 +1,7 @@
 import functools
 import statistics
 from sklearn.preprocessing import StandardScaler
+from protos import review_set_pb2
 
 def max_date_occurrences(reviews):
   date_count_map = {}
