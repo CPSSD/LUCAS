@@ -17,4 +17,5 @@ wordvec
 models
 LUCAS/notebooks/data.json
 LUCAS/app/db/credentials.py
+jobs
 

@@ -3,7 +3,7 @@ from scipy.sparse import coo_matrix, hstack
 from sklearn.utils import shuffle
 from protos import review_set_pb2, review_pb2
 import gensim
-from notebooks.experiments.exp2_feature_extraction import reviews_by_reviewer, reviewer_features, preprocess_words, topic_features
+from notebooks.yelp.exp2_feature_extraction import reviews_by_reviewer, reviewer_features, preprocess_words, topic_features
 
 def get_features_maker(all_reviews, bow_max_size=None):
   corpus = [x.review_content for x in all_reviews]
