@@ -53,6 +53,13 @@ function NextArrow(props) {
 }
 
 class Review extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false,
+    };
+  }
+
   getColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
     if (fixedConfidence <= -1) {
@@ -173,8 +180,19 @@ class Review extends Component {
       );
       reviewText.push(<span key={`${value}-${index}-2`}> </span>);
     });
+    if (splitReview.length <= 45) {
+      return (
+        reviewText
+      );
+    }
     return (
-      reviewText
+      <ShowMoreText
+        lines={3}
+        more="Show more"
+        less="Show less"
+      >
+        {reviewText}
+      </ShowMoreText>
     );
   }
 
@@ -354,13 +372,7 @@ class Review extends Component {
           <div className="card" style={{ borderTop: `10px solid ${colour}` }}>
             {this.renderUserInfo(userInfo, stars)}
             <div className="card-content review">
-              <ShowMoreText
-                lines={3}
-                more="Show more"
-                less="Show less"
-              >
-                {this.renderReview(feature_weights, review)}
-              </ShowMoreText>
+              {this.renderReview(feature_weights, review)}
             </div>
             <div className="card-footer">
               {this.renderVerdict(result, colour)}
@@ -414,7 +426,7 @@ class Review extends Component {
     const { filteredReviews, datasetWeightsLoaded } = this.props;
     if (!datasetWeightsLoaded) {
       return (
-        <div className="tile is-child">
+        <div className="tile is-child pl20 pr20">
           <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
           <div className="heading">Please Wait getting Yelp reviews..</div>
         </div>
@@ -422,7 +434,7 @@ class Review extends Component {
     }
 
     return (
-      <div className="tile is-ancestor">
+      <div className="tile is-ancestor pl20 pr20">
         <div className="tile is-parent width-100">
           {this.renderReviews(filteredReviews)}
         </div>
@@ -430,15 +442,56 @@ class Review extends Component {
     );
   }
 
+  toggleModal() {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Reviews</h2>
+                <p>
+                  These are the customer reviews for the selected business. 
+                  The confidence score you see is calculated via the LUCAS API. 
+                  When a review is expanded, the words that contributed the most towards that score are highlighted (Green: Genuine, Red: Deception). 
+                  If there are indications of deception in a users history, they will be shown in the badges above the user's review. 
+                  Hover over these badges to find out more.
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
+
   render() {
     return (
-      <div className="has-background-link mb20 pl20 pr20 pb40">
-        <div className="level pt20">
+      <div className="has-background-link mb20 pb40">
+        <div className="level pt20 pl20 pr20">
+          <div className="level-left">
+            <p className="title has-text-white">Reviews</p>
+          </div>
           <div className="level-right">
             <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>. Added Section tooltips
           </div>
         </div>
         {this.renderResults()}
+        {this.renderModal()}
       </div>
     );
   }

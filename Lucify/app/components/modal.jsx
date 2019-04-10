@@ -21,7 +21,7 @@ class WhatIsModal extends React.Component {
             <button className="delete" onClick={() => this.props.toggleModal()}></button>
           </header>
           <section className="modal-card-body">
-            <div className='content'>
+            <div className='content has-text-black'>
               <h2 className="is-bold">LUCAS</h2>
               <p>
                 LUCAS is an API used to accurately determine if user-submitted content is falsified. 

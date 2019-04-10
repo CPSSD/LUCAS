@@ -1,6 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import Slider from 'react-slick';
+import cx from 'classnames';
 import Rating from 'react-rating';
 import { connect } from 'react-redux';
 import DotChart from './dotChart';
@@ -29,6 +31,13 @@ function NextArrow(props) {
 }
 
 class Results extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false,
+    };
+  }
+
   componentDidMount() {
     this.props.resultsLoading();
   }
@@ -112,6 +121,37 @@ class Results extends Component {
       </section>
     );
   }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Data Visualizations</h2>
+                <p>
+                  The Lucify frontend has 2 main data visualizations. The first is the Dot data visualization that shows you a breakdown of the overall product reviews and how we rate them.
+                  The second is the trend data visualization that helps visiualize the review and rating trends of the business over time.
+                  Both charts are an interactive experience. Click on any of the data points in either chart to filter for those specific reviews futher down
+                  To reset the filters press the Reset buttons below the charts.
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
  
   renderChartCarousel() {
     const settings = {
@@ -126,6 +166,14 @@ class Results extends Component {
 
     return (
       <div className="is-12 box pb40 has-background-link">
+        <div className="level">
+          <div className="level-left">
+            <p className="title has-text-white">Data Visualizations</p>
+          </div>
+          <div className="level-right">
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>dded Section tooltips
+          </div>
+        </div>
         <Slider {...settings}>
           <div className="level">
             <DotChart />
@@ -147,11 +195,8 @@ class Results extends Component {
         }
         {this.renderChartCarousel()}
         <Review />
-        <div className="has-background-link pt20 pb20">
-          <div className="box ml20 mr20">
-            <WordCloud />
-          </div>
-        </div>
+        <WordCloud />
+        {this.renderModal()}
       </div>
     );
   }
