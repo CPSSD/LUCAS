@@ -53,6 +53,7 @@ function NextArrow(props) {
 }
 
 class Review extends Component {
+<<<<<<< HEAD
   constructor(props) {
     super(props);
     this.state = {
@@ -60,6 +61,12 @@ class Review extends Component {
     };
   }
 
+=======
+  constructor(props){
+    super(props)
+    this.tooltip = <div></div>
+  }
+>>>>>>> 1c09bc8... Imporved Frontend Performance
   getColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
     if (fixedConfidence <= -1) {
@@ -196,6 +203,10 @@ class Review extends Component {
     );
   }
 
+  updateTooltip(tooltip) {
+    this.tooltip = tooltip;
+  }
+
   renderStar(userInfo) {
     const { rating_deviation, review_count } = userInfo
     if (review_count === 1) return null;
@@ -207,17 +218,11 @@ class Review extends Component {
       'badge-medium': rating_deviation > 1 && rating_deviation <= 2,
       'badge-bad': rating_deviation > 2,
     });
+
+    const tooltip = <p>{`Average User Rating standard deviation is ${userInfo.rating_deviation.toFixed(2)} Stars`}</p>;
+
     return (
-      [
-        <div key={0} data-tip data-for={`star-${userInfo.user_id}`}><i className={badgeClasses}></i></div>,
-        ReactDom.createPortal(
-          <ReactTooltip key={1} id={`star-${userInfo.user_id}`} className="badgeTooltip">
-            <p>
-              {`Average User Rating standard deviation is ${userInfo.rating_deviation.toFixed(2)} Stars`}
-            </p>
-          </ReactTooltip>, document.body
-        )
-      ]
+      <div key={0} data-tip data-for={'tooltip'} onMouseOver={() => this.updateTooltip(tooltip)}><i className={badgeClasses}></i></div>
     );
   }
 
@@ -230,43 +235,33 @@ class Review extends Component {
       'badge-bad': true,
       'fa-user-edit': true,
     });
+    const tooltip = <p>{'This user has only has one Review'}</p>;
     return (
-      [
-        <div key={0} data-tip data-for={`reviews-${userId}`}><i className={badgeClasses}></i></div>,
-        ReactDom.createPortal(
-          <ReactTooltip key={1} id={`reviews-${userId}`} className="badgeTooltip">
-            <p>
-              {'This user has only has one Review'}
-            </p>
-          </ReactTooltip>, document.body
-        )
-      ]
+      <div key={0} data-tip data-for={'tooltip'} onMouseOver={() => this.updateTooltip(tooltip)}><i className={badgeClasses}></i></div>
     );
   }
 
-  renderDateBadge(commonDates, userId) {
-    if (commonDates.length === 1) return null;
-    const highestReviewDate = commonDates[0];
+  renderDateBadge(biggestDay, count) {
     const badgeClasses = cx({
       far: true,
       ml5: true,
       mr5: true,
-      'fa-calendar-times': highestReviewDate[1] >= 5,
-      'fa-calendar-check': highestReviewDate[1] < 5,
-      'badge-good': highestReviewDate[1] < 3,
-      'badge-bad': highestReviewDate[1] >= 5,
-      'badge-medium': highestReviewDate[1] > 2 && highestReviewDate[1] < 5
+      'fa-calendar-times': count >= 5,
+      'fa-calendar-check': count < 5,
+      'badge-good': count < 3,
+      'badge-bad': count >= 5,
+      'badge-medium': count > 2 && count < 5
     });
 
     let tooltip;
-    if (highestReviewDate[1] >= 5) {
+    if (count >= 5) {
       tooltip = (
         [
           <p key={0}>
             {'Large amount of reviews in one day.'}
           </p>,
           <p key={1}>
-            {`Highest: ${highestReviewDate[1]} reviews on ${highestReviewDate[0]}`}
+            {`Highest: ${count} reviews on ${biggestDay}`}
           </p>
         ]
       );
@@ -277,24 +272,17 @@ class Review extends Component {
             {'Average number of reviews in one day.'}
           </p>,
           <p key={1}>
-            {`Highest: ${highestReviewDate[1]} reviews on ${highestReviewDate[0]}`}
+            {`Highest: ${count} reviews on ${biggestDay}`}
           </p>
         ]
       );
     }
     return (
-      [
-        <div key={0} data-tip data-for={`date-${userId}`}><i className={badgeClasses}></i></div>,
-        ReactDom.createPortal(
-          <ReactTooltip key={1} id={`date-${userId}`} className="badgeTooltip">
-            {tooltip}
-          </ReactTooltip>, document.body
-        )
-      ]
+      <div key={0} data-tip data-for={'tooltip'} onMouseOver={() => this.updateTooltip(tooltip)}><i className={badgeClasses}></i></div>
     );
   }
 
-  renderAverageReviewBadge(reviewLength, userId) {
+  renderAverageReviewBadge(reviewLength) {
     const badgeClasses = cx({
       fas: true,
       ml5: true,
@@ -319,14 +307,7 @@ class Review extends Component {
       );
     }
     return (
-      [
-        <div key={0} data-tip data-for={`average-${userId}`}><i className={badgeClasses}></i></div>,
-        ReactDom.createPortal(
-          <ReactTooltip key={1} id={`average-${userId}`} className="badgeTooltip">
-            {tooltip}
-          </ReactTooltip>, document.body
-        )
-      ]
+      <div key={0} data-tip data-for={'tooltip'} onMouseOver={() => this.updateTooltip(tooltip)}><i className={badgeClasses}></i></div>
     );
   }
 
@@ -349,8 +330,11 @@ class Review extends Component {
           <div className="card-header-title badges">
             {this.renderStar(userInfo)}
             {this.renderReviewBadge(userInfo.review_count, userInfo.user_id)}
-            {this.renderDateBadge(userInfo.common_dates, userInfo.user_id)}
+            {this.renderDateBadge(userInfo.biggest_day, userInfo.biggest_day_count, userInfo.user_id)}
             {this.renderAverageReviewBadge(userInfo.average_length, userInfo.user_id)}
+            {ReactDom.createPortal(
+              <ReactTooltip id={'tooltip'} className="badgeTooltip" getContent={() => this.tooltip}></ReactTooltip>, document.body
+            )}
           </div>
         </div>
         
@@ -491,7 +475,11 @@ class Review extends Component {
           </div>
         </div>
         {this.renderResults()}
+<<<<<<< HEAD
         {this.renderModal()}
+=======
+        }
+>>>>>>> 1c09bc8... Imporved Frontend Performance
       </div>
     );
   }

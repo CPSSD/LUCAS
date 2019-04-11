@@ -56,7 +56,8 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        this.props.setUserData(response);
+        const stats = response.map((stat) => stat['_source']);
+        this.props.setUserData(stats);
       });
   }
 
@@ -72,9 +73,10 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        this.getUserData(response);
-        this.props.setReviews(response);
-        this.getDatasetReviewWeights(response);
+        const result = response.map((res) => res['_source'])
+        this.getUserData(result);
+        this.props.setReviews(result);
+        this.getDatasetReviewWeights(result);
       });
   }
 
