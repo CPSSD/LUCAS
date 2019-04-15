@@ -122,6 +122,10 @@ class Results extends Component {
     );
   }
 
+  toggleModal() {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
   renderModal() {
     const modalClasses = cx({
       modal: true,
@@ -171,7 +175,7 @@ class Results extends Component {
             <p className="title has-text-white">Data Visualizations</p>
           </div>
           <div className="level-right">
-            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>dded Section tooltips
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         <Slider {...settings}>

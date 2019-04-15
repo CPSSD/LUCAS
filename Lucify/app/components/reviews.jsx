@@ -488,18 +488,11 @@ class Review extends Component {
           </div>
           <div className="level-right">
             <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
-            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>. Added Section tooltips
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         {this.renderResults()}
-<<<<<<< HEAD
-<<<<<<< HEAD
         {this.renderModal()}
-=======
-        }
->>>>>>> 1c09bc8... Imporved Frontend Performance
-=======
->>>>>>> bc908bf... update
       </div>
     );
   }

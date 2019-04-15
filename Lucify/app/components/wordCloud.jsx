@@ -185,7 +185,7 @@ class WordCloud extends Component {
             <p className="title has-text-white">WordCloud</p>
           </div>
           <div className="level-right">
-            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>dded Section tooltips
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         <div className="pl20 pr20">
