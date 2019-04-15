@@ -1,6 +1,0 @@
-/SVM
-/NB
-/LR
-/CNN
-/LSTM
-/BERT
