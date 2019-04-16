@@ -7,11 +7,9 @@ from keras.preprocessing import text
 from sklearn.externals import joblib
 from os.path import dirname, join, abspath
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
-from db.mongo import db
 from scripts.training_helpers import get_feature_weights, get_classification, get_confidence
 
 app = Flask(__name__)
-app.register_blueprint(db)
 
 stat_model = joblib.load("../models/pipe_svc_1.0.pkl")  
 neural_model = keras.models.load_model('../models/mlp_opspam_86.h5')

@@ -36,6 +36,7 @@ router.post('/bulk', (req, res) => {
     uri: 'http://localhost:3005/bulkClassify',
     body: {
       reviews: req.body.reviews,
+      model: req.body.model,
     },
     json: true
   };
