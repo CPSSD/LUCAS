@@ -6,7 +6,7 @@ import Rating from 'react-rating';
 import Slider from 'react-slick';
 import cx from 'classnames';
 import ReactTooltip from 'react-tooltip';
-import { forEach, chunk, find, tail } from 'lodash';
+import { forEach, chunk, find } from 'lodash';
 import { connect } from 'react-redux';
 import { resetFilteredReviews } from '../actions/index';
 
@@ -55,7 +55,8 @@ function NextArrow(props) {
 class Review extends Component {
   constructor(props) {
     super(props);
-    this.tooltip = <div></div>
+    this.tooltip = <div></div>;
+    this.userVerdict = 0;
     this.state = {
       showModal: false,
     };
@@ -151,6 +152,19 @@ class Review extends Component {
   }
 
   renderVerdict(verdict, colour) {
+    let userVerdict;
+    let userColour;
+    if (this.userVerdict <= 1.5) {
+      userVerdict = 'Suspicious User';
+      userColour = '#8b0000';
+    } else if (this.userVerdict > 1.5 && this.userVerdict < 3) {
+      userVerdict = 'Average User';
+      userColour = '#ffae2c';
+    } else {
+      userVerdict = 'Trusted User';
+      userColour = '#006400';
+    }
+    this.userVerdict = 0;
     const verdictClasses = cx({
       pl10: true,
     });
@@ -162,10 +176,16 @@ class Review extends Component {
       'fa-check-circle': verdict === 'Genuine',
     });
     return (
-      <p className="card-footer-item is-2">
-        <span className={verdictClasses} style={{ color: colour }}> {verdict}</span>
-        <span className="pl10"><i className={iconClasses} style={{color: colour }}></i></span>
-      </p>
+      [
+        <p key="Review Verdict" className="card-footer-item is-2">
+          <span className={verdictClasses} style={{ color: colour }}> {verdict}</span>
+          <span className="pl10"><i className={iconClasses} style={{color: colour }}></i></span>
+        </p>,
+        <p key="User Verdict" className="card-footer-item is-2">
+          <span className="pl10"><i className="fas fa-user-secret" style={{ color: userColour }}></i></span>
+          <span className={verdictClasses} style={{ color: userColour }}> {userVerdict}</span>
+        </p>
+      ]
     );
   }
 
@@ -203,6 +223,11 @@ class Review extends Component {
   renderStar(userInfo, userId) {
     const { rating_deviation, review_count } = userInfo
     if (review_count === 1) return null;
+    if (rating_deviation <= 1) {
+      this.userVerdict += 1;
+    } else if (rating_deviation > 1 && rating_deviation <= 2) {
+      this.userVerdict += 0.5;
+    }
     const badgeClasses = cx({
       far: true,
       'fa-star': true,
@@ -222,12 +247,15 @@ class Review extends Component {
             {tooltip}
           </ReactTooltip>, document.body
         )
-      ] 
+      ]
     );
   }
 
   renderReviewBadge(reviewCount, userId) {
-    if (reviewCount !== 1) return null;
+    if (reviewCount !== 1) {
+      this.userVerdict += 1;
+      return null;
+    }
     const badgeClasses = cx({
       fas: true,
       ml5: true,
@@ -249,6 +277,11 @@ class Review extends Component {
   }
 
   renderDateBadge(biggestDay, count, userId) {
+    if (count < 3) {
+      this.userVerdict += 1;
+    } else if (count > 2 && count < 5) {
+      this.userVerdict += 0.5;
+    }
     const badgeClasses = cx({
       far: true,
       ml5: true,
@@ -297,6 +330,11 @@ class Review extends Component {
   }
 
   renderAverageReviewBadge(reviewLength, userId) {
+    if (reviewLength >= 1500) {
+      this.userVerdict += 1;
+    } else if (reviewLength > 200 && reviewLength < 1500) {
+      this.userVerdict += 0.5;
+    }
     const badgeClasses = cx({
       fas: true,
       ml5: true,
@@ -376,7 +414,7 @@ class Review extends Component {
               {this.renderReview(feature_weights, review)}
             </div>
             <div className="card-footer">
-              {this.renderVerdict(result, colour)}
+              {this.renderVerdict(result, colour, userInfo)}
               <div className="card-footer-item is-3">
                 Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence), colour)}
               </div>
