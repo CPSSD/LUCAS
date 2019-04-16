@@ -353,6 +353,24 @@ class Search extends React.Component {
                   <div className="dropdown-item" onClick={() => this.setModel("SVM")}>
                     SVM
                   </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("CNN")}>
+                    CNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("FNN")}>
+                    FNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("RNN")}>
+                    RNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("BERTSVM")}>
+                    BERT + SVM
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("NB")}>
+                    Naive Bayes
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("LR")}>
+                    Logistic Regression
+                  </div>
                 </div>
               </div>
             </div>
