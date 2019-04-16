@@ -350,26 +350,26 @@ class Search extends React.Component {
               </div>
               <div className="dropdown-menu" id="dropdown-menu" role="menu">
                 <div className="dropdown-content">
-                  <div className="dropdown-item" onClick={() => this.setModel("SVM")}>
-                    SVM
-                  </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("CNN")}>
-                    CNN
-                  </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("FNN")}>
-                    FNN
-                  </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("RNN")}>
-                    RNN
-                  </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("BERTSVM")}>
-                    BERT + SVM
-                  </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("NB")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("nb")}>
                     Naive Bayes
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("LR")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("lr")}>
                     Logistic Regression
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("svm")}>
+                    SVM
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("ffnn")}>
+                    FFNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("cnn")}>
+                    CNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("lstm")}>
+                    LSTM
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("bert")}>
+                    BERT
                   </div>
                 </div>
               </div>
