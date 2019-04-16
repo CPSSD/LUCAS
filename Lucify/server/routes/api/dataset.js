@@ -1,6 +1,7 @@
-const rp = require('request-promise');
 const router = require('express').Router();
 const mongodb = require('../../db/mongo');
+const { Client } = require('@elastic/elasticsearch');
+const client = new Client({ node: 'http://localhost:9200' });
 
 router.post('/getUser', (req, res) => {
 
@@ -26,27 +27,38 @@ router.post('/getBusiness', (req, res) => {
   }
 
   if (business_id) {
-    mongodb.findBusinessById(business_id).exec()
-      .then((business) => {
-        res.status(200).json(business);
-      })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
+    client.search({
+      index: 'business',
+      type: 'businesses',
+      body: {
+        query: {
+          match: {
+            business_id
+          }
+        }
+      }
+    }, (err, result) => {
+      const { body } = result;
+      if (err) res.status(500).send('Error');
+      res.status(200).send(body.hits.hits[0]['_source']);
+    });
   } else {
-    mongodb.getRandomBusiness(categories).exec()
-      .then((count) => {
-        mongodb.findBusinessByCategories(categories, count).exec()
-          .then((business) => {
-            res.status(200).json(business);
-          })
-          .catch((err) => {
-            res.status(500).json(err);
-          });
-      })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
+    client.search({
+      index: 'business',
+      type: 'businesses',
+      body: {
+        query: {
+          match: {
+            categories
+          }
+        }
+      }
+    }, (err, result) => {
+      const { body } = result;
+      if (err) res.status(500).send('Error');
+      const results = body.hits.hits;
+      res.status(200).send(results[Math.floor(Math.random() * results.length)]);
+    });
   }
 
   return res;
@@ -54,36 +66,28 @@ router.post('/getBusiness', (req, res) => {
 
 
 router.post('/getReviews', (req, res) => {
-  const { user_id, business_id } = req.body;
-  if (!business_id && !user_id) {
-    return res.status(422).json({ errors: { fields: "Both user and business id can't be blank" } });
+  const { business_id } = req.body;
+  if (!business_id) {
+    return res.status(422).json({ errors: { fields: "business id can't be blank" } });
   }
 
-  if (user_id && business_id) {
-    mongodb.findReviewsByBusinessIdAndUserId(business_id, user_id).exec()
-      .then((reviews) => {
-        res.status(200).json(reviews);
-      })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
-  } else if (user_id) {
-    mongodb.findReviewsByUserId(user_id).exec()
-      .then((reviews) => {
-        res.status(200).json(reviews);
-      })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
-  } else {
-    mongodb.findReviewsByBusinessId(business_id).exec()
-      .then((reviews) => {
-        res.status(200).json(reviews);
-      })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
-  }
+  client.search({
+    index: 'review',
+    type: 'reviews',
+    body: {
+      _source: [ 'user_id', 'date', 'stars', 'text'],
+      size: 500,
+      query: {
+        match: {
+          business_id
+        }
+      }
+    }
+  }, (err, result) => {
+    const { body } = result;
+    if (err) res.status(500).send('Error');
+    res.status(200).send(body.hits.hits);
+  });
 
   return res;
 });
@@ -93,23 +97,18 @@ router.post('/getUserData', (req, res) => {
   if (!userIds) {
     return res.status(422).json({ errors: { fields: "User id can't be blank" } });
   }
-
-  const options = {
-    method: 'POST',
-    uri: 'http://localhost:3005/db/getStats',
+  client.mget({
+    index: 'stats',
+    type: 'statistics',
     body: {
-      userIds,
-    },
-    json: true
-  };
+      ids: userIds
+    }
+  }, (err, result) => {
+    const { body } = result;
+    if (err) res.status(500).send('Error');
+    res.status(200).send(body.docs);
+  });
 
-  rp(options)
-    .then((parsedBody) => {
-      res.status(200).json(parsedBody);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
 
   return res;
 });

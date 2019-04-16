@@ -16,11 +16,9 @@ const app = express();
 app.use(cors());
 
 // Normal express config defaults
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-// If you need a backend, e.g. an API, add your custom backend-specific middleware here
-// app.use('/api', myApi);
 app.use(require('./routes'));
 
 // In production we need to pass these values in instead of relying on webpack
@@ -42,7 +40,5 @@ app.listen(port, host, (err) => {
   }
   logger.appStarted(port, prettyHost);
 });
-
-mongodb.connectDB();
 
 module.exports = app;

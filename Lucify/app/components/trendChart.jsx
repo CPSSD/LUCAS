@@ -45,7 +45,7 @@ class TrendChart extends Component {
         events: {
           click: (event) => { this.filterReview(event.point, columnData); }
         },
-        turboThreshold: 2000,
+        turboThreshold: 10000,
         dataGrouping: {
           groupPixelWidth: 50,
           forced: true,
