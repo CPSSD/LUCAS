@@ -324,7 +324,6 @@ class Search extends React.Component {
       dropdown: true,
       'is-active': this.state.isActive,
     });
-    console.log(classes);
     return classes;
   }
 
