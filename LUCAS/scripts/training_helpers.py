@@ -63,7 +63,7 @@ def get_strat_kfolds(X, y, k):
 def get_feature_weights(model, review):
   feature_weights = OrderedDict()
   cv = model.named_steps['cv']
-  coef = model.named_steps['classifier'].coef_.ravel()
+  coef = model.named_steps['clf'].coef_.ravel()
   pattern = re.compile('\W')
   for word in review.split():
     _word = re.sub(pattern, ' ', word)
