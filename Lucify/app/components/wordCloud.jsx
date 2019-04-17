@@ -1,11 +1,13 @@
 /* eslint-disable class-methods-use-this */
 
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
+import cx from 'classnames';
 import Highcharts from 'highcharts';
 import HCWordCloud from 'highcharts/modules/wordcloud';
 import HighchartsReact from 'highcharts-react-official';
 import { connect } from 'react-redux';
-import { union, pickBy, map } from 'lodash';
+import { union, pickBy, map, forEach } from 'lodash';
 
 HCWordCloud(Highcharts);
 
@@ -16,6 +18,9 @@ class WordCloud extends Component {
   constructor(props) {
     super(props);
     this.chartComponent = React.createRef();
+    this.state = {
+      showModal: false,
+    };
   }
 
   componentDidMount() {
@@ -90,12 +95,18 @@ class WordCloud extends Component {
     const filteredFeatureWeights = pickBy(mergedFeatureWeights, (val) => {
       return val !== 0;
     });
+    const entries = Object.entries(filteredFeatureWeights);
+    const sorted = entries.sort((a, b) => a[1] - b[1]);
+    const worst = sorted.slice(0, 50);
+    const best = sorted.slice(1).slice(-50);
+    const mostImpactfulWords = worst.concat(best);
     const data = [];
-    for (let key in filteredFeatureWeights) {
-      const currentVal = Math.abs(this.calculateAccuracy(filteredFeatureWeights[key]));
-      const weighting = filteredFeatureWeights[key] < 0 ? 'Negative' : 'Positive';
-      data.push({ name: key, weight: currentVal, color: this.getColor(filteredFeatureWeights[key]), weighting  });
-    }
+    forEach(mostImpactfulWords, (word) => {
+      const currentVal = Math.abs(this.calculateAccuracy(word[1]));
+      const weighting = word[1] < 0 ? 'Negative' : 'Positive';
+      data.push({ name: word[0], weight: currentVal, color: this.getColor(word[1]), weighting  });
+    });
+
     const options = {
       chart: {
         type: 'wordcloud',
@@ -107,6 +118,7 @@ class WordCloud extends Component {
           orientations: 1,
           to: 0,
         },
+        turboThreshold: 10000,
       }],
       title: {
         text: undefined,
@@ -132,18 +144,62 @@ class WordCloud extends Component {
             </div>`;
   }
 
+  toggleModal() {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Word Cloud</h2>
+                <p>
+                  The Word Cloud is a supplemental data visualization that visiualises how different words affect the review and our confidence in it.
+                  The Word Cloud will update based on the applied filters on the 2 main data visualizations and will show a breakdown of the most impactful words across the reviews.
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
+
   render() {
     return (
-      <div className="level-item">
-        {this.props.filteredReviews ?
-          <HighchartsReact
-            highcharts={Highcharts}
-            ref={this.chartComponent}
-            options={this.getOptions()}
-          />
-          :
-          null
-        }
+      <div className="has-background-link mb20 pb40">
+        <div className="level pt20 pl20 pr20">
+          <div className="level-left">
+            <p className="title has-text-white">WordCloud</p>
+          </div>
+          <div className="level-right">
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
+          </div>
+        </div>
+        <div className="pl20 pr20">
+          {this.props.filteredReviews ?
+            <HighchartsReact
+              highcharts={Highcharts}
+              ref={this.chartComponent}
+              options={this.getOptions()}
+            />
+            :
+            null
+          }
+        </div>
+        {this.renderModal()}
       </div>
     );
   }

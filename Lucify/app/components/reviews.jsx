@@ -1,9 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import ShowMoreText from 'react-show-more-text';
+import Rating from 'react-rating';
 import Slider from 'react-slick';
 import cx from 'classnames';
-import { forEach, chunk } from 'lodash';
+import ReactTooltip from 'react-tooltip';
+import { forEach, chunk, find, tail } from 'lodash';
 import { connect } from 'react-redux';
 import { resetFilteredReviews } from '../actions/index';
 
@@ -50,6 +53,13 @@ function NextArrow(props) {
 }
 
 class Review extends Component {
+  constructor(props) {
+    super(props);
+    this.tooltip = <div></div>
+    this.state = {
+      showModal: false,
+    };
+  }
   getColour(confidence) {
     const fixedConfidence = confidence ? confidence.toFixed(2) : 0;
     if (fixedConfidence <= -1) {
@@ -152,7 +162,7 @@ class Review extends Component {
       'fa-check-circle': verdict === 'Genuine',
     });
     return (
-      <p className="card-header-title is-2">
+      <p className="card-footer-item is-2">
         <span className={verdictClasses} style={{ color: colour }}> {verdict}</span>
         <span className="pl10"><i className={iconClasses} style={{color: colour }}></i></span>
       </p>
@@ -170,35 +180,206 @@ class Review extends Component {
       );
       reviewText.push(<span key={`${value}-${index}-2`}> </span>);
     });
+    if (splitReview.length <= 45) {
+      return (
+        reviewText
+      );
+    }
     return (
-      reviewText
+      <ShowMoreText
+        lines={3}
+        more="Show more"
+        less="Show less"
+      >
+        {reviewText}
+      </ShowMoreText>
     );
   }
 
+  updateTooltip(tooltip) {
+    this.tooltip = tooltip;
+  }
+
+  renderStar(userInfo, userId) {
+    const { rating_deviation, review_count } = userInfo
+    if (review_count === 1) return null;
+    const badgeClasses = cx({
+      far: true,
+      'fa-star': true,
+      mr5: true,
+      'badge-good': rating_deviation <= 1,
+      'badge-medium': rating_deviation > 1 && rating_deviation <= 2,
+      'badge-bad': rating_deviation > 2,
+    });
+
+    const tooltip = <p>{`Average User Rating standard deviation is ${userInfo.rating_deviation.toFixed(2)} Stars`}</p>;
+
+    return (
+      [
+        <div key={`star-badge-${userId}`} data-tip data-for={`star-${userId}`}><i className={badgeClasses}></i></div>,
+        ReactDom.createPortal(
+          <ReactTooltip key={`star-tooltip-${userId}`} id={`star-${userId}`} className="badgeTooltip">
+            {tooltip}
+          </ReactTooltip>, document.body
+        )
+      ] 
+    );
+  }
+
+  renderReviewBadge(reviewCount, userId) {
+    if (reviewCount !== 1) return null;
+    const badgeClasses = cx({
+      fas: true,
+      ml5: true,
+      mr5: true,
+      'badge-bad': true,
+      'fa-user-edit': true,
+    });
+    const tooltip = <p>{'This user has only has one Review'}</p>;
+    return (
+      [
+        <div key={`review-badge-${userId}`} data-tip data-for={`review-${userId}`}><i className={badgeClasses}></i></div>,
+        ReactDom.createPortal(
+          <ReactTooltip key={`review-tooltip-${userId}`} id={`review-${userId}`} className="badgeTooltip">
+            {tooltip}
+          </ReactTooltip>, document.body
+        )
+      ]
+    );
+  }
+
+  renderDateBadge(biggestDay, count, userId) {
+    const badgeClasses = cx({
+      far: true,
+      ml5: true,
+      mr5: true,
+      'fa-calendar-times': count >= 5,
+      'fa-calendar-check': count < 5,
+      'badge-good': count < 3,
+      'badge-bad': count >= 5,
+      'badge-medium': count > 2 && count < 5
+    });
+
+    let tooltip;
+    if (count >= 5) {
+      tooltip = (
+        [
+          <p key={"line1"}>
+            {'Large amount of reviews in one day.'}
+          </p>,
+          <p key={"line2"}>
+            {`Highest: ${count} reviews on ${biggestDay}`}
+          </p>
+        ]
+      );
+    } else {
+      tooltip = (
+        [
+          <p key={"line1"}>
+            {'Average number of reviews in one day.'}
+          </p>,
+          <p key={"line2"}>
+            {`Highest: ${count} reviews on ${biggestDay}`}
+          </p>
+        ]
+      );
+    }
+    return (
+      [
+        <div key={`date-badge-${userId}`} data-tip data-for={`date-${userId}`}><i className={badgeClasses}></i></div>,
+        ReactDom.createPortal(
+          <ReactTooltip key={`date-tooltip-${userId}`} id={`date-${userId}`} className="badgeTooltip">
+            {tooltip}
+          </ReactTooltip>, document.body
+        )
+      ]
+    );
+  }
+
+  renderAverageReviewBadge(reviewLength, userId) {
+    const badgeClasses = cx({
+      fas: true,
+      ml5: true,
+      'fa-edit': true,
+      'badge-good': reviewLength >= 1500,
+      'badge-bad': reviewLength <= 200,
+      'badge-medium': reviewLength > 200 && reviewLength < 1500
+    });
+
+    let tooltip;
+    if (reviewLength <= 200) {
+      tooltip = (
+        <p>
+          {`Average review length of this user ${Math.floor(reviewLength)} characters`}
+        </p>
+      );
+    } else {
+      tooltip = (
+        <p>
+          {`Average review length is ${Math.floor(reviewLength)} characters`}
+        </p>
+      );
+    }
+    return (
+      [
+        <div key={`average-badge-${userId}`} data-tip data-for={`average-${userId}`}><i className={badgeClasses}></i></div>,
+        ReactDom.createPortal(
+          <ReactTooltip key={`average-tooltip-${userId}`} id={`average-${userId}`} className="badgeTooltip">
+            {tooltip}
+          </ReactTooltip>, document.body
+        )
+      ]
+    );
+  }
+
+  renderUserInfo(userInfo, stars) {
+    if (userInfo) {
+      return (
+        <div className="card-header">
+          <div className="card-header-title">
+            <div className="pr5">
+              {userInfo.name}
+            </div>
+            <Rating
+              initialRating={stars}
+              emptySymbol="far fa-star"
+              fullSymbol="fas fa-star"
+              fractions={2}
+              readonly
+            />
+          </div>
+          <div className="card-header-title badges">
+            {this.renderStar(userInfo)}
+            {this.renderReviewBadge(userInfo.review_count, userInfo.user_id)}
+            {this.renderDateBadge(userInfo.biggest_day, userInfo.biggest_day_count, userInfo.user_id)}
+            {this.renderAverageReviewBadge(userInfo.average_length, userInfo.user_id)}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
+
   renderCards(reviews) {
+    const { userData } = this.props;
     if (!reviews) { return null; }
     return reviews.map((reviewInfo, index) => {
-      const { confidence, result, feature_weights, review } = reviewInfo;
-      const updaedConfidence = result === 'Deceptive' ? -parseFloat(confidence) : parseFloat(confidence);
-      const colour = this.getColour(parseFloat(updaedConfidence));
-
+      const { confidence, result, feature_weights, review, user_id, stars } = reviewInfo;
+      const updatedConfidence = result === 'Deceptive' ? -parseFloat(confidence) : parseFloat(confidence);
+      const colour = this.getColour(parseFloat(updatedConfidence));
+      const userInfo = find(userData, (data) => { return data.user_id === user_id; })
       return (
         <div className="tile is-child pr5 pl5 pb5" key={`card-${index}`}>
           <div className="card" style={{ borderTop: `10px solid ${colour}` }}>
-            <div className="card-header">
+            {this.renderUserInfo(userInfo, stars)}
+            <div className="card-content review">
+              {this.renderReview(feature_weights, review)}
+            </div>
+            <div className="card-footer">
               {this.renderVerdict(result, colour)}
-              <div className="card-header-title is-3">
+              <div className="card-footer-item is-3">
                 Confidence: {this.renderAccuracy(this.calculateAccuracy(confidence), colour)}
               </div>
-            </div>
-            <div className="card-content review">
-              <ShowMoreText
-                lines={3}
-                more="Show more"
-                less="Show less"
-              >
-                {this.renderReview(feature_weights, review)}
-              </ShowMoreText>
             </div>
           </div>
         </div>
@@ -246,7 +427,7 @@ class Review extends Component {
     const { filteredReviews, datasetWeightsLoaded } = this.props;
     if (!datasetWeightsLoaded) {
       return (
-        <div className="tile is-child">
+        <div className="tile is-child pl20 pr20">
           <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
           <div className="heading">Please Wait getting Yelp reviews..</div>
         </div>
@@ -254,7 +435,7 @@ class Review extends Component {
     }
 
     return (
-      <div className="tile is-ancestor">
+      <div className="tile is-ancestor pl20 pr20">
         <div className="tile is-parent width-100">
           {this.renderReviews(filteredReviews)}
         </div>
@@ -262,15 +443,56 @@ class Review extends Component {
     );
   }
 
+  toggleModal() {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
+  renderModal() {
+    const modalClasses = cx({
+      modal: true,
+      'is-active': this.state.showModal,
+    });
+    return (
+      ReactDom.createPortal(
+        <div className={modalClasses}>
+          <div className="modal-background" onClick={() => { this.toggleModal(); }}></div>
+          <div className="modal-card">
+            <header className="modal-card-head">
+              <p className="modal-card-title">What is this?</p>
+            </header>
+            <section className="modal-card-body">
+              <div className="content has-text-black">
+                <h2 className="is-bold">Reviews</h2>
+                <p>
+                  These are the customer reviews for the selected business. 
+                  The confidence score you see is calculated via the LUCAS API. 
+                  When a review is expanded, the words that contributed the most towards that score are highlighted (Green: Genuine, Red: Deception). 
+                  If there are indications of deception in a users history, they will be shown in the badges above the user's review. 
+                  Hover over these badges to find out more.
+                </p>
+              </div>
+            </section>
+          </div>
+          <button className="modal-close is-large" aria-label="close" onClick={() => { this.toggleModal(); }}></button>
+        </div>, document.body
+      )
+    );
+  }
+
   render() {
     return (
-      <div className="has-background-link mb20 pl20 pr20 pb40">
-        <div className="level pt20">
+      <div className="has-background-link mb20 pb40">
+        <div className="level pt20 pl20 pr20">
+          <div className="level-left">
+            <p className="title has-text-white">Reviews</p>
+          </div>
           <div className="level-right">
             <a className="button is-danger" onClick={() => this.resetData()}>Reset</a>
+            <span onClick={() => this.toggleModal()}><i className="far fa-question-circle is-pulled-right fa-2x has-text-white ml10"></i></span>
           </div>
         </div>
         {this.renderResults()}
+        {this.renderModal()}
       </div>
     );
   }
@@ -284,6 +506,7 @@ const mapStateToProps = (state) => {
     datasetWeightsLoaded: state.datasetWeightsLoaded,
     datasetWeights: state.datasetWeights,
     filteredReviews: state.filteredReviews,
+    userData: state.userData
   };
 };
 
