@@ -5,6 +5,7 @@ import Slider from 'react-slick';
 import cx from 'classnames';
 import Rating from 'react-rating';
 import { connect } from 'react-redux';
+import { groupBy } from 'lodash';
 import DotChart from './dotChart';
 import TrendChart from './trendChart';
 import WordCloud from './wordCloud';
@@ -66,7 +67,14 @@ class Results extends Component {
     );
   }
 
+  getRating(stars) {
+    return stars.reduce((prev, curr) => prev + curr) / stars.length;
+  }
   renderBusiness(business) {
+    const { datasetWeights } = this.props;
+    const splitreviews = groupBy(datasetWeights, 'result');
+    const { Genuine } = splitreviews;
+    const stars = Genuine.map((review) => review.stars);
     return (
       <section className="has-background-link mb40 pl20 pr20">
         <div className="level">
@@ -84,9 +92,21 @@ class Results extends Component {
             <div className="level tile is-child columns">
               <div className="level-item has-text-centered column">
                 <div>
-                  <p className="heading">Rating</p>
+                  <p className="heading">Yelp Rating</p>
                   <Rating
                     initialRating={business.rating}
+                    emptySymbol="far fa-star"
+                    fullSymbol="fas fa-star"
+                    fractions={2}
+                    readonly
+                  />
+                </div>
+              </div>
+              <div className="level-item has-text-centered column">
+                <div>
+                  <p className="heading">Lucify Rating</p>
+                  <Rating
+                    initialRating={this.getRating(stars)}
                     emptySymbol="far fa-star"
                     fullSymbol="fas fa-star"
                     fractions={2}

@@ -4,13 +4,16 @@ import { forEach, chunk } from 'lodash';
 import cx from 'classnames';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import Rating from 'react-rating';
+import Accordion from './accordion';
 
 import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews, resultsLoading, setUserData } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
     super(props);
+    this.model = 'Select Model';
     this.state = {
+      isActive: false,
       yelpSearchTerm: '',
       address: '',
     };
@@ -31,7 +34,8 @@ class Search extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        reviews
+        reviews,
+        model: this.model === 'Select Model' ? 'SVM' : this.model,
       })
     })
       .then((res) => res.json())
@@ -300,6 +304,29 @@ class Search extends React.Component {
     );
   }
 
+  renderAdvancedTitle() {
+    return (
+      <span>Advanced Options <i className="fas fa-angle-right"></i></span>
+    )
+  }
+
+  setModel(model) {
+    this.model = model;
+    this.setState({ isActive: !this.state.isActive });
+  }
+
+  toggleDropdown() {
+    this.setState({ isActive: !this.state.isActive });
+  }
+
+  getClasses() {
+    const classes = cx({
+      dropdown: true,
+      'is-active': this.state.isActive,
+    });
+    return classes;
+  }
+
   render() {
     return ([
       <div className="box search-box" key="search">
@@ -310,6 +337,45 @@ class Search extends React.Component {
           <div className="pr5 pl5 is-vertical-center">Near</div>
           {this.place()}
         </div>
+        <Accordion className="accordion has-text-left pl20 mb10">
+          <div data-header={this.renderAdvancedTitle()} className="mt10">
+            <div className={this.getClasses()}>
+              <div className="dropdown-trigger">
+                <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={() => this.toggleDropdown()}>
+                  <span>{this.model}</span>
+                  <span className="icon is-small">
+                    <i className="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div className="dropdown-menu" id="dropdown-menu" role="menu">
+                <div className="dropdown-content">
+                  <div className="dropdown-item" onClick={() => this.setModel("nb")}>
+                    Naive Bayes
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("lr")}>
+                    Logistic Regression
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("svm")}>
+                    SVM
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("ffnn")}>
+                    FFNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("cnn")}>
+                    CNN
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("lstm")}>
+                    LSTM
+                  </div>
+                  <div className="dropdown-item" onClick={() => this.setModel("bert")}>
+                    BERT
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Accordion>
         <div className="control">
           <button className="button is-primary is-fullwidth" onClick={() => this.searchYelp()}>
             Search/Analyze
