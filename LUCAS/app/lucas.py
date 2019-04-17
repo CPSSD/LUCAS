@@ -10,6 +10,7 @@ from sklearn.externals import joblib
 from os.path import dirname, join, abspath
 from sklearn.metrics import roc_auc_score
 from keras.preprocessing.sequence import pad_sequences
+graph = tf.get_default_graph()
 from keras import backend as K
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
 from scripts.training_helpers import get_feature_weights, get_classification, get_confidence
@@ -84,8 +85,9 @@ def classify_review(review, model):
     tokenized_review = np.array(pad_sequences(yelp_tokenizer.texts_to_sequences([text]), maxlen=320))
     print(tokenized_review.shape, fake_user_features.shape)
     if model == 'ffnn':
-      classification = get_classification(ffnn_model, [tokenized_review, fake_user_features])[0][0]
-      print(classification)
+      with graph.as_default():
+        classification = ffnn_model.predict([tokenized_review, fake_user_features])[0][0]
+        print(classification)
     if model == 'cnn':
       classification = get_classification(cnn_model, tokenized_review)[0][0]
     if model == 'lstm':
