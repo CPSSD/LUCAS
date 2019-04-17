@@ -62,6 +62,7 @@ def return_status():
   return 'LUCAS API v0.3.0'
 
 def classify_review(review, model):
+  text = review["text"]
   fake_user_features = np.array([[0,0,0,0,0]])
   if model in ['nb', 'lr', 'svm']:
     if model == 'nb':
@@ -106,8 +107,9 @@ def classify():
 @app.route('/bulkClassify', methods=['POST'])
 def bulkClassify():
   weights = []
+  model = request.get_json()["model"]
   for review in request.get_json()["reviews"]:
-    weights.append(classify_review(review["text"], review["model"]))
+    weights.append(classify_review(review, model))
   return json.dumps(weights, sort_keys=False)
 
 def start():
