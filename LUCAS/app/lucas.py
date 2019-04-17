@@ -106,8 +106,9 @@ def classify():
 @app.route('/bulkClassify', methods=['POST'])
 def bulkClassify():
   weights = []
+  model = request.get_json()["model"]
   for review in request.get_json()["reviews"]:
-    weights.append(classify_review(review["text"], review["model"]))
+    weights.append(classify_review(review["text"], model))
   return json.dumps(weights, sort_keys=False)
 
 def start():
