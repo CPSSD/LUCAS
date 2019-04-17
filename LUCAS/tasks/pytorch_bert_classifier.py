@@ -91,7 +91,7 @@ class DataProcessor(object):
             return lines
 
 class OpSpamProcessor(DataProcessor):
-    """Processor for the CoLA data set (GLUE version)."""
+    """Processor for the OpSpam data set."""
 
     def __init__(self, fold):
         dataset = tf.keras.utils.get_file(
@@ -292,7 +292,7 @@ def main():
                         type=str,
                         help="Where do you want to store the pre-trained models downloaded from s3")
     parser.add_argument("--max_seq_length",
-                        default=128,
+                        default=320,
                         type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. \n"
                              "Sequences longer than this will be truncated, and sequences shorter \n"
@@ -315,7 +315,7 @@ def main():
                         type=int,
                         help="Total batch size for eval.")
     parser.add_argument("--learning_rate",
-                        default=5e-5,
+                        default=2e-5,
                         type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--num_train_epochs",
