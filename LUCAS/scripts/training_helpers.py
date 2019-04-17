@@ -11,7 +11,7 @@ from os.path import dirname, join, abspath
 from sklearn.model_selection import cross_val_score
 
 def plot_coefficients(model, top_features=20):
- classifier = model.named_steps['classifier']
+ classifier = model.named_steps['clf']
  feature_names = model.named_steps['cv'].get_feature_names()
 
  coef = classifier.coef_.ravel()
@@ -72,7 +72,7 @@ def get_feature_weights(model, review):
   return feature_weights
 
 def get_classification(model, review):
-  return model.predict([review])
+  return model.predict(review)
 
 def get_confidence(model, review):
   return (model.decision_function([review])[0])

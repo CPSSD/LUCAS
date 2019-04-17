@@ -62,7 +62,7 @@ def return_status():
   return 'LUCAS API v0.3.0'
 
 def classify_review(review, model):
-  text = review["text"]
+  text = review['text']
   fake_user_features = np.array([[0,0,0,0,0]])
   if model in ['nb', 'lr', 'svm']:
     if model == 'nb':
@@ -96,7 +96,7 @@ def classify_review(review, model):
     predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
     feature_weights = get_feature_weights(svm_model, text)
 
-  return{"result": predicted_class, "confidence": str(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
+  return{"result": predicted_class, "confidence": max(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
 
 @app.route('/classify', methods=['POST'])
 def classify():
