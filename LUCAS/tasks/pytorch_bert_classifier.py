@@ -17,7 +17,7 @@ from tqdm import tqdm, trange
 from torch.nn import CrossEntropyLoss, MSELoss
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import matthews_corrcoef, f1_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 from pytorch_pretrained_bert.modeling import BertForSequenceClassification, BertConfig, WEIGHTS_NAME, CONFIG_NAME
@@ -99,12 +99,12 @@ class OpSpamProcessor(DataProcessor):
              origin="https://storage.googleapis.com/lucas0/opspam.pkl",
              extract=False)
         self.reviews = pd.read_pickle(dataset)#.sample(frac=1).reset_index(drop=True)
-        split = 320
-        self.start = fold*split
-        self.end = (fold+1)*split
-        train, test = train_test_split(self.reviews, shuffle=True, test_size=0.2, random_state=951)
-        self.train = train
-        self.test = test
+        splitter = StratifiedShuffleSplit(n_splits=5, random_state=910, test_size=0.2)
+        labels = [int(x) for x in self.reviews['deceptive']]
+        train_indices, test_indices = [x for x in splitter.split(self.reviews['review'], labels)][fold]
+
+        self.train = np.array([(self.reviews['review'][x], int(self.reviews['deceptive'][x])) for x in train_indices])
+        self.test = np.array([(self.reviews['review'][x], int(self.reviews['deceptive'][x])) for x in test_indices])
 
     def get_train_examples(self):
         """See base class."""
@@ -112,7 +112,7 @@ class OpSpamProcessor(DataProcessor):
 
     def get_dev_examples(self):
         """See base class."""
-        return self._create_examples(self.test, "test")#self.reviews[self.start:self.end], "dev")
+        return self._create_examples(self.test, "dev")#self.reviews[self.start:self.end], "dev")
 
     def get_labels(self):
         """See base class."""
@@ -121,7 +121,7 @@ class OpSpamProcessor(DataProcessor):
     def _create_examples(self, lines, set_type):
         """Creates examples for the training and dev sets."""
         examples = []
-        for (i, line) in enumerate(zip(lines['review'], lines['deceptive'])):
+        for (i, line) in enumerate(lines):
             guid = "%s-%s" % (set_type, i)
             text_a = line[0]
             label = str(line[1])
