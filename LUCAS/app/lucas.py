@@ -78,7 +78,7 @@ def classify_review(review, model):
     vect = cv.transform([text])
     classification = clf.predict(vect)
     predicted_class = 'Deceptive' if classification == 1 else 'Genuine'
-    class_confidence = max(clf.predict_proba(vect)) if 'svm' not in model else abs(clf.decision_function(vect))
+    class_confidence = max(max(clf.predict_proba(vect))) if 'svm' not in model else abs(clf.decision_function(vect))
     feature_weights = get_feature_weights(svm_model, text)
 
   else:
@@ -98,7 +98,7 @@ def classify_review(review, model):
     predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
     feature_weights = get_feature_weights(svm_model, text)
 
-  return{"result": predicted_class, "confidence": max(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
+  return{"result": predicted_class, "confidence": int(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
 
 @app.route('/classify', methods=['POST'])
 def classify():
