@@ -1,6 +1,8 @@
 import functools
 import statistics
+import nltk
 from sklearn.preprocessing import StandardScaler
+from sklearn.utils import shuffle
 from protos import review_set_pb2
 
 def max_date_occurrences(reviews):
@@ -40,9 +42,12 @@ def reviewer_features(reviewer_id, reviews_by_reviewer):
   return (max_reviews_in_day, average_review_length, ratings_stdev,
           percent_pos_reviews, percent_neg_reviews)
 
-def scaled_reviewer_features(reviewset, entire_reviewset):
+def unscaled_reviewer_features(reviewset, entire_reviewset):
   reviewer_reviews = reviews_by_reviewer(entire_reviewset)
-  reviewer_predictors = [list(reviewer_features(x.user_id, reviewer_reviews)) for x in reviewset]
+  return [list(reviewer_features(x.user_id, reviewer_reviews)) for x in reviewset]
+
+def scaled_reviewer_features(reviewset, entire_reviewset):
+  reviewer_predictors = unscaled_reviewer_features(reviewset, entire_reviewset)
   return StandardScaler().fit_transform(reviewer_predictors)
 
 def get_entire_dataset(yelpDataPath="../../data/yelpZip"):
@@ -50,3 +55,29 @@ def get_entire_dataset(yelpDataPath="../../data/yelpZip"):
   with open(yelpDataPath, 'rb') as f:
     review_set.ParseFromString(f.read())
   return [x for x in review_set.reviews]
+
+def get_balanced_dataset(yelpDataPath="../../data/yelpZip", max_seq_len=320):
+  review_set = review_set_pb2.ReviewSet()
+  with open(yelpDataPath, 'rb') as f:
+    review_set.ParseFromString(f.read())
+
+  is_fake = lambda x: x.label
+  fake_reviews = list(filter(is_fake, review_set.reviews))
+  is_word = lambda w: w.isalpha()
+  review_words = lambda r: list(filter(is_word, nltk.word_tokenize(r.review_content)))
+  short_review = lambda r: len(review_words(r)) <= max_seq_len
+  fake_short = list(filter(short_review, fake_reviews))
+
+  count_fake = len(fake_short)
+
+  genuine_reviews = []
+  counter_genuine = 0
+  for review in shuffle(review_set.reviews, random_state=1337):
+    if review.label == True:
+      continue
+    if counter_genuine >= count_fake:
+      break
+    if len(review_words(review)) <= max_seq_len:
+      genuine_reviews.append(review)
+      counter_genuine += 1
+  return shuffle(genuine_reviews + fake_short, random_state=1337)
