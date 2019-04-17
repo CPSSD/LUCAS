@@ -98,7 +98,7 @@ def classify_review(review, model):
     predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
     feature_weights = get_feature_weights(svm_model, text)
 
-  return{"result": predicted_class, "confidence": int(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
+  return{"result": predicted_class, "confidence": float(class_confidence), "feature_weights": feature_weights, "review": text, "user_id": review["user_id"], "stars": review["stars"]}
 
 @app.route('/classify', methods=['POST'])
 def classify():
