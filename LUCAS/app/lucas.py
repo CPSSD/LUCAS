@@ -116,5 +116,4 @@ def start():
   app.run(debug=True,host='0.0.0.0', port=3005)
 
 if __name__ == '__main__':
-  # start()
-  print(classify_review('hello word', 'ffnn'))
+  start()
