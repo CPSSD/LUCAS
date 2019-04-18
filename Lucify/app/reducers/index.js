@@ -1,12 +1,10 @@
 import {
   TOGGLE_REVIEW,
   TOGGLE_SINGLE_REVIEW,
-  TOGGLE_SEARCH_REVIEW,
   TOGGLE_MODAL,
   SET_REVIEWS,
   SET_BUSINESS,
   SET_REVIEW_WEIGHTS,
-  DATASET_WEIGHTS_LOADED,
   SET_FILTERED_REIEWS,
   RESET_FILTERED_REVIEWS,
   UPDATE_FILTERED_REVIEWS,
@@ -29,10 +27,6 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, toggleReview: action.payload };
     case TOGGLE_SINGLE_REVIEW:
       return { ...state, toggleSingleReview: action.payload };
-    case TOGGLE_SEARCH_REVIEW:
-      return { ...state, toggleSearchReview: action.payload };
-    case DATASET_WEIGHTS_LOADED:
-      return { ...state, datasetWeightsLoaded: action.payload };
     case TOGGLE_MODAL:
       return { ...state, toggleModal: !state.toggleModal };
     case LOADING:
@@ -44,7 +38,7 @@ const rootReducer = (state = initialState, action) => {
     case SET_USER_DATA:
       return { ...state, userData: action.payload };
     case SET_REVIEW_WEIGHTS:
-      return { ...state, datasetWeights: action.payload };
+      return { ...state, datasetWeights: action.payload, datasetWeightsLoaded: true };
     case SET_FILTERED_REIEWS:
       return { ...state, filteredReviews: action.payload.reviews, reviewsFiltered: action.payload.filtered };
     case RESET_FILTERED_REVIEWS:

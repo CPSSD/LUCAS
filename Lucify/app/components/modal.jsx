@@ -33,7 +33,7 @@ class WhatIsModal extends React.Component {
               <h2>LUCIFY</h2>
               <p>
                 To bring our API to the public, we have developed our flagship interface, Lucify. 
-                This specialises on helping users assess falsified reviews on amazon products. 
+                This specialises on helping users assess falsified reviews on Yelp businesses. 
                 This demonstrates our mission, which is to enable users to bypass the increasing online deception caused by opinion spam.
               </p>
             </div>

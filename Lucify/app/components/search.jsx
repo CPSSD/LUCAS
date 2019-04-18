@@ -6,7 +6,7 @@ import PlacesAutocomplete from 'react-places-autocomplete';
 import Rating from 'react-rating';
 import Accordion from './accordion';
 
-import { toggleSearchReview, setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, datasetWeightsLoaded, setFilteredReviews, resultsLoading, setUserData } from '../actions/index';
+import { setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, setFilteredReviews, resultsLoading, setUserData } from '../actions/index';
 
 class Search extends React.Component {
   constructor(props) {
@@ -35,15 +35,13 @@ class Search extends React.Component {
       },
       body: JSON.stringify({
         reviews,
-        model: this.model === 'Select Model' ? 'SVM' : this.model,
+        model: this.model === 'Select Model' ? 'svm' : this.model,
       })
     })
       .then((res) => res.json())
       .then((response) => {
-        this.props.setDatasetReviewWeights(response);
         this.props.setFilteredReviews(response, false);
-        this.props.toggleSearchReview(true);
-        this.props.datasetWeightsLoaded(true);
+        this.props.setDatasetReviewWeights(response);
       });
   }
 
@@ -77,7 +75,7 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        const result = response.map((res) => res['_source'])
+        const result = response.map((res) => res['_source']);
         this.getUserData(result);
         this.props.setReviews(result);
         this.getDatasetReviewWeights(result);
@@ -96,7 +94,7 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        this.getReviewsFromDataset(response.business_id);
+        this.getReviewsFromDataset(response['_source'].business_id);
       });
   }
 
@@ -118,12 +116,13 @@ class Search extends React.Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        if (!response) {
+        const { hits, total } = response;
+        if (total === 0) {
           this.props.setBusiness(business);
           this.getRandomBusiness(query.join());
         } else {
           this.props.setBusiness(business);
-          this.getReviewsFromDataset(response.business_id);
+          this.getReviewsFromDataset(hits[0]['_source'].business_id);
         }
       });
   }
@@ -392,9 +391,7 @@ class Search extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    toggleSearchReview: (value) => dispatch(toggleSearchReview(value)),
     toggleSingleReview: (value) => dispatch(toggleSingleReview(value)),
-    datasetWeightsLoaded: (value) => dispatch(datasetWeightsLoaded(value)),
     setReviews: (reviews) => dispatch(setReviews(reviews)),
     setDatasetReviewWeights: (weights) => dispatch(setDatasetReviewWeights(weights)),
     setBusiness: (business) => dispatch(setBusiness(business)),

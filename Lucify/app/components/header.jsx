@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { toggleReview, toggleSearchReview, setBusiness, toggleModal } from '../actions/index';
+import { toggleModal } from '../actions/index';
 
 const lucifyLogo = require('../../public/lucify.png');
 
@@ -12,8 +12,6 @@ class Header extends React.Component {
   }
 
   render() {
-    const { showReviewResults, showSearchResults } = this.props;
-    const showResults = showReviewResults || showSearchResults;
     return (
       <div className="hero-head">
         <nav className="navbar">
@@ -40,20 +38,10 @@ class Header extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    showReviewResults: state.toggleReview,
-    showSearchResults: state.toggleSearchReview
-  };
-};
-
 const mapDispatchToProps = (dispatch) => {
   return {
-    toggleReview: (value) => dispatch(toggleReview(value)),
-    toggleSearchReview: (value) => dispatch(toggleSearchReview(value)),
     toggleModal: () => dispatch(toggleModal()),
-    setBusiness: (business) => dispatch(setBusiness(business))
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(null, mapDispatchToProps)(Header);
