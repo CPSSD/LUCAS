@@ -74,7 +74,7 @@ class Results extends Component {
     const { datasetWeights } = this.props;
     const splitreviews = groupBy(datasetWeights, 'result');
     const { Genuine } = splitreviews;
-    const stars = Genuine.map((review) => review.stars);
+    const stars = Genuine ? Genuine.map((review) => review.stars) : [0];
     return (
       <section className="has-background-link mb40 pl20 pr20">
         <div className="level">

@@ -77,7 +77,7 @@ class Main extends React.Component {
 const mapStateToProps = (state) => {
   return {
     showReviewResults: state.toggleReview,
-    showSearchResults: state.toggleSearchReview,
+    showSearchResults: state.datasetWeightsLoaded,
     showSingleReview: state.toggleSingleReview,
   };
 };

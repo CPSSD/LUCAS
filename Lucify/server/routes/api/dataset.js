@@ -40,7 +40,7 @@ router.post('/getBusiness', (req, res) => {
     }, (err, result) => {
       const { body } = result;
       if (err) res.status(500).send('Error');
-      res.status(200).send(body.hits.hits[0]['_source']);
+      res.status(200).send(body.hits);
     });
   } else {
     client.search({
