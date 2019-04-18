@@ -40,7 +40,7 @@ const rootReducer = (state = initialState, action) => {
     case SET_REVIEW_WEIGHTS:
       return { ...state, datasetWeights: action.payload, datasetWeightsLoaded: true };
     case SET_FILTERED_REIEWS:
-      return { ...state, filteredReviews: action.payload.reviews, reviewsFiltered: action.payload.filtered };
+      return { ...state, filteredReviews: action.payload.reviews, reviewsFiltered: action.payload.filtered, model: action.payload.model };
     case RESET_FILTERED_REVIEWS:
       return { ...state, filteredReviews: state.datasetWeights, reviewsFiltered: false };
     case UPDATE_FILTERED_REVIEWS:

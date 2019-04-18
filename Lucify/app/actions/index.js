@@ -20,7 +20,7 @@ export const toggleSearchReview = (value) => ({ type: TOGGLE_SEARCH_REVIEW, payl
 export const toggleModal = () => ({ type: TOGGLE_MODAL, payload: {} });
 export const setReviews = (reviews) => ({ type: SET_REVIEWS, payload: reviews });
 export const setDatasetReviewWeights = (weights) => ({ type: SET_REVIEW_WEIGHTS, payload: weights });
-export const setFilteredReviews = (reviews, filtered) => ({ type: SET_FILTERED_REIEWS, payload: { reviews, filtered } });
+export const setFilteredReviews = (reviews, filtered, model) => ({ type: SET_FILTERED_REIEWS, payload: { reviews, filtered, model } });
 export const datasetWeightsLoaded = (value) => ({ type: DATASET_WEIGHTS_LOADED, payload: value });
 export const setBusiness = (business) => ({ type: SET_BUSINESS, payload: business });
 export const setUserData = (data) => ({ type: SET_USER_DATA, payload: data });
