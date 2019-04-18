@@ -11,7 +11,8 @@ import { setReviews, toggleSingleReview, setBusiness, setDatasetReviewWeights, s
 class Search extends React.Component {
   constructor(props) {
     super(props);
-    this.model = 'Select Model';
+    this.model = 'svm';
+    this.name = 'Select Model';
     this.state = {
       isActive: false,
       yelpSearchTerm: '',
@@ -35,12 +36,13 @@ class Search extends React.Component {
       },
       body: JSON.stringify({
         reviews,
-        model: this.model === 'Select Model' ? 'svm' : this.model,
+        model: this.model,
       })
     })
       .then((res) => res.json())
       .then((response) => {
-        this.props.setFilteredReviews(response, false);
+        const name = this.name === 'Select Model' ? 'SVM' : this.name;
+        this.props.setFilteredReviews(response, false, name);
         this.props.setDatasetReviewWeights(response);
       });
   }
@@ -309,8 +311,9 @@ class Search extends React.Component {
     )
   }
 
-  setModel(model) {
+  setModel(model, name) {
     this.model = model;
+    this.name = name;
     this.setState({ isActive: !this.state.isActive });
   }
 
@@ -341,7 +344,7 @@ class Search extends React.Component {
             <div className={this.getClasses()}>
               <div className="dropdown-trigger">
                 <button className="button" aria-haspopup="true" aria-controls="dropdown-menu" onClick={() => this.toggleDropdown()}>
-                  <span>{this.model}</span>
+                  <span>{this.name}</span>
                   <span className="icon is-small">
                     <i className="fas fa-angle-down" aria-hidden="true"></i>
                   </span>
@@ -349,25 +352,25 @@ class Search extends React.Component {
               </div>
               <div className="dropdown-menu" id="dropdown-menu" role="menu">
                 <div className="dropdown-content">
-                  <div className="dropdown-item" onClick={() => this.setModel("nb")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("nb", 'Naive Bayes')}>
                     Naive Bayes
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("lr")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("lr", 'Logistic Regression')}>
                     Logistic Regression
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("svm")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("svm", 'SVM')}>
                     SVM
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("ffnn")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("ffnn", 'FFNN')}>
                     FFNN
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("cnn")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("cnn", 'CNN')}>
                     CNN
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("lstm")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("lstm", 'LSTM')}>
                     LSTM
                   </div>
-                  <div className="dropdown-item" onClick={() => this.setModel("bert")}>
+                  <div className="dropdown-item" onClick={() => this.setModel("bert", 'BERT')}>
                     BERT
                   </div>
                 </div>
@@ -395,7 +398,7 @@ const mapDispatchToProps = (dispatch) => {
     setReviews: (reviews) => dispatch(setReviews(reviews)),
     setDatasetReviewWeights: (weights) => dispatch(setDatasetReviewWeights(weights)),
     setBusiness: (business) => dispatch(setBusiness(business)),
-    setFilteredReviews: (reviews, filtered) => dispatch(setFilteredReviews(reviews, filtered)),
+    setFilteredReviews: (reviews, filtered, model) => dispatch(setFilteredReviews(reviews, filtered, model)),
     resultsLoading: () => dispatch(resultsLoading()),
     setUserData: (data) => dispatch(setUserData(data)),
   };

@@ -83,6 +83,11 @@ class Results extends Component {
               <a href={business.url} target="_blank" rel="noopener noreferrer" className="title has-text-white">{business.name}</a>
             </div>
           </div>
+          <div className="level-right">
+            <div className="level-item has-text-centered pt20">
+              <p className="title has-text-white">{`Model: ${this.props.model}`}</p>
+            </div>
+          </div>
         </div>
         <div className="container has-text-white tile is-ancestor is-fluid pb20">
           <div className="tile is-parent is-2">
@@ -237,6 +242,7 @@ const mapStateToProps = (state) => {
   return {
     datasetWeights: state.datasetWeights,
     business: state.business,
+    model: state.model,
     datasetWeightsLoaded: state.datasetWeightsLoaded,
     filteredReviews: state.filteredReviews
   };
