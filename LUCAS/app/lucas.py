@@ -54,9 +54,9 @@ opspam_tokenizer = joblib.load('../models/opspam_tokenizer.pkl')
 yelp_tokenizer = joblib.load('../models/yelp_ffnn_tokenizer.pkl') 
 
 ffnn_model = keras.models.load_model('../models/ffnn_uf_yelp.model', custom_objects={'auroc': auroc, 'f1':f1})
-cnn_model = keras.models.load_model('../models/mlp_opspam_86.h5')
-lstm_model = keras.models.load_model('../models/mlp_opspam_86.h5')
-bert_model = keras.models.load_model('../models/mlp_opspam_86.h5')
+cnn_model = keras.models.load_model('../models/cnn_yelp1.pkl')
+lstm_model = keras.models.load_model('../models/lstm_opspam.pkl')
+bert_model = keras.models.load_model('../models/bert_opspam.pkl')
 
 @app.route('/')
 def return_status():
@@ -65,7 +65,7 @@ def return_status():
 def classify_review(review, model):
   text = review['text']
   fake_user_features = np.array([[0,0,0,0,0]])
-  if model in ['nb', 'lr', 'svm']:
+  if model in ['nb', 'lr', 'svm', 'cnn', 'lstm', 'bert']:
     if model == 'nb':
       clf = naive_bayes_model.named_steps['clf']
       cv = naive_bayes_model.named_steps['cv']
@@ -75,10 +75,19 @@ def classify_review(review, model):
     if model == 'svm':
       clf = svm_model.named_steps['clf']
       cv = svm_model.named_steps['cv']
+    if model == 'cnn':
+      clf = cnn_model.named_steps['clf']
+      cv = cnn_model.named_steps['cv']
+    if model == 'lstm':
+      clf = lstm_model.named_steps['clf']
+      cv = lstm_model.named_steps['cv']
+    if model == 'bert':
+      clf = bert_model.named_steps['clf']
+      cv = bert_model.named_steps['cv']
     vect = cv.transform([text])
     classification = clf.predict(vect)
     predicted_class = 'Deceptive' if classification == 1 else 'Genuine'
-    class_confidence = max(max(clf.predict_proba(vect))) if 'svm' not in model else abs(clf.decision_function(vect))
+    class_confidence = max(max(clf.predict_proba(vect))) if model not in ['cnn', 'svm'] else abs(clf.decision_function(vect))
     feature_weights = get_feature_weights(svm_model, text)
 
   else:
@@ -88,12 +97,6 @@ def classify_review(review, model):
       with graph.as_default():
         classification = ffnn_model.predict([tokenized_review, fake_user_features])[0][0]
         print(classification)
-    if model == 'cnn':
-      classification = get_classification(cnn_model, tokenized_review)[0][0]
-    if model == 'lstm':
-      classification = get_classification(lstm_model, tokenized_review)[0][0]
-    if model == 'bert':
-      classification = get_classification(bert_model, tokenized_review)[0][0]
     class_confidence = abs(classification - 0.5)*2
     predicted_class = 'Genuine' if classification < 0.5 else 'Deceptive'
     feature_weights = get_feature_weights(svm_model, text)
